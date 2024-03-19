@@ -1,0 +1,124 @@
+//
+//  AnnotationManager.swift
+//  FroopProof
+//
+//  Created by David Reed on 2/19/24.
+//
+
+
+import Foundation
+import SwiftUI
+import Combine
+import MapKit
+
+class AnnotationManager: ObservableObject {
+    static let shared = AnnotationManager()
+    @ObservedObject var mapManager = MapManager.shared
+    @Published var guestAnnotations: [UserData] = []
+    private var userDataSubscriptions = [String: AnyCancellable]()
+    private var cancellables = Set<AnyCancellable>()
+    @Published var currentPinIndex: Int = 0
+    @Published var currentGuestIndex: Int = 0
+    @Published var currentGuestCoordinate: CLLocationCoordinate2D = CLLocationCoordinate2D()
+    @Published var trackingUser: Bool = false
+
+    init() {
+        setupUserDataListeners()
+//        setupDebugTimer()
+    }
+    
+    private func setupUserDataListeners() {
+        AppStateManager.shared.$currentFilteredFroopHistory
+            .map { $0.first?.confirmedFriends ?? [] }
+            .assign(to: \.guestAnnotations, on: self)
+            .store(in: &cancellables)
+    }
+    
+    func zoomToLocation(_ coordinate: CLLocationCoordinate2D) {
+        print("ZOOM TO LOCATION FIRING!")
+        print(String(describing: coordinate))
+        
+        let newRegion = MKCoordinateRegion(center: coordinate, latitudinalMeters: 500, longitudinalMeters: 500)
+        withAnimation {
+            mapManager.cameraPosition = .region(newRegion)
+        }
+    }
+    
+    func manuallyUpdateAnnotations() {
+        let updatedGuests = guestAnnotations.map { guest -> UserData in
+            if let updatedGuest = AppStateManager.shared.currentFilteredFroopHistory.first?.confirmedFriends.first(where: { $0.froopUserID == guest.froopUserID }) {
+                // Assuming you want to update the coordinate and potentially other fields
+                guest.coordinate = updatedGuest.coordinate
+                // Add any other property updates here
+            }
+            return guest
+        }
+        DispatchQueue.main.async {
+            self.guestAnnotations = updatedGuests
+        }
+    }
+    
+    
+//    private func setupDebugTimer() {
+//        Timer.scheduledTimer(withTimeInterval: 5, repeats: true) { [weak self] _ in
+//            guard let self = self else { return }
+//            for guest in self.guestAnnotations {
+//                refreshGuestAnnotations()
+//                currentGuestCoordinate = AppStateManager.shared.currentFilteredFroopHistory[AppStateManager.shared.aFHI].confirmedFriends[currentGuestIndex].coordinate
+//                if trackingUser {
+//                    self.zoomToLocation(self.currentGuestCoordinate)
+//                }
+//                print("🕒 [Timer] Coordinate for \(guest.froopUserID): \(guest.coordinate)")
+//                print("🕒🕒 [Timer] Coordinate for \(AppStateManager.shared.currentFilteredFroopHistory[AppStateManager.shared.aFHI].confirmedFriends[0].froopUserID): \(AppStateManager.shared.currentFilteredFroopHistory[AppStateManager.shared.aFHI].confirmedFriends[0].coordinate)")
+//                print("🕒🕒🕒 [Timer] Coordinate for \(AppStateManager.shared.currentFilteredFroopHistory[AppStateManager.shared.aFHI].confirmedFriends[1].froopUserID): \(AppStateManager.shared.currentFilteredFroopHistory[AppStateManager.shared.aFHI].confirmedFriends[1].coordinate)")
+//
+//                
+//            }
+//        }
+//    }
+    
+    
+    func refreshGuestAnnotations() {
+        // Assuming AppStateManager has a method or property to access the current guest list with updated UserData
+        let updatedGuests = AppStateManager.shared.currentFilteredFroopHistory.first?.confirmedFriends ?? []
+        
+        // Iterate through the local annotations to update their details
+        for (index, guestAnnotation) in guestAnnotations.enumerated() {
+            if let updatedGuest = updatedGuests.first(where: { $0.froopUserID == guestAnnotation.froopUserID }) {
+                // Update the properties you're interested in, such as coordinate
+                guestAnnotations[index].coordinate = updatedGuest.coordinate
+                // Add any other property updates here
+            }
+        }
+        
+        // Notify the UI that the annotations have been updated
+        // This can be as simple as reassigning the array to itself if all else fails
+        self.guestAnnotations = self.guestAnnotations.map { $0 }
+    }
+    
+    func updateAnnotations(with newAnnotations: [UserData]) {
+        print("🍓 Updating annotations: \(newAnnotations)")
+        self.guestAnnotations = newAnnotations
+    }
+    
+    func addGuest(guest: UserData) {
+        updateAnnotations(with: guestAnnotations + [guest])
+    }
+    
+    func cycleThroughGuests() {
+        // This is a simplified example. You'll adjust based on your actual logic for cycling through guests.
+        let nextGuests = guestAnnotations.shuffled() // Or any logic to reorder
+        updateAnnotations(with: nextGuests)
+    }
+    
+    func cycleToNextPin() {
+        guard !MapManager.shared.froopPins.isEmpty else { return }
+        currentPinIndex = (currentPinIndex + 1) % MapManager.shared.froopPins.count
+    }
+
+    func cycleToNextGuest() {
+        guard !guestAnnotations.isEmpty else { return }
+        currentGuestIndex = (currentGuestIndex + 1) % guestAnnotations.count
+    }
+    
+}
