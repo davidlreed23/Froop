@@ -90,7 +90,10 @@ struct FroopTypeView: View {
                                     .shadow(color: Color.white.opacity(0.7), radius: 7, x: -4, y: -4)
                                     .ignoresSafeArea()
                                     .onTapGesture {
-                                        uploadFroopTypes()
+                                        changeView.froopTypeData = froopType
+
+                                        changeView.configureViewBuildOrder()
+                                        //uploadFroopTypes()
 //                                        print(froopTypeStore.froopTypes)
                                         withAnimation(.spring()) {
                                             mapState = .searchingForLocation
@@ -104,7 +107,7 @@ struct FroopTypeView: View {
                                             if appStateManager.froopIsEditing {
                                                 changeView.pageNumber = 5
                                             } else {
-                                                changeView.pageNumber += 1
+                                                changeView.pageNumber = 2
 //                                                print(changeView.pageNumber)
                                             }
                                         }
@@ -150,6 +153,7 @@ struct FroopTypeView: View {
                 let documentID = "\(froopType.id)"  // Assuming the 'id' of the FroopType will be the document ID in Firestore.
                 
                 db.collection("froopTypes").document(documentID).setData([
+                    "viewPositions": froopType.viewPositions,
                     "id": froopType.id,
                     "order": froopType.order,
                     "name": froopType.name,

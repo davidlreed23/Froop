@@ -26,7 +26,6 @@ struct ActiveOrPassiveView: View {
     @ObservedObject var inviteManager = InviteManager.shared
     @State var froopDropPin: FroopDropPin = FroopDropPin()
     @State private var isSheetPresented = false
-    @State var froopAdded = false
     @State private var froopListStatus: FroopListStatus = .confirmed
     @State var instanceFroop: FroopHistory = FroopHistory(
         froop: Froop(dictionary: [:]),

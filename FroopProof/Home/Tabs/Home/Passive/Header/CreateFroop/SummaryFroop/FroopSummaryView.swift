@@ -24,14 +24,12 @@ struct FroopSummaryView: View {
     @ObservedObject var timeZoneManager: TimeZoneManager = TimeZoneManager()
     @ObservedObject var myData = MyData.shared
     @ObservedObject var froopData: FroopData
-    @ObservedObject var changeView: ChangeView
+    @ObservedObject var changeView = ChangeView.shared
     @State var froopHolder: Froop = Froop(dictionary: [:])
     @State var selectedFroopType: FroopType?
     @State var confirmedFriends: [UserData] = []
     @ObservedObject var froopTypeStore = FroopTypeStore()
-    @Binding var showNFWalkthroughScreen: Bool
     @AppStorage("ProfileCompletionCurrentPage") var ProfileCompletionCurrentPage = 5
-    @Binding var froopAdded: Bool
     var PCtotalPages = 6
     @State var myTimeZone: TimeZone = TimeZone.current
     @State private var formattedDateString: String = ""
@@ -662,13 +660,13 @@ struct FroopSummaryView: View {
                                         }
                                     }
                                 }
-                                froopAdded = true
+                                changeView.froopAdded = true
                                 
                                 if ProfileCompletionCurrentPage <= PCtotalPages {
                                     ProfileCompletionCurrentPage = 2
                                     //                                        print(ProfileCompletionCurrentPage)
                                 }
-                                showNFWalkthroughScreen = false
+                                changeView.showNFWalkthroughScreen = false
                                 
                                 for friendId in confirmedFriends {
                                     do {

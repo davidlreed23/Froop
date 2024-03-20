@@ -15,13 +15,12 @@ struct FroopLocationView: View {
     // @ObservedObject var froopDataListener = FroopDataListener.shared
     @ObservedObject var locationManager = LocationManager.shared
     @ObservedObject var locationServices = LocationServices.shared
-    @ObservedObject var changeView: ChangeView
+    @ObservedObject var changeView = ChangeView.shared
     @ObservedObject var froopData: FroopData
     
     @State private var showLocationSearchView = false
     @State private var mapState = MapViewState.searchingForLocation
     @EnvironmentObject var locationViewModel: LocationSearchViewModel
-    @Binding var homeViewModel: HomeViewModel
     @ObservedObject var myData = MyData.shared
     @State var showRec = false
     @State private var delayCompleted = false
@@ -92,7 +91,7 @@ struct FroopLocationView: View {
         .background(Color.clear)
         .environmentObject(locationViewModel)
         .environmentObject(froopData)
-        .environmentObject(homeViewModel)
+//        .environmentObject(homeViewModel)
 //        .edgesIgnoringSafeArea(.bottom)
 //        .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)
         

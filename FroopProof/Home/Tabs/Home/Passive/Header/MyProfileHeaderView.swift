@@ -13,12 +13,12 @@ import Combine
 struct MyProfileHeaderView: View {
     @ObservedObject var appStateManager = AppStateManager.shared
     @ObservedObject var dataController = DataController.shared
+    @ObservedObject var changeView = ChangeView.shared
     @Environment(\.colorScheme) var colorScheme
     // @ObservedObject var froopDataListener = FroopDataListener.shared
     @ObservedObject var timeZoneManager: TimeZoneManager = TimeZoneManager()
     @ObservedObject var froopManager = FroopManager.shared
     @ObservedObject var myData = MyData.shared
-    @State var showNFWalkthroughScreen = false
     @State var froopAdded = false
     @State private var walkthroughScreen: NFWalkthroughScreen? = nil
     @Binding var showNotificationSheet: Bool
@@ -166,8 +166,8 @@ struct MyProfileHeaderView: View {
                                     LocationManager.shared.requestAlwaysAuthorization()
                                     //                                    self.showSheet = false  // Dismiss the blurred sheet
                                     ChangeView.shared.pageNumber = 1
-                                    self.walkthroughScreen = NFWalkthroughScreen(showNFWalkthroughScreen: $showNFWalkthroughScreen, froopAdded: $froopAdded)
-                                    self.showNFWalkthroughScreen = true
+                                    self.walkthroughScreen = NFWalkthroughScreen(froopAdded: $froopAdded)
+                                    self.changeView.showNFWalkthroughScreen = true
                                 }
                                 
                                 Text("FROOP")
@@ -221,7 +221,7 @@ struct MyProfileHeaderView: View {
                 }
                 .frame(height: (headerHeight/* + dataController.offsetY) < minimumHeaderHeight ? minimumHeaderHeight : (headerHeight + dataController.offsetY*/), alignment: .bottom)
                 
-                .fullScreenCover(isPresented: $showNFWalkthroughScreen) {
+                .fullScreenCover(isPresented: $changeView.showNFWalkthroughScreen) {
                     NavigationView {
                         ZStack {
                             walkthroughScreen
@@ -236,7 +236,7 @@ struct MyProfileHeaderView: View {
                                                     
                             ToolbarItem(placement: .navigationBarLeading) {
                                 Button(action: {
-                                    self.showNFWalkthroughScreen = false
+                                    self.changeView.showNFWalkthroughScreen = false
                                 }) {
                                     HStack (spacing: 0){
                                         Image(systemName: "chevron.left")

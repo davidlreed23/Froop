@@ -12,13 +12,10 @@ import CoreLocation
 
 struct FroopDateView: View {
     @Environment(\.colorScheme) var colorScheme
-    
     @ObservedObject var printControl = PrintControl.shared
     // @ObservedObject var froopDataListener = FroopDataListener.shared
     @ObservedObject var froopData: FroopData
     @ObservedObject var changeView = ChangeView.shared
-    
-    @Binding var homeViewModel: HomeViewModel
     
     @ObservedObject var myData = MyData.shared
     
@@ -37,10 +34,8 @@ struct FroopDateView: View {
         dateFormatter.dateFormat = "MMMM dd, yyyy"
         return dateFormatter.string(from: self.froopData.froopStartTime)
     }
-    init(changeView: ChangeView, froopData: FroopData, homeViewModel: Binding<HomeViewModel>) {
-        self.changeView = changeView
+    init(froopData: FroopData) {
         self.froopData = froopData
-        self._homeViewModel = homeViewModel
     }
 
     @State var transClock = false

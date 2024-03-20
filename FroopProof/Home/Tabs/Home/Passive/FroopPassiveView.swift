@@ -26,7 +26,6 @@ struct FroopPassiveView: View {
     @State private var walkthroughScreen: NFWalkthroughScreen? = nil
     @State var showSheet = false
     @State var froopAdded = false
-    @State var showNFWalkthroughScreen = false
     @State private var sortedIndices: [Int] = []
     @State private var currentIndex: Int = 0
     @State private var now = Date()
