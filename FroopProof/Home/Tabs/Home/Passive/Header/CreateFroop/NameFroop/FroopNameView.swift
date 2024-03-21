@@ -17,9 +17,7 @@ import UIKit
 struct FroopNameView: View {
     @Environment(\.colorScheme) var colorScheme
     @ObservedObject var printControl = PrintControl.shared
-    // @ObservedObject var froopDataListener = FroopDataListener.shared
     @ObservedObject var appStateManager = AppStateManager.shared
-
     @ObservedObject var froopData: FroopData
     @ObservedObject var changeView = ChangeView.shared
     var onFroopNamed: (() -> Void)?

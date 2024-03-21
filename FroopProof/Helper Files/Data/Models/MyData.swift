@@ -231,9 +231,11 @@ final class MyData: ObservableObject {
                 FroopManager.shared.fetchUserData(for: uid) { result in
                     switch result {
                         case .success(let userData):
-                            // Now you're using 'self' to do something
+                            // Before appending, ensure uniqueness based on `froopUserID`
                             DispatchQueue.main.async {
-                                self?.myFriends.append(userData)
+                                if let self = self, !self.myFriends.contains(where: { $0.froopUserID == userData.froopUserID }) {
+                                    self.myFriends.append(userData)
+                                }
                             }
                             promise(.success(userData))
                         case .failure(let error):
@@ -255,16 +257,12 @@ final class MyData: ObservableObject {
                     }
                 },
                 receiveValue: { [weak self] userDatas in
-                    // Ensure only unique UserData objects are appended
-                    for userData in userDatas {
-                        if !self!.myFriends.contains(where: { $0.froopUserID == userData.froopUserID }) {
-                            self?.myFriends.append(userData)
-                        }
-                    }
+                    // This section is now redundant as the uniqueness check is done immediately after data fetching
                 }
             )
-            .store(in: &cancellables)
+            .store(in: &self.cancellables) // Ensure `self.cancellables` is correctly referenced as a property of your class
     }
+
     
     func listenForFriendChanges(forUID uid: String) {
         let listenerKey = "friendsListener_\(uid)"  // Unique key for the listener

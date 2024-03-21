@@ -18,6 +18,7 @@ import SwiftUI
 final class LocationManager: NSObject, ObservableObject {
     static let shared = LocationManager()
     private let locationManager = CLLocationManager()
+    @ObservedObject var myData = MyData.shared
     @ObservedObject var timeZoneManager = TimeZoneManager()
     @Published var locationCount = 0
     @Published var locations: [(count: Int, latitude: Double, longitude: Double)] = []
@@ -38,7 +39,8 @@ final class LocationManager: NSObject, ObservableObject {
     @Published var guestArrived: Bool = false
     @Published var guestLeft: Bool = false
     @Published var locationUpdateTimerOn: Bool = false
-    
+    @Published var currentAddress: String?
+
     @Published var userTimeZone: TimeZone = TimeZone.current
     
     var currentLocation: CLLocation?
@@ -90,6 +92,10 @@ final class LocationManager: NSObject, ObservableObject {
         return LocationServices.shared
     }
     
+    func fetchCurrentAddress() {
+        updateUserLocationAddress()
+    }
+    
     func setGeofenceForFroop(coordinate: CLLocationCoordinate2D, radius: Double = 100.0) {
           let circleOverlay = MKCircle(center: coordinate, radius: radius)
           circleOverlays.append(circleOverlay)
@@ -107,6 +113,89 @@ final class LocationManager: NSObject, ObservableObject {
     func requestSingleUpdate () {
         locationManager.requestWhenInUseAuthorization()
         locationManager.requestLocation()
+    }
+    
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        guard FirebaseServices.shared.isAuthenticated else {
+            // If the user is not authenticated, return early
+            return
+        }
+        PrintControl.shared.printLocationServices("-LocationManager: Function:  locationManager is firing!")
+        guard let location = locations.first else { return }
+        self.userLocation = location
+        
+        locationCount += 1
+        self.locations.append((count: locationCount, latitude: location.coordinate.latitude, longitude: location.coordinate.longitude))
+        updateUserLocationInFirestore()
+
+        // Fetch the time zone for the user's location
+        timeZoneManager.fetchTimeZone(latitude: location.coordinate.latitude, longitude: location.coordinate.longitude) { timeZone in
+            DispatchQueue.main.async {
+                self.timeZoneManager.userLocationTimeZone = timeZone
+                // Additional actions if needed
+            }
+        }
+
+        getCurrentLocationAddress(location) { (address) in
+            self.userLocationAddress = address
+        }
+        
+        // Calculate travel time to Froops and reschedule the notifications
+        for froopData in froopDataArray {
+            calculateTravelTime(from: location.coordinate, to: froopData.froopLocationCoordinate) { travelTime in
+                if let travelTime = travelTime {
+                    self.rescheduleLocalNotification(for: froopData, travelTime: travelTime)
+                } else {
+                    PrintControl.shared.printErrorMessages("Could not calculate travel time.")
+                }
+            }
+        }
+
+        let uid = FirebaseServices.shared.uid
+        // Update user's location in Firestore
+        let db = FirebaseServices.shared.db
+        
+        let userDocRef = db.collection("users").document(uid)
+        PrintControl.shared.printLocationServices("updating user's location in firestore")
+        let geoPoint = FirebaseServices.shared.convertToGeoPoint(coordinate: location.coordinate)
+        userDocRef.updateData([
+            "coordinate": geoPoint
+        ]) { error in
+            if let error = error {
+                PrintControl.shared.printErrorMessages("Error updating location: \(error)")
+            } else {
+                self.updateUserLocationInFirestore()
+                PrintControl.shared.printLocationServices("Location successfully updated")
+            }
+        }
+        
+        // Check if user has arrived
+        if let froopLocation = froopDataArray.first?.froopLocationCoordinate {
+            let froopLocation = CLLocation(latitude: froopLocation.latitude, longitude: froopLocation.longitude)
+            if location.distance(from: froopLocation) <= 25 {
+                stopUpdating()
+                userDocRef.updateData([
+                    "guestArrived": true
+                ]) { error in
+                    if let error = error {
+                        PrintControl.shared.printErrorMessages("Error updating guestArrived: \(error)")
+                    } else {
+                        PrintControl.shared.printLocationServices("guestArrived successfully updated")
+                    }
+                }
+            } else if location.distance(from: froopLocation) > 25 {
+                userDocRef.updateData([
+                    "guestArrived": false,
+                    "guestLeft": true
+                ]) { error in
+                    if let error = error {
+                        PrintControl.shared.printErrorMessages("Error updating guestArrived and guestLeft: \(error)")
+                    } else {
+                        PrintControl.shared.printLocationServices("guestArrived and guestLeft successfully updated")
+                    }
+                }
+            }
+        }
     }
     
     func updateUserLocationInFirestore() {
@@ -290,9 +379,39 @@ final class LocationManager: NSObject, ObservableObject {
             }
         }
     }
-
-  
-    
 }
 
+extension LocationManager: CLLocationManagerDelegate {
+
+    // Call this function whenever you want to update the userLocationAddress
+    func updateUserLocationAddress() {
+        // Assuming `myData.coordinate` is of type CLLocationCoordinate2D
+        guard let coordinate = self.userLocation?.coordinate else {
+            print("User location is not available")
+            return
+        }
+
+        // Create CLLocation from CLLocationCoordinate2D
+        let userLocation = CLLocation(latitude: coordinate.latitude, longitude: coordinate.longitude)
+
+        let geocoder = CLGeocoder()
+        geocoder.reverseGeocodeLocation(userLocation) { [weak self] (placemarks, error) in
+            guard let self = self else { return }
+
+            if let error = error {
+                print("Reverse geocoding failed: \(error.localizedDescription)")
+                return
+            }
+
+            if let placemark = placemarks?.first {
+                let address = [placemark.subThoroughfare, placemark.thoroughfare, placemark.locality, placemark.administrativeArea, placemark.postalCode, placemark.country]
+                    .compactMap { $0 }
+                    .joined(separator: ", ")
+
+                self.userLocationAddress = address
+                print("User's location address: \(address)")
+            }
+        }
+    }
+}
 

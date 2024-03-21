@@ -17,6 +17,8 @@ struct FroopTypeOrTemplate: View {
     @Environment(\.colorScheme) var colorScheme
     @ObservedObject var printControl = PrintControl.shared
     @ObservedObject var locationServices = LocationServices.shared
+    @ObservedObject var changeView = ChangeView.shared
+
     // @ObservedObject var froopDataListener = FroopDataListener.shared
     @State private var mapState = MapViewState.noInput
     @ObservedObject var froopData: FroopData
@@ -35,7 +37,7 @@ struct FroopTypeOrTemplate: View {
             ZStack {
                 Color.offWhite
                 VStack {
-                    Text("What kind of Froop do you want to create?")
+                    Text("What kind of Froop do you want to create? \(froopData.froopType) / \(changeView.froopTypeData?.id ?? 0)")
                         .frame(maxWidth: 400)
                         .fontWeight(.semibold)
                         .font(.system(size: 26))

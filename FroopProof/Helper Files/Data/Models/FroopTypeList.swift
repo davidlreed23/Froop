@@ -291,6 +291,7 @@ struct FroopTypeListOne: Codable {
     ] /// Good
     
     var froopTypesTravel: [FroopTypes] = [
+        FroopTypes(viewPositions: [1,0,2,0,4,3,0,0,0,0,0,0,0,0,0,0,0,0,0,0], id: 5001, order: "AAPickMeUp", subCategory: "", name: "Pick Me Up", imageName: "tcar.fill", category: ["Travel & Exploration", "Errands & Utility"]),
         FroopTypes(viewPositions: [1,2,3,4,5,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], id: 5002, order: "Camping", subCategory: "", name: "Camping", imageName: "tent.fill", category: ["Travel & Exploration"]),
         FroopTypes(viewPositions: [1,2,3,4,5,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], id: 5003, order: "BeachDay", subCategory: "", name: "Beach Day", imageName: "sun.max.fill", category: ["Travel & Exploration"]),
         FroopTypes(viewPositions: [1,2,3,4,5,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], id: 5004, order: "Museum", subCategory: "", name: "Museum", imageName: "building.columns.fill", category: ["Travel & Exploration"]),

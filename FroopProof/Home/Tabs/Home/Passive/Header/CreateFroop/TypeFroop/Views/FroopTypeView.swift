@@ -104,11 +104,18 @@ struct FroopTypeView: View {
                                         if hasAssociatedTopics(for: froopType) {
                                             selectedTopic = froopType.name
                                         } else {
-                                            if appStateManager.froopIsEditing {
-                                                changeView.pageNumber = 5
-                                            } else {
-                                                changeView.pageNumber = 2
-//                                                print(changeView.pageNumber)
+                                            DispatchQueue.main.asyncAfter(deadline: .now() + 0) {
+                                                if appStateManager.froopIsEditing {
+                                                    withAnimation {
+                                                        // Get the last index of the currentViewBuildOrder
+                                                        // Make sure the array is not empty to avoid crashes
+                                                        if let lastIndex = changeView.currentViewBuildOrder.last, !changeView.currentViewBuildOrder.isEmpty {
+                                                            changeView.pageNumber = lastIndex
+                                                        }
+                                                    }
+                                                } else {
+                                                    changeView.pageNumber = 2
+                                                }
                                             }
                                         }
                                     }

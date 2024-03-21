@@ -90,6 +90,8 @@
 		6342519E2AE19A83003A7BA2 /* FroopHistoryService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6342519D2AE19A83003A7BA2 /* FroopHistoryService.swift */; };
 		6344E2F6298D711B0019B8BC /* Nuke in Frameworks */ = {isa = PBXBuildFile; productRef = 6344E2F5298D711B0019B8BC /* Nuke */; };
 		6344E2F9298D7DE40019B8BC /* PhotoPicker_alt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6344E2F8298D7DE40019B8BC /* PhotoPicker_alt.swift */; };
+		6349BBB42BAB4C02001EAAD0 /* FroopSingleFriendSelectView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6349BBB32BAB4C02001EAAD0 /* FroopSingleFriendSelectView.swift */; };
+		6349BBB62BAB6CAF001EAAD0 /* SelectFriendProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6349BBB52BAB6CAF001EAAD0 /* SelectFriendProfileView.swift */; };
 		634D591D297986920052BF16 /* Froop.swift in Sources */ = {isa = PBXBuildFile; fileRef = 634D591C297986920052BF16 /* Froop.swift */; };
 		634D5920297987320052BF16 /* NFWalkthroughScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 634D591F297987320052BF16 /* NFWalkthroughScreen.swift */; };
 		634D5923297987850052BF16 /* FroopData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 634D5922297987850052BF16 /* FroopData.swift */; };
@@ -404,6 +406,8 @@
 		6342519B2AE05F1B003A7BA2 /* ActiveFroopFriendInviteView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActiveFroopFriendInviteView.swift; sourceTree = "<group>"; };
 		6342519D2AE19A83003A7BA2 /* FroopHistoryService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FroopHistoryService.swift; sourceTree = "<group>"; };
 		6344E2F8298D7DE40019B8BC /* PhotoPicker_alt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoPicker_alt.swift; sourceTree = "<group>"; };
+		6349BBB32BAB4C02001EAAD0 /* FroopSingleFriendSelectView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FroopSingleFriendSelectView.swift; sourceTree = "<group>"; };
+		6349BBB52BAB6CAF001EAAD0 /* SelectFriendProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectFriendProfileView.swift; sourceTree = "<group>"; };
 		634D591C297986920052BF16 /* Froop.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Froop.swift; sourceTree = "<group>"; };
 		634D591F297987320052BF16 /* NFWalkthroughScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NFWalkthroughScreen.swift; sourceTree = "<group>"; };
 		634D5922297987850052BF16 /* FroopData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FroopData.swift; sourceTree = "<group>"; };
@@ -953,6 +957,15 @@
 				63BA7FD72AF6CAAE00D27758 /* MyMiniCardsViewActive.swift */,
 			);
 			path = CardViews;
+			sourceTree = "<group>";
+		};
+		6349BBB22BAB4BD2001EAAD0 /* SelectSingleFriendFroop */ = {
+			isa = PBXGroup;
+			children = (
+				6349BBB32BAB4C02001EAAD0 /* FroopSingleFriendSelectView.swift */,
+				6349BBB52BAB6CAF001EAAD0 /* SelectFriendProfileView.swift */,
+			);
+			path = SelectSingleFriendFroop;
 			sourceTree = "<group>";
 		};
 		634D5916297975E70052BF16 /* RegistrationViews */ = {
@@ -1548,6 +1561,7 @@
 			children = (
 				634054F42A903BB40013CB9E /* MyProfileHeaderView.swift */,
 				634D591E297987120052BF16 /* CreateFroop */,
+				6349BBB22BAB4BD2001EAAD0 /* SelectSingleFriendFroop */,
 			);
 			path = Header;
 			sourceTree = "<group>";
@@ -2067,6 +2081,7 @@
 				636162C6297FA45E00DC068B /* SwiftUIView.swift in Sources */,
 				634E024129BE908D009C97DA /* TextFriendOutsideFroop.swift in Sources */,
 				634D594B297994E70052BF16 /* FroopSummaryView.swift in Sources */,
+				6349BBB42BAB4C02001EAAD0 /* FroopSingleFriendSelectView.swift in Sources */,
 				6337361029E6826F00CC4A17 /* UserNotificationsController.swift in Sources */,
 				6376762B2A95CE5200918302 /* MyMinCardsView.swift in Sources */,
 				6372232B2B3E0B4B008F482F /* GlobalChatCardView.swift in Sources */,
@@ -2223,6 +2238,7 @@
 				631448982A171510009EBAD2 /* FroopPassiveView.swift in Sources */,
 				633CC9F32A05663A00F94093 /* FroopTabView.swift in Sources */,
 				638BDE172A0EBAB000FB7305 /* AttendingUserCard.swift in Sources */,
+				6349BBB62BAB6CAF001EAAD0 /* SelectFriendProfileView.swift in Sources */,
 				63CE0BC22AF972AD00E3720F /* MapManager.swift in Sources */,
 				63B0CBDE2991C8E0000E5687 /* FroopCardView.swift in Sources */,
 				634D8EF929A7D1440059083D /* SearchUserView.swift in Sources */,

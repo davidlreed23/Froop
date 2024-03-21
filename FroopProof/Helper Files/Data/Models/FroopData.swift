@@ -498,4 +498,44 @@ extension FroopData {
             guestApproveList: self.guestApproveList
         )
     }
+    
+    func resetData(newFroopType: Int? = nil) {
+        if let newFroopType = newFroopType {
+            froopType = newFroopType
+        }
+        // Reset all other properties
+        froopId = ""
+        froopName = ""
+        froopLocationid = 0
+        froopLocationTimeZone = ""
+        froopLocationtitle = ""
+        froopLocationsubtitle = ""
+        froopLocationlatitude = 0.0
+        froopLocationlongitude = 0.0
+        froopLocationCoordinate = CLLocationCoordinate2D()
+        froopDate = Date()
+        froopStartTime = Date()
+        froopCreationTime = Date()
+        froopDuration = 0
+        froopInvitedFriends = []
+        froopEndTime = Date()
+        froopImages = []
+        froopDisplayImages = []
+        froopThumbnailImages = []
+        froopVideos = []
+        froopVideoThumbnails = []
+        froopIntroVideo = ""
+        froopIntroVideoThumbnail = ""
+        froopHost = ""
+        froopHostPic = ""
+        froopTimeZone = ""
+        froopMessage = ""
+        froopList = []
+        template = false
+        hidden = []
+        inviteUrl = ""
+        videoSubscribed = false
+        guestApproveList = []
+        // Add more fields to reset as needed
+    }
 }

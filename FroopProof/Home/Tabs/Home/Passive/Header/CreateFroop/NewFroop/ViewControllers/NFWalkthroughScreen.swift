@@ -17,6 +17,7 @@ class ChangeView: ObservableObject {
     static let shared = ChangeView()
     @ObservedObject var printControl = PrintControl.shared
     @ObservedObject var froopData: FroopData = FroopData()
+    @ObservedObject var appStateManager = AppStateManager.shared
     // @ObservedObject var froopDataListener = FroopDataListener.shared
     @Published var froopTypeData: FroopType?
     @ObservedObject var myData = MyData.shared
@@ -25,7 +26,7 @@ class ChangeView: ObservableObject {
     @Published var currentViewBuildOrder: [Int] = [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
     @Published var froopAdded = false
     @Published var showNFWalkthroughScreen = false
-
+    @Published var tempFroopType: Int = 0
     
     func configureViewBuildOrder() {
         guard let viewPositions = froopTypeData?.viewPositions else { return }
@@ -42,6 +43,24 @@ class ChangeView: ObservableObject {
         currentViewBuildOrder = order.sorted(by: { $0.value < $1.value }).map { $0.position }
         print("✅ currentViewBuildOrder \(String(describing: currentViewBuildOrder))")
     }
+    
+    func navigateToNextOrEditingPage() {
+            DispatchQueue.main.async {
+                if self.appStateManager.froopIsEditing {
+                    // When editing, navigate to the last view defined in the currentViewBuildOrder
+                    withAnimation {
+                        if let lastIndex = self.currentViewBuildOrder.last, !self.currentViewBuildOrder.isEmpty {
+                            self.pageNumber = lastIndex
+                        }
+                    }
+                } else {
+                    // When not editing, simply proceed to the next page
+                    withAnimation {
+                        self.pageNumber += 1
+                    }
+                }
+            }
+        }
     
     func currentPageView(locationViewModel: LocationSearchViewModel) -> some View {
         guard let nextPageIndex = currentViewBuildOrder.indices.contains(pageNumber - 1) ? currentViewBuildOrder[pageNumber - 1] : nil else {
@@ -60,7 +79,7 @@ class ChangeView: ObservableObject {
             case 5:
                 return AnyView(FroopSummaryView(froopData: froopData).environmentObject(locationViewModel))
             case 6:
-                return AnyView(EmptyView().environmentObject(locationViewModel))
+                return AnyView(FroopSingleFriendSelectView(froopData: froopData, timestamp: Date()).environmentObject(locationViewModel))
             case 7:
                 return AnyView(EmptyView().environmentObject(locationViewModel))
             case 8:

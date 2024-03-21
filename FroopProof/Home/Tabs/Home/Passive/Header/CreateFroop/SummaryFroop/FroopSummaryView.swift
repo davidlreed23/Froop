@@ -18,6 +18,8 @@ struct FroopSummaryView: View {
     @ObservedObject var printControl = PrintControl.shared
     @ObservedObject var friendViewController = FriendViewController.shared
     @ObservedObject var manager = PayWallManager.shared
+    @ObservedObject var locationManager = LocationManager.shared
+
     // @ObservedObject var froopDataListener = FroopDataListener.shared
     var db = FirebaseServices.shared.db
     @ObservedObject var appStateManager = AppStateManager.shared
@@ -36,6 +38,7 @@ struct FroopSummaryView: View {
     @State private var showMap = false
     @State private var hide: Bool = false
     @State private var animate = false
+    @State private var addressAtMyLocation: Bool = true
     
     var body: some View {
         
@@ -466,12 +469,20 @@ struct FroopSummaryView: View {
                 //MARK: Froop Location
                 VStack (alignment: .leading) {
                     
-                    Text("ADDRESS")
+                    Text("ADDRESS \(String(describing:addressAtMyLocation))")
                         .font(.system(size: 14))
                         .fontWeight(.semibold)
                         .foregroundColor(Color(red: 50/255, green: 46/255, blue: 62/255).opacity(0.9))
                         .padding(.leading, 15)
                         .offset(y: 5)
+                        .onTapGesture {
+                            locationManager.startUpdating()
+                            addressAtMyLocation.toggle()
+                            print("My Current Address - \(String(describing: locationManager.currentAddress))")
+                            print("My Current Location - \(String(describing: locationManager.currentLocation))")
+                            print("User2DLocation - \(String(describing: locationManager.user2DLocation))")
+                            print("myData.coordinate - \(String(describing: myData.coordinate))")
+                        }
                     
                     ZStack {
                         RoundedRectangle(cornerRadius: 10)
@@ -494,24 +505,44 @@ struct FroopSummaryView: View {
                                 .foregroundColor(Color(red: 249/255, green: 0/255, blue: 98/255 ))
                                 .padding(.leading, 25)
                                 .frame(alignment: .center)
-                            VStack (alignment: .leading){
-                                Text(froopData.froopLocationtitle)
-                                    .font(.system(size: 16))
-                                    .fontWeight(.medium)
-                                    .lineLimit(1)
-                                    .minimumScaleFactor(0.5)
-                                    .foregroundColor(Color(red: 50/255, green: 46/255, blue: 62/255))
-                                    .padding(.trailing, 25)
-                                Text(froopData.froopLocationsubtitle)
-                                    .font(.system(size: 14))
-                                    .fontWeight(.light)
-                                    .lineLimit(2)
-                                    .minimumScaleFactor(0.5)
-                                    .foregroundColor(Color(red: 50/255, green: 46/255, blue: 62/255))
-                                    .lineLimit(2)
-                                    .padding(.trailing, 25)
+                            if addressAtMyLocation, let address = locationManager.currentAddress {
+                                VStack(alignment: .leading) {
+                                    Text("Current Location")
+                                        .font(.system(size: 16))
+                                        .fontWeight(.medium)
+                                        .lineLimit(1)
+                                        .minimumScaleFactor(0.5)
+                                        .foregroundColor(Color(red: 50/255, green: 46/255, blue: 62/255))
+                                        .padding(.trailing, 25)
+                                    Text(address)
+                                        .font(.system(size: 14))
+                                        .fontWeight(.light)
+                                        .lineLimit(2)
+                                        .minimumScaleFactor(0.5)
+                                        .foregroundColor(Color(red: 50/255, green: 46/255, blue: 62/255))
+                                        .lineLimit(2)
+                                        .padding(.trailing, 25)
+                                }
+                            } else {
+                                VStack (alignment: .leading) {
+                                    Text(froopData.froopLocationtitle)
+                                        .font(.system(size: 16))
+                                        .fontWeight(.medium)
+                                        .lineLimit(1)
+                                        .minimumScaleFactor(0.5)
+                                        .foregroundColor(Color(red: 50/255, green: 46/255, blue: 62/255))
+                                        .padding(.trailing, 25)
+                                    Text(froopData.froopLocationsubtitle)
+                                        .font(.system(size: 14))
+                                        .fontWeight(.light)
+                                        .lineLimit(2)
+                                        .minimumScaleFactor(0.5)
+                                        .foregroundColor(Color(red: 50/255, green: 46/255, blue: 62/255))
+                                        .lineLimit(2)
+                                        .padding(.trailing, 25)
+                                }
+                                Spacer()
                             }
-                            Spacer()
                         }
                     }
                 }
