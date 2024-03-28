@@ -25,6 +25,7 @@ struct AddFriendsActiveFroopView: View {
     @ObservedObject var myData = MyData.shared
     @ObservedObject var froopDataController = FroopDataController.shared
     @ObservedObject var froopManager = FroopManager.shared
+
     
     var uid = FirebaseServices.shared.uid
     var db = FirebaseServices.shared.db
@@ -154,7 +155,7 @@ struct AddFriendsActiveFroopView: View {
                 Button(action: {
                     Task {
                         do {
-                            let modifiedInvitedFriends = try await froopDataController.addInvitedFriendstoFroop(invitedFriends: invitedFriends , instanceFroop: AppStateManager.shared.currentFilteredFroopHistory[safe: AppStateManager.shared.aFHI]?.froop ?? Froop(dictionary: [:]) )
+                            let modifiedInvitedFriends = try await froopDataController.addInvitedFriendstoFroop(invitedFriends: invitedFriends , instanceFroopId: appStateManager.currentFilteredFroopHistory[safe: appStateManager.aFHI]?.froop.froopId ?? "", instanceHostId: appStateManager.currentFilteredFroopHistory[safe: appStateManager.aFHI]?.froop.froopHost ?? "" )
                             // Update the invitedFriends with the modified list
                             invitedFriends = modifiedInvitedFriends
                             self.showingAlert = true

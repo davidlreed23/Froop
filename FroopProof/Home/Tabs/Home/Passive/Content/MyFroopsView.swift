@@ -18,7 +18,7 @@ struct MyFroopsView: View {
     
     @ObservedObject var myData = MyData.shared
     @ObservedObject var changeView = ChangeView()
-    @ObservedObject var froopData = FroopData()
+    @ObservedObject var froopData = FroopData.shared
     @State var refresh = UUID()
     var uid = FirebaseServices.shared.uid
     

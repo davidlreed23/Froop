@@ -16,6 +16,9 @@ struct FroopGroupChatInputView: View {
     @ObservedObject var chatManager = FroopGroupChatNotificationsManager.shared
     var onSend: () -> Void
     @FocusState private var isInputActive: Bool
+    var appStateManager: AppStateManager {
+        return AppStateManager.shared
+    }
     
     var body: some View {
         ZStack {
@@ -94,6 +97,6 @@ struct FroopGroupChatInputView: View {
         chatManager.sendGroupMessage(content: chatManager.messageText)
         //        chatManager.chatEntered = false
         chatManager.messageText = ""
-        print("Message Count = \(String(describing: AppStateManager.shared.currentFilteredFroopHistory[safe: AppStateManager.shared.aFHI]?.froopGroupConversationAndMessages.messages.count ?? 0))")
+        print("Message Count = \(String(describing: appStateManager.currentFilteredFroopHistory[safe: appStateManager.aFHI]?.froopGroupConversationAndMessages.messages.count ?? 0))")
     }
 }

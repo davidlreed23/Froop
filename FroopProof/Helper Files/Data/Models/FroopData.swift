@@ -15,8 +15,7 @@ import CoreLocation
 import Foundation
 
 class FroopData: NSObject, ObservableObject, Decodable {
-    
-    
+    static var shared = FroopData()
     @ObservedObject var printControl = PrintControl.shared
     @ObservedObject var froopDataController = FroopDataController.shared
     // @ObservedObject var froopDataListener = FroopDataListener.shared

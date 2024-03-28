@@ -29,7 +29,7 @@ struct DetailsHostMessageView: View {
     @ObservedObject var froopManager = FroopManager.shared
     @ObservedObject var friendViewController = FriendViewController.shared
     @ObservedObject var timeZoneManager: TimeZoneManager = TimeZoneManager()
-    @ObservedObject var froopData: FroopData = FroopData()
+    @ObservedObject var froopData = FroopData.shared
     @Binding var selectedFroopHistory: FroopHistory
 //    @ObservedObject var friendData: UserData = UserData()
     
@@ -77,8 +77,8 @@ struct DetailsHostMessageView: View {
                             }
                             
                         }
-                        .padding(.trailing, 25)
-                        .padding(.leading, 15)
+                        .padding(.trailing, 5)
+                        .padding(.leading, 5)
                     }
                     .frame(maxHeight: 50)
                 }
@@ -125,8 +125,8 @@ struct DetailsHostMessageView: View {
                         Spacer()
                         
                     }
-                    .padding(.trailing, 25)
-                    .padding(.leading, 25)
+                    .padding(.trailing, 5)
+                    .padding(.leading, 5)
                 }
                 .onTapGesture {
                     messageEdit = true

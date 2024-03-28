@@ -36,7 +36,7 @@ struct FroopMediaFeedView: View {
     let imageItemskfs: [ImageItemkf] = []
     let mediaItems: [MediaData] = []
     var isPassiveMode: Bool {
-        return AppStateManager.shared.currentFilteredFroopHistory[safe: AppStateManager.shared.aFHI]?.froop.froopId == ""
+        return appStateManager.currentFilteredFroopHistory[safe: appStateManager.aFHI]?.froop.froopId == ""
     }
     
     @State private var uploading = false
@@ -44,7 +44,7 @@ struct FroopMediaFeedView: View {
     var body: some View {
         ZStack {
             VStack {
-                if AppStateManager.shared.currentFilteredFroopHistory[safe: AppStateManager.shared.aFHI]?.froop.froopId != "" {
+                if appStateManager.currentFilteredFroopHistory[safe: appStateManager.aFHI]?.froop.froopId != "" {
                     DownloadedMediaGridView(mediaItems: viewModel.mediaItems)
                 } else {
                     Text("No active Froop ID available.")
@@ -68,6 +68,9 @@ class FroopMediaFeedViewModel: ObservableObject {
     @Published var displayImageItems: [ImageItemkf] = []
     @Published var thumbnailImageItems: [ImageItemkf] = []
     @Published var mediaItems: [MediaData] = []
+    var appStateManager: AppStateManager {
+        return AppStateManager.shared
+    }
     
     let froopId = AppStateManager.shared.currentFilteredFroopHistory[safe: AppStateManager.shared.aFHI]?.froop.froopId ?? ""
     let host = AppStateManager.shared.currentFilteredFroopHistory[safe: AppStateManager.shared.aFHI]?.froop.froopHost ?? ""
@@ -78,8 +81,8 @@ class FroopMediaFeedViewModel: ObservableObject {
         print("startListening Function Firing!")
         
         // Safely access the current FroopHistory using the active index
-        guard AppStateManager.shared.aFHI >= 0,
-              AppStateManager.shared.aFHI < AppStateManager.shared.currentFilteredFroopHistory.count else {
+        guard appStateManager.aFHI >= 0,
+              appStateManager.aFHI < appStateManager.currentFilteredFroopHistory.count else {
             print("Index out of bounds or no FroopHistory available.")
             return
         }
@@ -305,17 +308,17 @@ struct ToggleViewButton: View {
             }, label: {
                 HStack(spacing: 5) {
                     Spacer()
-                    Text(numColumns == 1 ? "GRID VIEW" : "EXPAND")
+                    Text(numColumns == 1 ? "CHANGE TO GRID VIEW" : "CHANGE TO EXPANDED VIEW")
                         .font(.system(size: 14))
                         .fontWeight(.bold)
-                        .foregroundColor(Color(red: 249/255, green: 0/255, blue: 95/255).opacity(0.5))
-                    Image(systemName: numColumns == 1 ? "square.grid.3x3.square" : "arrow.left.and.right")
+                        .foregroundColor(Color(red: 249/255, green: 0/255, blue: 95/255).opacity(1))
+                    Image(systemName: numColumns == 1 ? "square.grid.3x3.square" : "square.dashed.inset.filled")
                         .font(.system(size: 36))
                         .fontWeight(.ultraLight)
                         .foregroundColor(Color(red: 249/255, green: 0/255, blue: 95/255))
                 }
             })
-            .background(.white)
+            .background(.clear)
             .padding(.trailing, 15)
             .padding(.top, 15)
         }
@@ -336,74 +339,85 @@ struct DownloadedMediaGridView: View {
     @State private var isVideoPlayerPresented: Bool = false
     @State private var selectedVideoURL: URL? = nil
     
+    var appStateManager: AppStateManager {
+        return AppStateManager.shared
+    }
+    
     var body: some View {
-        VStack {
-            ToggleViewButton(numColumns: $numColumns)
-            GeometryReader { geometry in
-                ScrollView(showsIndicators: false) {
-                    LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 5), count: numColumns), spacing: 3) {
-                        ForEach(mediaItems) { mediaItem in
-                            if mediaItem.type == .image, let image = mediaItem.highResImage {
-                                Image(uiImage: image)
-                                    .resizable()
-                                    .aspectRatio(contentMode: .fill)
-                                    .frame(width: geometry.size.width / CGFloat(numColumns) - 10, height: geometry.size.width / CGFloat(numColumns) - 10)
-                                    .clipped()
-                                // Add any additional overlay or functionality specific to images
-                            } else if mediaItem.type == .video, let thumbnailImage = mediaItem.thumbnailImage {
-                                Image(uiImage: thumbnailImage)
-                                    .resizable()
-                                    .aspectRatio(contentMode: .fill)
-                                    .frame(width: geometry.size.width / CGFloat(numColumns) - 10, height: geometry.size.width / CGFloat(numColumns) - 10)
-                                    .clipped()
-                                    .overlay(
-                                        Image(systemName: "play.circle.fill")
-                                            .resizable()
-                                            .aspectRatio(contentMode: .fit)
-                                            .foregroundColor(.white)
-                                            .opacity(0.9)
-                                            .frame(width: 35, height: 35)
-                                        ,
-                                        alignment: .center
-                                    )
-                                    .onTapGesture {
-                                        print("Video URL tapped: \(String(describing: mediaItem.videoURL))")
-                                        mediaManager.selectedVideoURL = mediaItem.videoURL
-                                        if let videoURL = mediaItem.videoURL {
-                                            print("Setting selectedVideoURL to: \(videoURL.absoluteString)")
-                                            self.selectedVideoURL = videoURL
-                                            self.isVideoPlayerPresented = true
-                                        } else {
-                                            print("mediaItem.videoURL is nil")
+        ZStack {
+            FTVBackGroundComponent()
+            Rectangle()
+                .foregroundColor(.clear)
+                .background(.ultraThinMaterial)
+                .ignoresSafeArea()
+            VStack {
+                ToggleViewButton(numColumns: $numColumns)
+                GeometryReader { geometry in
+                    ScrollView(showsIndicators: false) {
+                        LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 5), count: numColumns), spacing: 3) {
+                            ForEach(mediaItems) { mediaItem in
+                                if mediaItem.type == .image, let image = mediaItem.highResImage {
+                                    Image(uiImage: image)
+                                        .resizable()
+                                        .aspectRatio(contentMode: .fill)
+                                        .frame(width: geometry.size.width / CGFloat(numColumns) - 10, height: geometry.size.width / CGFloat(numColumns) - 10)
+                                        .clipped()
+                                    // Add any additional overlay or functionality specific to images
+                                } else if mediaItem.type == .video, let thumbnailImage = mediaItem.thumbnailImage {
+                                    Image(uiImage: thumbnailImage)
+                                        .resizable()
+                                        .aspectRatio(contentMode: .fill)
+                                        .frame(width: geometry.size.width / CGFloat(numColumns) - 10, height: geometry.size.width / CGFloat(numColumns) - 10)
+                                        .clipped()
+                                        .overlay(
+                                            Image(systemName: "play.circle.fill")
+                                                .resizable()
+                                                .aspectRatio(contentMode: .fit)
+                                                .foregroundColor(.white)
+                                                .opacity(0.9)
+                                                .frame(width: 35, height: 35)
+                                            ,
+                                            alignment: .center
+                                        )
+                                        .onTapGesture {
+                                            print("Video URL tapped: \(String(describing: mediaItem.videoURL))")
+                                            mediaManager.selectedVideoURL = mediaItem.videoURL
+                                            if let videoURL = mediaItem.videoURL {
+                                                print("Setting selectedVideoURL to: \(videoURL.absoluteString)")
+                                                self.selectedVideoURL = videoURL
+                                                self.isVideoPlayerPresented = true
+                                            } else {
+                                                print("mediaItem.videoURL is nil")
+                                            }
                                         }
-                                    }
-                                // Add any additional overlay or functionality specific to videos
+                                    // Add any additional overlay or functionality specific to videos
+                                }
                             }
                         }
+                        .padding(.top, 5)
+                        .padding(.leading, 10)
+                        .padding(.trailing, 10)
                     }
-                    .padding(.top, 5)
-                    .padding(.leading, 10)
-                    .padding(.trailing, 10)
-                }
-                .frame(height: UIScreen.screenHeight * 0.60)
-                
-                .fullScreenCover(isPresented: $isVideoPlayerPresented) {
-                    if case mediaManager.selectedVideoURL = selectedVideoURL {
-                        CustomVideoPlayerView(videoURLString: mediaManager.selectedVideoURL?.absoluteString ?? "") {
-                            print("CustomVideoPlayerView closure executed, dismissing video player")
-                            self.isVideoPlayerPresented = false
-                        }
-                        .onAppear {
-                            print("Passing video URL to CustomVideoPlayerView: \(String(describing: mediaManager.selectedVideoURL))")
-                        }
-                    } else {
-                        Text("No video URL found, cannot present video player")
+                    .frame(height: UIScreen.screenHeight * 0.60)
+                    
+                    .fullScreenCover(isPresented: $isVideoPlayerPresented) {
+                        if case mediaManager.selectedVideoURL = selectedVideoURL {
+                            CustomVideoPlayerView(videoURLString: mediaManager.selectedVideoURL?.absoluteString ?? "") {
+                                print("CustomVideoPlayerView closure executed, dismissing video player")
+                                self.isVideoPlayerPresented = false
+                            }
                             .onAppear {
-                                print("Empty View presented because no video URL was found")
+                                print("Passing video URL to CustomVideoPlayerView: \(String(describing: mediaManager.selectedVideoURL))")
                             }
+                        } else {
+                            Text("No video URL found, cannot present video player")
+                                .onAppear {
+                                    print("Empty View presented because no video URL was found")
+                                }
+                        }
                     }
+                    
                 }
-                
             }
         }
     }
@@ -414,7 +428,7 @@ struct DownloadedMediaGridView: View {
 //        let imageType = determineImageType(from: imageURL)
         
         // Get the current FroopHistory
-        let currentFroopHistory = AppStateManager.shared.currentFilteredFroopHistory[safe: AppStateManager.shared.aFHI] ?? FroopManager.defaultFroopHistory()
+        let currentFroopHistory = appStateManager.currentFilteredFroopHistory[safe: appStateManager.aFHI] ?? FroopManager.defaultFroopHistory()
         
         // Find the index of the image URL in the corresponding array
         guard let index = findImageIndex(imageURL: imageURL, in: currentFroopHistory.froop) else {

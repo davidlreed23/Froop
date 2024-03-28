@@ -14,14 +14,15 @@ struct DatePickViewCopy: View {
     @Environment(\.colorScheme) var colorScheme
     @ObservedObject var dataController = DataController.shared
     @ObservedObject var printControl = PrintControl.shared
+    @ObservedObject var changeView = ChangeView.shared
     // @ObservedObject var froopDataListener = FroopDataListener.shared
     @Binding var transClock: Bool
     @Binding var datePicked: Bool
-    @ObservedObject var froopData: FroopData
+    @ObservedObject var froopData = FroopData.shared
 //    @State var selectedDate = Date()
     @State private var isTouched = false
     @State private var shrink: CGFloat = 0
-  
+
     let dateFormatter = DateFormatter()
     var dateString: String {
         dateFormatter.dateFormat = "MMMM yyyy"
@@ -173,7 +174,7 @@ struct DatePickViewCopy: View {
             .background(Color.clear)
             .opacity(isTouched ? 0.0 : 1.0)
         }
-        
+ 
     }
     
     func moveToPreviousMonth() {

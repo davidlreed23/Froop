@@ -24,6 +24,7 @@ class MediaManager: ObservableObject {
     static let shared = MediaManager()
     @ObservedObject var printControl = PrintControl.shared
     @ObservedObject var froopManager = FroopManager.shared
+    
     // @ObservedObject var froopDataListener = FroopDataListener.shared
    
     /// Reference Properties

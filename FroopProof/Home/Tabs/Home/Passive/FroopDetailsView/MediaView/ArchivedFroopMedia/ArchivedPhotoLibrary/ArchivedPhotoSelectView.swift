@@ -29,10 +29,12 @@ struct ArchivedPhotoSelectView: View {
     @State var selectedImageIndex: Int
     @Binding var selectedImages: [MediaData]
     @Binding var uploadedImages: [MediaData]
-
+    var appStateManager: AppStateManager {
+        return AppStateManager.shared
+    }
 
     var isPassiveMode: Bool {
-        return AppStateManager.shared.currentFilteredFroopHistory[safe: AppStateManager.shared.aFHI]?.froop.froopId == ""
+        return appStateManager.currentFilteredFroopHistory[safe: appStateManager.aFHI]?.froop.froopId == ""
     }
 
 

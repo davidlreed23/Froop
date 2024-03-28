@@ -383,6 +383,19 @@ final class LocationManager: NSObject, ObservableObject {
 
 extension LocationManager: CLLocationManagerDelegate {
 
+    func findCoordinateName() {
+        print("firing)")
+        self.froopData?.froopLocationtitle = ""
+        Task {
+            let location = CLLocation(latitude: myData.coordinate.latitude, longitude: myData.coordinate.longitude)
+            let geoDecoder = CLGeocoder()
+            if let name = try? await geoDecoder.reverseGeocodeLocation(location).first?.name {
+                self.froopData?.froopLocationtitle = name
+                print("🛜🛜🛜🛜 \(name)")
+            }
+        }
+    }
+    
     // Call this function whenever you want to update the userLocationAddress
     func updateUserLocationAddress() {
         // Assuming `myData.coordinate` is of type CLLocationCoordinate2D

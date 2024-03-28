@@ -42,7 +42,7 @@ struct ProfileView: View {
                 //                Color.offWhite
                 Rectangle()
                     .foregroundColor(Color(red: 50/255, green: 46/255, blue: 62/255))
-                    .opacity(0.75)
+                    .opacity(1)
                     .offset(y: 0)
                     .frame(height: 160)
                     .ignoresSafeArea()
@@ -52,7 +52,6 @@ struct ProfileView: View {
                     }
 
                 ZStack {
-//                     The Picker
                     Picker("", selection: $profileTab) {
                         Text("My Profile").tag(0)
                         Text("My Friends").tag(1)
@@ -60,6 +59,7 @@ struct ProfileView: View {
                     .pickerStyle(SegmentedPickerStyle())
                     .foregroundColor(.white)
                     .padding(.top, 35)
+                    .padding(.bottom, 10)
                     .padding(.leading, 25)
                     .padding(.trailing, 25)
                     .frame(height: 50)

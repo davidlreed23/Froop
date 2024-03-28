@@ -14,6 +14,7 @@ struct MyProfileHeaderView: View {
     @ObservedObject var appStateManager = AppStateManager.shared
     @ObservedObject var dataController = DataController.shared
     @ObservedObject var changeView = ChangeView.shared
+    @ObservedObject var froopData = FroopData.shared
     @Environment(\.colorScheme) var colorScheme
     // @ObservedObject var froopDataListener = FroopDataListener.shared
     @ObservedObject var timeZoneManager: TimeZoneManager = TimeZoneManager()
@@ -237,6 +238,7 @@ struct MyProfileHeaderView: View {
                             ToolbarItem(placement: .navigationBarLeading) {
                                 Button(action: {
                                     self.changeView.showNFWalkthroughScreen = false
+                                    froopData.resetData()
                                 }) {
                                     HStack (spacing: 0){
                                         Image(systemName: "chevron.left")
@@ -253,20 +255,9 @@ struct MyProfileHeaderView: View {
                         }
                     }
                 }
-//            }
             .frame(height: headerHeight)
         }
-//        .onChange(of: dataController.offsetY) { oldValue, newValue in
-//            // Recalculate the progress based on the new value of offsetY
-//            let newProgress = max(min(-newValue / (headerHeight - minimumHeaderHeight), 1), 0)
-//            
-//            // Print the new progress value
-//            print("Scroll Progress: \(newProgress)")
-//            
-//            // If you need to update the state with the new progress, do it here
-//            // For example:
-//            // self.progress = newProgress
-//        }
+
        
         .onAppear {
             if let location = LocationManager.shared.userLocation {

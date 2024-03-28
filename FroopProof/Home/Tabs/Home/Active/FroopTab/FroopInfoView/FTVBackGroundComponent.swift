@@ -12,6 +12,9 @@ import UIKit
 struct FTVBackGroundComponent: View {
     var db = FirebaseServices.shared.db
     @State private var typeName: String = ""
+    var appStateManager: AppStateManager {
+        return AppStateManager.shared
+    }
     
     var body: some View {
         ZStack (alignment: .top){
@@ -39,7 +42,7 @@ struct FTVBackGroundComponent: View {
                     .padding(.top, 100)
                     .shadow(radius: 10)
                    
-                Text(AppStateManager.shared.froopTypes[AppStateManager.shared.currentFilteredFroopHistory[safe: AppStateManager.shared.aFHI]?.froop.froopType ?? 1] ?? "")
+                Text(appStateManager.froopTypes[appStateManager.currentFilteredFroopHistory[safe: appStateManager.aFHI]?.froop.froopType ?? 1] ?? "")
                     .font(.system(size: 60))
                     .foregroundColor(.white)
                     .fontWeight(.semibold)
@@ -56,7 +59,7 @@ struct FTVBackGroundComponent: View {
     }
     
     func backgroundImage() -> String {
-        let froopType = AppStateManager.shared.currentFilteredFroopHistory[safe: AppStateManager.shared.aFHI]?.froop.froopType
+        let froopType = appStateManager.currentFilteredFroopHistory[safe: appStateManager.aFHI]?.froop.froopType
         switch froopType {
         case 1: return "Bar"
         case 2: return "BirthDay"

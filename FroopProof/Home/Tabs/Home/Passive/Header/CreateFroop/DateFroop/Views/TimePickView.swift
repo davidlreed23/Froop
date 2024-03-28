@@ -33,7 +33,7 @@ struct TimePickView: View {
     @Binding var transClock: Bool
     @Binding var datePicked: Bool
     @Binding var  duraVis: Bool
-    @ObservedObject var froopData: FroopData
+    @ObservedObject var froopData = FroopData.shared
     @ObservedObject var changeView: ChangeView
 
     let sourceTimeZone = TimeZone(identifier: "UTC")!
@@ -87,7 +87,7 @@ struct TimePickView: View {
                     } else {
                         scrollTrig.updateDateFromIndices()
                         if appStateManager.froopIsEditing {
-                            changeView.pageNumber = 5
+                            changeView.pageNumber = changeView.showSummary1
                         } else {
                             changeView.pageNumber += 1
                         }
@@ -95,10 +95,11 @@ struct TimePickView: View {
                     
                 } label: {
                     Text("Confirm!")
-                        .font(.system(size: 32, weight: .thin))
+                        .font(.system(size: 28, weight: .thin))
                         .foregroundColor(colorScheme == .dark ? .white : .white)
                         .multilineTextAlignment(.center)
                         .frame(width: 250, height: 45)
+                        .border(Color.gray, width: 1)
                         .padding(.bottom, UIScreen.screenHeight * 0.08)
                 }
                 

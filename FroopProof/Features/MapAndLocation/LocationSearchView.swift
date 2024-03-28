@@ -13,6 +13,8 @@ struct LocationSearchView: View {
     @ObservedObject var appStateManager = AppStateManager.shared
     @ObservedObject var printControl = PrintControl.shared
     @ObservedObject var locationServices = LocationServices.shared
+    @ObservedObject var changeView = ChangeView.shared
+
     // @ObservedObject var froopDataListener = FroopDataListener.shared
     
     @State private var isEditing = false
@@ -23,7 +25,7 @@ struct LocationSearchView: View {
     @EnvironmentObject var locationViewModel: LocationSearchViewModel
     @Binding var showRec: Bool
     @State var locationFilter: [String] = ["Search Nearby"]
-    @ObservedObject var froopData: FroopData
+    @ObservedObject var froopData = FroopData.shared
     
     var body: some View {
         //LocationSearchView(locationFilter: locationFilter)
@@ -37,8 +39,9 @@ struct LocationSearchView: View {
                     .multilineTextAlignment(.center)
                     .padding(.leading, 15)
                     .padding(.trailing, 15)
-                ZStack{
-                    RoundedRectangle(cornerRadius: 6)
+                
+                ZStack {
+                    RoundedRectangle(cornerRadius: 10)
                         .fill(Color.clear)
                         .frame(maxHeight: withAnimation(.easeInOut(duration: 0.4)) {
                             isEditing ? 150 : 50
@@ -116,19 +119,20 @@ struct LocationSearchView: View {
                     .padding(.trailing, 15)
                 }
             }
+            .padding(.top, 100)
             .offset(y: isEditing ? -200 : 0)
         }
-        Spacer()
-            .onReceive(NotificationCenter.default.publisher(for: UIResponder.keyboardWillShowNotification)) { _ in
-                withAnimation {
-                    self.isEditing = true
-                }
+        .ignoresSafeArea()
+        .onReceive(NotificationCenter.default.publisher(for: UIResponder.keyboardWillShowNotification)) { _ in
+            withAnimation {
+                self.isEditing = true
             }
-            .onReceive(NotificationCenter.default.publisher(for: UIResponder.keyboardWillHideNotification)) { _ in
-                withAnimation {
-                    self.isEditing = false
-                }
+        }
+        .onReceive(NotificationCenter.default.publisher(for: UIResponder.keyboardWillHideNotification)) { _ in
+            withAnimation {
+                self.isEditing = false
             }
+        }
     }
     
     func calculateOffset(for screenSize: ScreenSizeCategory) -> CGFloat {

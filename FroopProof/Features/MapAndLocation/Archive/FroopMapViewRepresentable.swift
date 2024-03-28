@@ -17,7 +17,7 @@ struct FroopMapViewRepresentable: UIViewRepresentable {
     @ObservedObject var appStateManager = AppStateManager.shared
     @ObservedObject var printControl = PrintControl.shared
     @ObservedObject var locationServices = LocationServices.shared
-    @ObservedObject var froopData: FroopData
+    @ObservedObject var froopData = FroopData.shared
     
     let mapView = MKMapView()
     

@@ -20,7 +20,7 @@ struct FroopSingleFriendSelectView: View {
     @ObservedObject var myData = MyData.shared
     @ObservedObject var froopDataController = FroopDataController.shared
     @ObservedObject var froopManager = FroopManager.shared
-    @ObservedObject var froopData: FroopData
+    @ObservedObject var froopData = FroopData.shared
 
     var uid = FirebaseServices.shared.uid
     @ObservedObject var friendData: UserData = UserData()
@@ -37,6 +37,14 @@ struct FroopSingleFriendSelectView: View {
     @State var fromUserID: String = ""
     @Environment(\.presentationMode) var presentationMode
     @State private var showingAlert = false
+    
+    var editable = {
+        if ChangeView.shared.currentViewBuildOrder[5] != 0 {
+            true
+        } else {
+            false
+        }
+    }
 
     
     
@@ -62,7 +70,7 @@ struct FroopSingleFriendSelectView: View {
                 }
             
             VStack {
-                Text("Who will pick you up?")
+                Text("Who will pick you up? \(changeView.showGuest)")
                     .font(.system(size: 36))
                     .fontWeight(.thin)
                     .multilineTextAlignment(.center)
@@ -95,14 +103,33 @@ struct FroopSingleFriendSelectView: View {
                     if let selectedFriend = selectedFriend {
                         if !froopData.froopInvitedFriends.contains(selectedFriend.froopUserID) {
                             froopData.froopInvitedFriends.append(selectedFriend.froopUserID)
-                            changeView.navigateToNextOrEditingPage()
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                                if appStateManager.froopIsEditing {
+                                    withAnimation {
+                                        changeView.pageNumber = changeView.showSummary1
+                                    }
+                                } else {
+                                    changeView.pageNumber += 1
+                                }
+                            }
                             print("Friend invited: \(selectedFriend.firstName) \(selectedFriend.lastName)")
                             // Clear the selected friend if needed
-//                            self.selectedFriend = nil
+                            //                            self.selectedFriend = nil
                         }
                     }
+//                    } else {
+//                        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+//                            if appStateManager.froopIsEditing {
+//                                withAnimation {
+//                                    changeView.pageNumber = changeView.showSummary1
+//                                }
+//                            } else {
+//                                changeView.pageNumber += 1
+//                            }
+//                        }
+//                    }
                 }) {
-                    Text("Confirm Friends")
+                    Text(changeView.friendSelected ? "Confirm Friend" : "Select Later")
                         .font(.headline)
                         .foregroundColor(Color(red: 50/255, green: 46/255, blue: 62/255))
                         .font(.system(size: 24))

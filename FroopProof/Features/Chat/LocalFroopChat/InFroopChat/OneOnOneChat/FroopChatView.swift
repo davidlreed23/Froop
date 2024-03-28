@@ -173,7 +173,7 @@ struct FroopChatView: View {
             self.isLoading = false
             self.conversationId = conversationId
             print("ConversationId from FroopChatView\(conversationId)")
-            let froopId = AppStateManager.shared.currentFilteredFroopHistory[safe: AppStateManager.shared.aFHI]?.froop.froopId ?? ""
+            let froopId = appStateManager.currentFilteredFroopHistory[safe: appStateManager.aFHI]?.froop.froopId ?? ""
             
             // Now, set up the listener and fetch messages for this conversationId
             self.chatManager.setupActiveFroopChatsListener(froopId: froopId, currentUserUID: self.uid, selectedFriendUID: self.selectedFriend.froopUserID, conversationId: conversationId) { fetchedMessages in

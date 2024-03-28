@@ -12,6 +12,9 @@ struct FroopChatCardView: View {
     @ObservedObject var chatManager = FroopChatNotificationsManager.shared
     
     var froopConversationAndMessages: ConversationAndMessages
+    var appStateManager: AppStateManager {
+        return AppStateManager.shared
+    }
     
     @Binding var chatViewOpen: Bool
     @Binding var selectedConversation: UserData
@@ -138,7 +141,7 @@ struct FroopChatCardView: View {
     }
 
     private func findUserData(with uid: String) -> UserData? {
-        let confirmedFriends = AppStateManager.shared.currentFilteredFroopHistory[safe: AppStateManager.shared.aFHI]?.confirmedFriends ?? []
+        let confirmedFriends = appStateManager.currentFilteredFroopHistory[safe: appStateManager.aFHI]?.confirmedFriends ?? []
         return confirmedFriends.first(where: { $0.froopUserID == uid })
     }
 }

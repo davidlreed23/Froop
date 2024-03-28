@@ -53,7 +53,7 @@ struct OnboardingView: View {
                 .padding(.bottom, 50),
             alignment: .bottom
         )
-        .navigationBarTitle("Froop Beta", displayMode: .inline)
+        .navigationBarTitle("Froop", displayMode: .inline)
         .onReceive(
             NotificationCenter.default.publisher(for: UIResponder.keyboardWillShowNotification)
                 .merge(

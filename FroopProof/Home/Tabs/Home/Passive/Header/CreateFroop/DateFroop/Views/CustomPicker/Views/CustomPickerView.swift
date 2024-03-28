@@ -305,7 +305,7 @@ struct ClockView: View {
     let itemSpacing: CGFloat = 0
     let scrollViewWidth: CGFloat = 80
     let currentTime = Date()
-    @ObservedObject var froopData: FroopData
+    @ObservedObject var froopData = FroopData.shared
 
     
     
@@ -508,7 +508,7 @@ struct DurationView: View {
     let itemSpacing: CGFloat = 0
     let scrollViewWidth: CGFloat = 110
     let currentTime = Date()
-    @ObservedObject var froopData: FroopData
+    @ObservedObject var froopData = FroopData.shared
 
     
     

@@ -17,6 +17,7 @@ struct SelectFriendProfileView: View {
     @ObservedObject var appStateManager = AppStateManager.shared
     @ObservedObject var printControl = PrintControl.shared
     @ObservedObject var locationServices = LocationServices.shared
+    @ObservedObject var changeView = ChangeView.shared
     @State var guestStatus: GuestStatus = .none
     @Binding var invitedFriends: [UserData]
     @Binding var selectedFriend: UserData?
@@ -68,6 +69,7 @@ struct SelectFriendProfileView: View {
         }
         .onTapGesture {
             handleTap(for: friend.froopUserID)
+            changeView.friendSelected.toggle()
         }
     }
     
@@ -79,6 +81,7 @@ struct SelectFriendProfileView: View {
         } else {
             // Select the new friend
             self.selectedFriend = friend
+            changeView.singleUserData = friend
             guestStatus = .invited // Or any status you prefer for a selected state
         }
     }

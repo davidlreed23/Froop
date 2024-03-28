@@ -35,8 +35,8 @@ class FroopGroupChatNotificationsManager: ObservableObject {
     ///UPDATED FUNCTIONS
     
     private func printFroopConversationAndMessagesDetails(_ conversationAndMessages: ConversationAndMessages) {
-        _ = AppStateManager.shared.currentFilteredFroopHistory[safe: AppStateManager.shared.aFHI]?.froop.froopId ?? ""
-        _ = AppStateManager.shared.currentFilteredFroopHistory[safe: AppStateManager.shared.aFHI]?.host.froopUserID ?? ""
+        _ = appStateManager.currentFilteredFroopHistory[safe: appStateManager.aFHI]?.froop.froopId ?? ""
+        _ = appStateManager.currentFilteredFroopHistory[safe: appStateManager.aFHI]?.host.froopUserID ?? ""
     }
     
     
@@ -44,8 +44,8 @@ class FroopGroupChatNotificationsManager: ObservableObject {
     func sendGroupMessage(content: String) {
         guard !content.isEmpty else { return }
 
-        let froopId = AppStateManager.shared.currentFilteredFroopHistory[safe: AppStateManager.shared.aFHI]?.froop.froopId ?? ""
-        let hostId = AppStateManager.shared.currentFilteredFroopHistory[safe: AppStateManager.shared.aFHI]?.host.froopUserID ?? ""
+        let froopId = appStateManager.currentFilteredFroopHistory[safe: appStateManager.aFHI]?.froop.froopId ?? ""
+        let hostId = appStateManager.currentFilteredFroopHistory[safe: appStateManager.aFHI]?.host.froopUserID ?? ""
         let groupChatRef = db.collection("users").document(hostId)
                              .collection("myFroops").document(froopId)
                              .collection("chats").document("froopGroupChat")
@@ -60,7 +60,7 @@ class FroopGroupChatNotificationsManager: ObservableObject {
                 print("🚫Error sending group message: \(error)")
                 return
             }
-            FroopManager.shared.refreshGroupChatMessages(for: AppStateManager.shared.currentFilteredFroopHistory[safe: AppStateManager.shared.aFHI]?.froop.froopId ?? "", for: AppStateManager.shared.currentFilteredFroopHistory[safe: AppStateManager.shared.aFHI]?.froop.froopHost ?? "")
+            FroopManager.shared.refreshGroupChatMessages(for: self.appStateManager.currentFilteredFroopHistory[safe: self.appStateManager.aFHI]?.froop.froopId ?? "", for: self.appStateManager.currentFilteredFroopHistory[safe: self.appStateManager.aFHI]?.froop.froopHost ?? "")
             print("Group message posted successfully")
         }
     }
@@ -79,7 +79,7 @@ class FroopGroupChatNotificationsManager: ObservableObject {
     }
 
     func findUserData(with uid: String) -> UserData? {
-         let confirmedFriends = AppStateManager.shared.currentFilteredFroopHistory[safe: AppStateManager.shared.aFHI]?.confirmedFriends ?? []
+         let confirmedFriends = appStateManager.currentFilteredFroopHistory[safe: appStateManager.aFHI]?.confirmedFriends ?? []
          return confirmedFriends.first(where: { $0.froopUserID == uid })
      }
 }

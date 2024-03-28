@@ -16,7 +16,7 @@ import FirebaseFirestoreSwift
 class ChangeView: ObservableObject {
     static let shared = ChangeView()
     @ObservedObject var printControl = PrintControl.shared
-    @ObservedObject var froopData: FroopData = FroopData()
+    @ObservedObject var froopData = FroopData.shared
     @ObservedObject var appStateManager = AppStateManager.shared
     // @ObservedObject var froopDataListener = FroopDataListener.shared
     @Published var froopTypeData: FroopType?
@@ -27,7 +27,25 @@ class ChangeView: ObservableObject {
     @Published var froopAdded = false
     @Published var showNFWalkthroughScreen = false
     @Published var tempFroopType: Int = 0
+    @Published var froopHolder: Froop = Froop(dictionary: [:])
+    @Published var confirmedFriends: [UserData] = []
+    @Published var singleUserData: UserData = UserData()
+    @Published var friendSelected: Bool = false
     
+    //MARK: Controlling the Summary View
+    @Published var showType: Int = 0
+    @Published var showTitle: Int = 0
+    @Published var showLocation: Int = 0
+    @Published var showDate: Int = 0
+    @Published var showDuration: Int = 0
+    @Published var showName: Int = 0
+    @Published var showGuest: Int = 0
+    @Published var showSummary1: Int = 0
+    @Published var addressAtMyLocation: Bool = false
+    @Published var locDerivedTitle: String? = nil
+    @Published var locDerivedSubtitle: String? = nil
+    
+
     func configureViewBuildOrder() {
         guard let viewPositions = froopTypeData?.viewPositions else { return }
         var order: [(position: Int, value: Int)] = []
@@ -42,25 +60,54 @@ class ChangeView: ObservableObject {
         // Sort by the values, then map to the positions
         currentViewBuildOrder = order.sorted(by: { $0.value < $1.value }).map { $0.position }
         print("✅ currentViewBuildOrder \(String(describing: currentViewBuildOrder))")
+
+        // Reset all show properties to 0 (or another default value indicating "not shown")
+        showType = 0
+        showTitle = 0
+        showLocation = 0
+        showDate = 0
+        showDuration = 0
+        showGuest = 0
+        showSummary1 = 0
+
+        // Iterate over the sorted order to set the show properties based on their new positions
+        for (newPosition, originalPosition) in currentViewBuildOrder.enumerated() {
+            switch originalPosition {
+                case 1:
+                    showType = newPosition + 1
+                case 2:
+                    showLocation = newPosition + 1
+                case 3:
+                    showDate = newPosition + 1
+                    showDuration = newPosition + 1
+                case 4:
+                    showTitle = newPosition + 1
+                case 5:
+                    showSummary1 = newPosition + 1
+                case 6:
+                    showGuest = newPosition + 1
+                // Add additional cases as needed
+                default:
+                    break
+            }
+        }
     }
     
     func navigateToNextOrEditingPage() {
-            DispatchQueue.main.async {
-                if self.appStateManager.froopIsEditing {
-                    // When editing, navigate to the last view defined in the currentViewBuildOrder
-                    withAnimation {
-                        if let lastIndex = self.currentViewBuildOrder.last, !self.currentViewBuildOrder.isEmpty {
-                            self.pageNumber = lastIndex
-                        }
-                    }
-                } else {
-                    // When not editing, simply proceed to the next page
-                    withAnimation {
-                        self.pageNumber += 1
-                    }
+        DispatchQueue.main.async {
+            if self.appStateManager.froopIsEditing {
+                // When editing, navigate to the last view defined in the currentViewBuildOrder
+                if let lastIndex = self.currentViewBuildOrder.last, !self.currentViewBuildOrder.isEmpty {
+                    self.pageNumber = lastIndex
+                }
+            } else {
+                // When not editing, simply proceed to the next page
+                withAnimation {
+                    self.pageNumber += 1
                 }
             }
         }
+    }
     
     func currentPageView(locationViewModel: LocationSearchViewModel) -> some View {
         guard let nextPageIndex = currentViewBuildOrder.indices.contains(pageNumber - 1) ? currentViewBuildOrder[pageNumber - 1] : nil else {
@@ -160,183 +207,3 @@ struct NFWalkthroughScreen: View {
         }
     }
 }
-
-
-
-//
-//  NFWalkthroughScreen.swift
-//  FroopProof
-//
-//  Created by David Reed on 1/19/23.
-//
-
-//import SwiftUI
-//import iPhoneNumberField
-//import Firebase
-//import FirebaseFirestore
-//import FirebaseFirestoreSwift
-//
-//
-//
-//class ChangeView: ObservableObject {
-//    static let shared = ChangeView()
-//    @ObservedObject var printControl = PrintControl.shared
-//    @ObservedObject var froopData: FroopData = FroopData()
-//    // @ObservedObject var froopDataListener = FroopDataListener.shared
-//    @Published var froopTypeData: FroopType?
-//    @ObservedObject var myData = MyData.shared
-//    @Published var nextView: Bool = false
-//    @Published var pageNumber: Int = 1
-//    @Published var currentViewBuildOrder: [Int] = []
-//    
-//    func configureViewBuildOrder() {
-//        guard let viewPositions = froopTypeData?.viewPositions else { return }
-//        var order: [(position: Int, value: Int)] = []
-//
-//        for (index, value) in viewPositions.enumerated() {
-//            if value > 0 {
-//                // Append a tuple of (position, value) to 'order'
-//                order.append((position: index + 1, value: value))
-//            }
-//        }
-//
-//        // Sort by the values, then map to the positions
-//        currentViewBuildOrder = order.sorted(by: { $0.value < $1.value }).map { $0.position }
-//        print("✅ currentViewBuildOrder \(String(describing: currentViewBuildOrder))")
-//    }
-//    
-//    func changeThePageNumber() {
-//        PrintControl.shared.printProfile("-ChangeView: Function: changeThePageNumber is firing!")
-//        if self.nextView == true {
-//            self.pageNumber += 1
-//            self.nextView = false
-//        }
-//    }
-//}
-//
-//struct NFWalkthroughScreen: View {
-//    @Environment(\.colorScheme) var colorScheme
-//    @StateObject var locationViewModel = LocationSearchViewModel()
-//    @ObservedObject var myData = MyData.shared
-//    @ObservedObject var changeView = ChangeView.shared
-//    @State private var homeViewModel = HomeViewModel()
-//    @Binding var showNFWalkthroughScreen: Bool
-//    @Binding var froopAdded: Bool
-//    
-//    private var currentPageView: some View {
-//        Group {
-//            if let nextPage = changeView.currentViewBuildOrder.indices.contains(changeView.pageNumber - 1) ? changeView.currentViewBuildOrder[changeView.pageNumber - 1] : nil {
-//                switch nextPage {
-//                    case 1:
-//                        FroopTypeOrTemplate(froopData: changeView.froopData)
-//                            .environmentObject(locationViewModel)
-//                            .transition(.push(from: .bottom))
-//                    case 2:
-//                        FroopLocationView(changeView: changeView, froopData: changeView.froopData, homeViewModel: $homeViewModel)
-//                            .environmentObject(locationViewModel)
-//                            .transition(.push(from: .bottom))
-//                    case 3:
-//                        FroopDateView(changeView: changeView, froopData: changeView.froopData, homeViewModel: $homeViewModel)
-//                            .environmentObject(locationViewModel)
-//                            .transition(.push(from: .bottom))
-//                    case 4:
-//                        FroopNameView(froopData: changeView.froopData)
-//                            .environmentObject(locationViewModel)
-//                            .transition(.push(from: .bottom))
-//                    case 5:
-//                        FroopSummaryView(froopData: changeView.froopData, changeView: changeView, showNFWalkthroughScreen: $showNFWalkthroughScreen, froopAdded: $froopAdded)
-//                            .environmentObject(locationViewModel)
-//                            .transition(.asymmetric(insertion: .move(edge: .bottom), removal: .move(edge: .top)))
-//                    case 6:
-//                        EmptyView() // Until We add more views.
-//                            .environmentObject(locationViewModel)
-//                            .transition(.asymmetric(insertion: .move(edge: .bottom), removal: .move(edge: .top)))
-//                    case 7:
-//                        EmptyView() // Until We add more views.
-//                            .environmentObject(locationViewModel)
-//                            .transition(.asymmetric(insertion: .move(edge: .bottom), removal: .move(edge: .top)))
-//                    case 8:
-//                        EmptyView() // Until We add more views.
-//                            .environmentObject(locationViewModel)
-//                            .transition(.asymmetric(insertion: .move(edge: .bottom), removal: .move(edge: .top)))
-//                    case 9:
-//                        EmptyView() // Until We add more views.
-//                            .environmentObject(locationViewModel)
-//                            .transition(.asymmetric(insertion: .move(edge: .bottom), removal: .move(edge: .top)))
-//                    case 10:
-//                        EmptyView() // Until We add more views.
-//                            .environmentObject(locationViewModel)
-//                            .transition(.asymmetric(insertion: .move(edge: .bottom), removal: .move(edge: .top)))
-//                    case 11:
-//                        EmptyView() // Until We add more views.
-//                            .environmentObject(locationViewModel)
-//                            .transition(.asymmetric(insertion: .move(edge: .bottom), removal: .move(edge: .top)))
-//                    case 12:
-//                        EmptyView() // Until We add more views.
-//                            .environmentObject(locationViewModel)
-//                            .transition(.asymmetric(insertion: .move(edge: .bottom), removal: .move(edge: .top)))
-//                    case 13:
-//                        EmptyView() // Until We add more views.
-//                            .environmentObject(locationViewModel)
-//                            .transition(.asymmetric(insertion: .move(edge: .bottom), removal: .move(edge: .top)))
-//                    case 14:
-//                        EmptyView() // Until We add more views.
-//                            .environmentObject(locationViewModel)
-//                            .transition(.asymmetric(insertion: .move(edge: .bottom), removal: .move(edge: .top)))
-//                    case 15:
-//                        EmptyView() // Until We add more views.
-//                            .environmentObject(locationViewModel)
-//                            .transition(.asymmetric(insertion: .move(edge: .bottom), removal: .move(edge: .top)))
-//                    case 16:
-//                        EmptyView() // Until We add more views.
-//                            .environmentObject(locationViewModel)
-//                            .transition(.asymmetric(insertion: .move(edge: .bottom), removal: .move(edge: .top)))
-//                    case 17:
-//                        EmptyView() // Until We add more views.
-//                            .environmentObject(locationViewModel)
-//                            .transition(.asymmetric(insertion: .move(edge: .bottom), removal: .move(edge: .top)))
-//                    case 18:
-//                        EmptyView() // Until We add more views.
-//                            .environmentObject(locationViewModel)
-//                            .transition(.asymmetric(insertion: .move(edge: .bottom), removal: .move(edge: .top)))
-//                    case 19:
-//                        EmptyView() // Until We add more views.
-//                            .environmentObject(locationViewModel)
-//                            .transition(.asymmetric(insertion: .move(edge: .bottom), removal: .move(edge: .top)))
-//                    case 20:
-//                        EmptyView() // Until We add more views.
-//                            .environmentObject(locationViewModel)
-//                            .transition(.asymmetric(insertion: .move(edge: .bottom), removal: .move(edge: .top)))
-//                    default:
-//                        Text("Invalid page number")
-//                            .transition(.opacity) // Apply transition here
-//                }
-//            }
-//                .animation(.default, value: changeView.pageNumber) // Control the animation when pageNumber changes
-//        }
-//    }
-//    
-//    var body: some View {
-//        // For Slide Animation...
-//        
-//        ZStack {
-//            VStack {
-//                HStack {
-//                    Button {
-//                        changeView.pageNumber -= 1
-//                    } label: {
-//                        Image(systemName: "arrow.backward.square.fill")
-//                            .font(.system(size: 24))
-//                            .foregroundColor(colorScheme == .dark ? Color(red: 50/255, green: 46/255, blue: 62/255) : Color(red: 50/255, green: 46/255, blue: 62/255))
-//                            .opacity(changeView.pageNumber >= 2 ? 0.0 : 1.0)
-//                    }
-//                    Spacer()
-//                }
-//                Spacer()
-//            }
-//            .padding(.top, 20)
-//            .padding(.leading, 20)
-//            // Changing Between Views....
-//        }
-//    }
-//}

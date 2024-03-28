@@ -43,8 +43,8 @@ class FroopChatNotificationsManager: ObservableObject {
     
     
     func loadConversationsForCurrentUser() {
-        let hostId = AppStateManager.shared.currentFilteredFroopHistory[safe: AppStateManager.shared.aFHI]?.host.froopUserID ?? ""
-        let froopId = AppStateManager.shared.currentFilteredFroopHistory[safe: AppStateManager.shared.aFHI]?.froop.froopId ?? ""
+        let hostId = appStateManager.currentFilteredFroopHistory[safe: appStateManager.aFHI]?.host.froopUserID ?? ""
+        let froopId = appStateManager.currentFilteredFroopHistory[safe: appStateManager.aFHI]?.froop.froopId ?? ""
 
         // Immediately set up listener for the chats collection if it doesn't exist
         if self.activeListeners[froopId] == nil {
@@ -81,7 +81,7 @@ class FroopChatNotificationsManager: ObservableObject {
     func setupConversationsListener(froopId: String) {
         // Check if we already have an active listener for this froop's conversations
         if self.activeListeners[froopId] == nil {
-            let hostId = AppStateManager.shared.currentFilteredFroopHistory[safe: AppStateManager.shared.aFHI]?.host.froopUserID ?? ""
+            let hostId = appStateManager.currentFilteredFroopHistory[safe: appStateManager.aFHI]?.host.froopUserID ?? ""
             let chatsRef = db.collection("users").document(hostId).collection("myFroops").document(froopId).collection("chats")
             
             let listener = chatsRef.addSnapshotListener { [weak self] (querySnapshot, error) in
@@ -170,7 +170,7 @@ class FroopChatNotificationsManager: ObservableObject {
     
     func setupActiveFroopChatsListener(froopId: String, currentUserUID: String, selectedFriendUID: String, conversationId: String, completion: @escaping ([Message]) -> Void) {
         holderConId = conversationId
-        print("🌶️ HostID: \(AppStateManager.shared.currentFilteredFroopHistory[safe: AppStateManager.shared.aFHI]?.host.froopUserID ?? "")")
+        print("🌶️ HostID: \(appStateManager.currentFilteredFroopHistory[safe: appStateManager.aFHI]?.host.froopUserID ?? "")")
         print("🌶️🌶️ FroopId: \(froopId)")
 
         // Lookup the conversation in froopConversationsAndMessages
@@ -178,7 +178,7 @@ class FroopChatNotificationsManager: ObservableObject {
             let conversationId = conversationAndMessages.id
             print("🌶️🌶️🌶️ ConversationId: \(conversationId)")
 
-            let hostId = AppStateManager.shared.currentFilteredFroopHistory[safe: AppStateManager.shared.aFHI]?.host.froopUserID ?? ""
+            let hostId = appStateManager.currentFilteredFroopHistory[safe: appStateManager.aFHI]?.host.froopUserID ?? ""
 
             let messagesRef = self.db.collection("users").document(hostId)
                                     .collection("myFroops").document(froopId)
@@ -208,8 +208,8 @@ class FroopChatNotificationsManager: ObservableObject {
     func sendFroopMessage(content: String, toUserId: String) {
 //        print("sendFroopMessage firing")
         guard !content.isEmpty else { return }
-        let hostId = AppStateManager.shared.currentFilteredFroopHistory[safe: AppStateManager.shared.aFHI]?.host.froopUserID ?? ""
-        print("Host Name: \(AppStateManager.shared.currentFilteredFroopHistory[safe: AppStateManager.shared.aFHI]?.host.firstName ?? "")")
+        let hostId = appStateManager.currentFilteredFroopHistory[safe: appStateManager.aFHI]?.host.froopUserID ?? ""
+        print("Host Name: \(appStateManager.currentFilteredFroopHistory[safe: appStateManager.aFHI]?.host.firstName ?? "")")
         let conversationId = holderConId
         print("Conversation ID: \(holderCon.conversation.id)")
         postFroopMessage(content: content, conversationId: conversationId, toUserId: toUserId, hostId: hostId )
@@ -236,7 +236,7 @@ class FroopChatNotificationsManager: ObservableObject {
     
     private func createNewFroopConversation(with toUserId: String, hostId: String) -> String {
         print("🙇🏼‍♀️ createNewFroopConversation Function Firing")
-        let froopId = AppStateManager.shared.currentFilteredFroopHistory[safe: AppStateManager.shared.aFHI]?.froop.froopId ?? ""
+        let froopId = appStateManager.currentFilteredFroopHistory[safe: appStateManager.aFHI]?.froop.froopId ?? ""
         let newConversationRef = db.collection("users").document(hostId).collection("myFroops").document(froopId).collection("chats").document()
 
         newConversationRef.setData(["userIds": [uid, toUserId]]) { error in
@@ -295,8 +295,8 @@ class FroopChatNotificationsManager: ObservableObject {
         
     func findOrCreateFroopConversation(with toUserId: String, froopId: String? = nil, completion: @escaping (String) -> Void) {
         let currentUserId = FirebaseServices.shared.uid
-        let froopId = AppStateManager.shared.currentFilteredFroopHistory[safe: AppStateManager.shared.aFHI]?.froop.froopId ?? ""
-        let hostId = AppStateManager.shared.currentFilteredFroopHistory[safe: AppStateManager.shared.aFHI]?.froop.froopHost ?? ""
+        let froopId = appStateManager.currentFilteredFroopHistory[safe: appStateManager.aFHI]?.froop.froopId ?? ""
+        let hostId = appStateManager.currentFilteredFroopHistory[safe: appStateManager.aFHI]?.froop.froopHost ?? ""
         let chatsRef = db.collection("users").document(hostId).collection("myFroops").document(froopId).collection("chats")
 
         // Query for conversations that include both the current user's ID and the target user's ID in the 'userIds' array.
@@ -362,8 +362,8 @@ class FroopChatNotificationsManager: ObservableObject {
         
 //        print("Conversation ID: \(conversationAndMessages.conversation.id)")
 //        print("User IDs in Conversation: \(conversationAndMessages.conversation.userIds.joined(separator: ", "))")
-        _ = AppStateManager.shared.currentFilteredFroopHistory[safe: AppStateManager.shared.aFHI]?.froop.froopId ?? ""
-        _ = AppStateManager.shared.currentFilteredFroopHistory[safe: AppStateManager.shared.aFHI]?.host.froopUserID ?? ""
+        _ = appStateManager.currentFilteredFroopHistory[safe: appStateManager.aFHI]?.froop.froopId ?? ""
+        _ = appStateManager.currentFilteredFroopHistory[safe: appStateManager.aFHI]?.host.froopUserID ?? ""
         
 //        for message in conversationAndMessages.messages {
 //            print("Message ID: \(message.id), Sender ID: \(message.senderId), Receiver ID: \(message.receiverId), Content: \(message.text)")
@@ -372,7 +372,7 @@ class FroopChatNotificationsManager: ObservableObject {
     
     func postFroopMessage(content: String, conversationId: String, toUserId: String, hostId: String) {
         print("postFroopMessage firing")
-        let froopId = AppStateManager.shared.currentFilteredFroopHistory[safe: AppStateManager.shared.aFHI]?.froop.froopId ?? ""
+        let froopId = appStateManager.currentFilteredFroopHistory[safe: appStateManager.aFHI]?.froop.froopId ?? ""
         let senderId = FirebaseServices.shared.uid // Assuming this is the current user's ID
         
         // Reference to the conversation document

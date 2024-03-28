@@ -318,11 +318,9 @@ struct FroopInfoView: View {
                     }
                 }
             }
-
-
         }
+        .padding(.top, 95)
         .id(appStateManager.currentFilteredFroopHistory[safe: appStateManager.aFHI]?.froop.froopId )
-
         .onReceive(timer) { _ in
             now = Date()
         }
@@ -367,8 +365,6 @@ struct FroopInfoView: View {
             }
             .presentationDetents([.large])
         }
-        
-        
     }
     
     func formatDate(for date: Date, in timeZoneIdentifier: String) -> String {

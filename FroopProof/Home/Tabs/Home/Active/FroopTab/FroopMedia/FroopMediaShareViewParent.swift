@@ -50,6 +50,8 @@ struct FroopMediaShareViewParent: View {
                 Spacer()
             }
         }
+        .padding(.top, 100)
+
     }
     
     @ViewBuilder

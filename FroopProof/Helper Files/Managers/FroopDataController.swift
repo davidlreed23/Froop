@@ -579,22 +579,24 @@ class FroopDataController: NSObject, ObservableObject, MFMessageComposeViewContr
         }
     }
     
-    func addInvitedFriendstoFroop(invitedFriends: [UserData], instanceFroop: Froop) async throws -> [UserData] {
+    func addInvitedFriendstoFroop(invitedFriends: [UserData], instanceFroopId: String, instanceHostId: String) async throws -> [UserData] {
         print("🚦 FirebaseServices.shared.uid:  \(FirebaseServices.shared.uid)")
-        print(instanceFroop.froopId)
+        print(instanceFroopId)
         let uid = FirebaseServices.shared.uid
 
         let userRef = db.collection("users").document(uid)
+        print("🌐 \(invitedFriends.count)")
+
         print("🚦🚦\(userRef.path)")
 
-        let invitedFriendsRef = userRef.collection("myFroops").document(instanceFroop.froopId).collection("invitedFriends")
+        let invitedFriendsRef = userRef.collection("myFroops").document(instanceFroopId).collection("invitedFriends")
         print("🚦🚦🚦\(invitedFriendsRef.path)")
 
         let froopListRef = userRef.collection("froopDecisions").document("froopLists")
-        print("🚦🚦🚦🚦\(invitedFriendsRef.path)")
+        print("🚦🚦🚦🚦\(froopListRef.path)")
 
         let inviteListRef = invitedFriendsRef.document("inviteList")
-        print("🚦🚦🚦🚦🚦\(froopListRef.path)")
+        print("🚦🚦🚦🚦🚦\(inviteListRef.path)")
 
         let confirmedListRef = invitedFriendsRef.document("confirmedList")
         print("🚦🚦🚦🚦🚦🚦\(confirmedListRef.path)")
@@ -610,6 +612,7 @@ class FroopDataController: NSObject, ObservableObject, MFMessageComposeViewContr
 
         let declinedListCollectionRef = froopListRef.collection("myDeclinedList")
         print("🚦🚦🚦🚦🚦🚦🚦🚦🚦🚦 \(declinedListCollectionRef.path)")
+        
 
         // Extract the UIDs from the invitedFriends array
         let invitedFriendUIDs = invitedFriends.map { $0.froopUserID }
@@ -624,9 +627,9 @@ class FroopDataController: NSObject, ObservableObject, MFMessageComposeViewContr
         for invitedFriend in modifiedInvitedFriends {
             let invitedGuestRef = db.collection("users").document(invitedFriend.froopUserID).collection("froopDecisions").document("froopLists")
 
-            let froopIdExistsInInvitesList = try await checkIfFroopIdExists(in: invitedGuestRef.collection("myInvitesList"), froopId: instanceFroop.froopId)
-            let froopIdExistsInConfirmedList = try await checkIfFroopIdExists(in: invitedGuestRef.collection("myConfirmedList"), froopId: instanceFroop.froopId)
-            let froopIdExistsInDeclinedList = try await checkIfFroopIdExists(in: invitedGuestRef.collection("myDeclinedList"), froopId: instanceFroop.froopId)
+            let froopIdExistsInInvitesList = try await checkIfFroopIdExists(in: invitedGuestRef.collection("myInvitesList"), froopId: instanceFroopId)
+            let froopIdExistsInConfirmedList = try await checkIfFroopIdExists(in: invitedGuestRef.collection("myConfirmedList"), froopId: instanceFroopId)
+            let froopIdExistsInDeclinedList = try await checkIfFroopIdExists(in: invitedGuestRef.collection("myDeclinedList"), froopId: instanceFroopId)
             if froopIdExistsInInvitesList {
                     try await confirmGuestUIDInList(in: inviteListRef, guestUID: invitedFriend.froopUserID)
                 } else if froopIdExistsInConfirmedList {
@@ -636,11 +639,11 @@ class FroopDataController: NSObject, ObservableObject, MFMessageComposeViewContr
                 } else {
                     // If the current user is the invited friend and they are the host, add them to the confirmedList
                     if invitedFriend.froopUserID == uid && isCurrentUserInvited {
-                        try await addFroopToConfirmedList(in: invitedGuestRef.collection("myConfirmedList"), froopHost: instanceFroop.froopHost, froopId: instanceFroop.froopId)
+                        try await addFroopToConfirmedList(in: invitedGuestRef.collection("myConfirmedList"), froopHost: instanceHostId, froopId: instanceFroopId)
                         try await addInvitedGuestUIDToConfirmedList(in: confirmedListRef, newInvitedFriendUIDs: [invitedFriend.froopUserID])
                     } else {
                         // Otherwise, add the invitation document to the guest's myInvitationsList
-                        try await addFroopToInvitesList(in: invitedGuestRef.collection("myInvitesList"), froopHost: instanceFroop.froopHost, froopId: instanceFroop.froopId)
+                        try await addFroopToInvitesList(in: invitedGuestRef.collection("myInvitesList"), froopHost: instanceHostId, froopId: instanceFroopId)
                         try await addInvitedGuestUIDToInviteList(in: inviteListRef, newInvitedFriendUIDs: [invitedFriend.froopUserID])
                     }
                 }

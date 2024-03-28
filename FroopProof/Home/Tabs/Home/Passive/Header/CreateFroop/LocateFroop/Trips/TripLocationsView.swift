@@ -17,7 +17,7 @@ struct TripLocationsView: View {
     @ObservedObject var locationManager = LocationManager.shared
 
     // @ObservedObject var froopDataListener = FroopDataListener.shared
-    @ObservedObject var froopData: FroopData
+    @ObservedObject var froopData = FroopData.shared
     @EnvironmentObject var viewModel: LocationSearchViewModel
     
     
@@ -59,28 +59,23 @@ struct TripLocationsView: View {
             }
             
             .offset(y: -35)
-            //.padding(.top, 10)
             
             VStack(alignment: .leading) {
                 
                 Text(froopData.froopLocationtitle)
                     .font(.system(size: 18, weight: .bold))
-//                    .blendMode(.difference)
                     .foregroundColor(.primary)
                     .padding(.bottom, 2)
                 
                 Text(froopData.froopLocationsubtitle)
                     .font(.system(size: 18, weight: .light))
                     .foregroundColor(.primary)
-//                    .blendMode(.difference)
                     .lineLimit(2, reservesSpace: true)
                     .padding(.bottom, 10)
-                
+            
                 Text("Distance: \(String(format: "%.2f", calculateDistance() / 1609.34)) Miles from:")
                     .font(.system(size: 20, weight: .thin))
-//                    .blendMode(.difference)
                     .foregroundColor(.primary)
-                //.padding(.top, 15)
                 
                 HStack {
                     Text("Can Arrive in: \(String(format: "%.0f", distance)) minutes")
@@ -109,6 +104,7 @@ struct TripLocationsView: View {
               
             }
         }
+        .frame(height: UIScreen.screenHeight * 0.35)
         .padding(.top, 16)
         .padding(.leading, 8)
     }

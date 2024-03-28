@@ -16,7 +16,7 @@ struct ActiveFroopFriendInviteView: View {
     @ObservedObject var froopManager = FroopManager.shared
     @ObservedObject var friendViewController = FriendViewController.shared
     @ObservedObject var timeZoneManager: TimeZoneManager = TimeZoneManager()
-    @ObservedObject var froopData: FroopData = FroopData()
+    @ObservedObject var froopData = FroopData.shared
     @ObservedObject var friendData: UserData = UserData()
     @State var detailGuests: [UserData] = []
     @State var instanceFroop: FroopHistory

@@ -15,7 +15,9 @@ struct PhotoLibraryView: View {
     
     @ObservedObject var printControl = PrintControl.shared
     // @ObservedObject var froopDataListener = FroopDataListener.shared
-    
+    var appStateManager: AppStateManager {
+        return AppStateManager.shared
+    }
     @ObservedObject var viewModel = MediaGridViewModel.shared
     @ObservedObject var mediaManager = MediaManager.shared
     @ObservedObject var froopManager = FroopManager.shared
@@ -84,8 +86,8 @@ struct PhotoLibraryView: View {
             return
         }
         
-        let froopId = AppStateManager.shared.currentFilteredFroopHistory[safe: AppStateManager.shared.aFHI]?.froop.froopId ?? ""
-        let froopHost = AppStateManager.shared.currentFilteredFroopHistory[safe: AppStateManager.shared.aFHI]?.froop.froopHost ?? ""
+        let froopId = appStateManager.currentFilteredFroopHistory[safe: appStateManager.aFHI]?.froop.froopId ?? ""
+        let froopHost = appStateManager.currentFilteredFroopHistory[safe: appStateManager.aFHI]?.froop.froopHost ?? ""
         
         let storage = Storage.storage()
         let storageRef = storage.reference()
@@ -125,7 +127,7 @@ struct PhotoLibraryView: View {
                     isImage: true
                 )
                 
-                AppStateManager.shared.mediaTimeStamp.append(creationDate)
+                appStateManager.mediaTimeStamp.append(creationDate)
                 completion(true)
             }
         }
@@ -144,6 +146,9 @@ class MediaGridViewModel: ObservableObject {
     @Published var mediaCount: Int = 0
     var reversedMedia: [MediaData] {
         selectedMedia.reversed()
+    }
+    var appStateManager: AppStateManager {
+        return AppStateManager.shared
     }
     
     var alreadyUploadedAssetIdentifiers = Set<String>()
@@ -182,16 +187,16 @@ class MediaGridViewModel: ObservableObject {
         print("◆ froopStartTime: \(froopStartTime)")
         print("◆ froopEndTime: \(froopEndTime)")
 
-        let froopId = froopEndTime < Date() ? FroopManager.shared.selectedFroopHistory.froop.froopId : AppStateManager.shared.currentFilteredFroopHistory[safe: AppStateManager.shared.aFHI]?.froop.froopId ?? ""
+        let froopId = froopEndTime < Date() ? FroopManager.shared.selectedFroopHistory.froop.froopId : appStateManager.currentFilteredFroopHistory[safe: appStateManager.aFHI]?.froop.froopId ?? ""
         
-        let froopHost = froopEndTime < Date() ? FroopManager.shared.selectedFroopHistory.host.froopUserID : AppStateManager.shared.currentFilteredFroopHistory[safe: AppStateManager.shared.aFHI]?.froop.froopHost ?? ""
+        let froopHost = froopEndTime < Date() ? FroopManager.shared.selectedFroopHistory.host.froopUserID : appStateManager.currentFilteredFroopHistory[safe: appStateManager.aFHI]?.froop.froopHost ?? ""
             
         mediaManager.requestPhotoLibraryAuthorization { success in
             if success {
                 self.mediaManager.fetchMediaFromPhotoLibrary(
                     froopStartTime: froopStartTime,
-                    froopEndTime: froopEndTime < Date() ? FroopManager.shared.selectedFroopHistory.froop.froopEndTime : AppStateManager.shared.currentFilteredFroopHistory[safe: AppStateManager.shared.aFHI]?.froop.froopEndTime ?? Date(),
-                    includeVideos: froopEndTime < Date() ? FroopManager.shared.selectedFroopHistory.host.premiumAccount : AppStateManager.shared.currentFilteredFroopHistory[safe: AppStateManager.shared.aFHI]?.host.premiumAccount ?? false
+                    froopEndTime: froopEndTime < Date() ? FroopManager.shared.selectedFroopHistory.froop.froopEndTime : self.appStateManager.currentFilteredFroopHistory[safe: self.appStateManager.aFHI]?.froop.froopEndTime ?? Date(),
+                    includeVideos: froopEndTime < Date() ? FroopManager.shared.selectedFroopHistory.host.premiumAccount : self.appStateManager.currentFilteredFroopHistory[safe: self.appStateManager.aFHI]?.host.premiumAccount ?? false
                 )
                 { assets in
                     let group = DispatchGroup()

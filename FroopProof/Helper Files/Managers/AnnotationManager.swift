@@ -58,26 +58,6 @@ class AnnotationManager: ObservableObject {
         }
     }
     
-    
-//    private func setupDebugTimer() {
-//        Timer.scheduledTimer(withTimeInterval: 5, repeats: true) { [weak self] _ in
-//            guard let self = self else { return }
-//            for guest in self.guestAnnotations {
-//                refreshGuestAnnotations()
-//                currentGuestCoordinate = AppStateManager.shared.currentFilteredFroopHistory[AppStateManager.shared.aFHI].confirmedFriends[currentGuestIndex].coordinate
-//                if trackingUser {
-//                    self.zoomToLocation(self.currentGuestCoordinate)
-//                }
-//                print("🕒 [Timer] Coordinate for \(guest.froopUserID): \(guest.coordinate)")
-//                print("🕒🕒 [Timer] Coordinate for \(AppStateManager.shared.currentFilteredFroopHistory[AppStateManager.shared.aFHI].confirmedFriends[0].froopUserID): \(AppStateManager.shared.currentFilteredFroopHistory[AppStateManager.shared.aFHI].confirmedFriends[0].coordinate)")
-//                print("🕒🕒🕒 [Timer] Coordinate for \(AppStateManager.shared.currentFilteredFroopHistory[AppStateManager.shared.aFHI].confirmedFriends[1].froopUserID): \(AppStateManager.shared.currentFilteredFroopHistory[AppStateManager.shared.aFHI].confirmedFriends[1].coordinate)")
-//
-//                
-//            }
-//        }
-//    }
-    
-    
     func refreshGuestAnnotations() {
         // Assuming AppStateManager has a method or property to access the current guest list with updated UserData
         let updatedGuests = AppStateManager.shared.currentFilteredFroopHistory.first?.confirmedFriends ?? []

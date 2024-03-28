@@ -63,6 +63,8 @@ struct MyMinCardsView: View {
             if openFroop {
                 froopHostAndFriends.cardForStatus(openFroop: $openFroop)
                     .padding(.bottom, 10)
+                    .padding(.leading, 5)
+                    .padding(.trailing, 5)
             } else {
                 
                 VStack (){
@@ -84,6 +86,7 @@ struct MyMinCardsView: View {
                                 }
                             }
                             .padding(.top, 5)
+                            .padding(.leading, 5)
                         VStack (alignment:.leading){
                             HStack (alignment: .center){
                                 Text(froopHostAndFriends.froop.froopName)

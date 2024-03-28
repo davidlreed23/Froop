@@ -5,9 +5,16 @@
 //  Created by David Reed on 1/19/23.
 //
 
+import Foundation
+import FirebaseFirestoreSwift
+import CoreLocation
+import Firebase
+import Combine
 import SwiftUI
-import MapKit
+import UIKit
 import FirebaseFirestore
+import MapKit
+import RevenueCat
 
 struct Froop: Identifiable, Hashable {
     

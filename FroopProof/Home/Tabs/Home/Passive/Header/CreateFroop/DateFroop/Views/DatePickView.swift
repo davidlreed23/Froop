@@ -13,12 +13,13 @@ import Foundation
 
 struct DatePickView: View {
     @Environment(\.colorScheme) var colorScheme
+    @ObservedObject var changeView = ChangeView.shared
     @ObservedObject var dataController = DataController.shared
     @ObservedObject var printControl = PrintControl.shared
     // @ObservedObject var froopDataListener = FroopDataListener.shared
     @Binding var transClock: Bool
     @Binding var datePicked: Bool
-    @ObservedObject var froopData: FroopData
+    @ObservedObject var froopData = FroopData.shared
 //    @State var selectedDate = Date()
     @State private var isTouched = false
   

@@ -17,7 +17,7 @@ struct DurationPicker: View {
    
  
     
-    @ObservedObject var froopData: FroopData
+    @ObservedObject var froopData = FroopData.shared
     @State private var selectedDay = 0
     @State private var selectedHour = 0
     @State private var selectedMinute = 0

@@ -15,7 +15,7 @@ struct FroopMapBackgroundView: View {
     @ObservedObject var printControl = PrintControl.shared
     @ObservedObject var locationServices = LocationServices.shared
     // @ObservedObject var froopDataListener = FroopDataListener.shared
-    @ObservedObject var froopData: FroopData
+    @ObservedObject var froopData = FroopData.shared
     @State private var showLocationSearchView = false
     @State private var mapState = MapViewState.locationSelected
     @EnvironmentObject var locationViewModel: LocationSearchViewModel

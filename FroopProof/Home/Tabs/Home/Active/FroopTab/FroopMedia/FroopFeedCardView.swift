@@ -125,6 +125,7 @@ struct FroopFeedCardView: View {
             }
             
         }
+        .padding(.top, 100)
         .onTapGesture {
             print("tap")
             for friend in froopHostAndFriends.friends {

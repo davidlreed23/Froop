@@ -43,7 +43,7 @@ struct ActiveMapView: View {
         mapManager.tapLatitudeDelta < 0.008
     }
 
-    
+
     /// Route Properties
     @State private var routeDisplaying: Bool = false
     @State private var route: MKRoute?
@@ -90,7 +90,6 @@ struct ActiveMapView: View {
     
     var body: some View {
         
-        
         NavigationStack{
             if appStateManager.aFHI >= 0 && appStateManager.aFHI < appStateManager.currentFilteredFroopHistory.count {
                 
@@ -129,7 +128,8 @@ struct ActiveMapView: View {
                             .tint(Color(red: 249/255, green: 0/255, blue: 98/255))
                             .tag(appStateManager.currentFilteredFroopHistory[appStateManager.aFHI].froop.froopId)
                     }
-                   
+                    .frame(width: UIScreen.screenWidth, height: UIScreen.screenHeight)
+
                     .onChange(of: mapSelection) { oldValue, newValue in
                         if let selectedId = newValue, selectedId != selectedMarkerId {
                             selectedMarkerId = selectedId
@@ -314,11 +314,9 @@ struct ActiveMapView: View {
                             }
                             Spacer()
                         }
-                        .padding(.top, 10)
+                        .padding(.top, 115)
                         .padding(.leading, 10)
                     }
-                    
-                    
                     .navigationTitle("\(appStateManager.currentFilteredFroopHistory[appStateManager.aFHI].froop.froopName)")
                     .navigationBarTitleDisplayMode(.inline)
                     .toolbarBackground(.visible, for: .navigationBar)

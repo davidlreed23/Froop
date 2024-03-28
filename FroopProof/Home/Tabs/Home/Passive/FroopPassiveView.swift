@@ -19,7 +19,7 @@ struct FroopPassiveView: View {
     
     @ObservedObject var froopManager = FroopManager.shared
     @ObservedObject var changeView = ChangeView()
-    @ObservedObject var froopData = FroopData()
+    @ObservedObject var froopData = FroopData.shared
 
     @State var instanceFroop: FroopHistory
     @State var selectedFriend: UserData = UserData()
@@ -52,6 +52,7 @@ struct FroopPassiveView: View {
             VStack {
                 UserDetailView(instanceFroop: instanceFroop, friendDetailOpen: $friendDetailOpen, globalChat: $globalChat)
                     .ignoresSafeArea()
+                    .frame(width: UIScreen.screenWidth, height: UIScreen.screenHeight)
             }
         }
         .onAppear {

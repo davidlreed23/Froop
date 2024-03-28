@@ -86,6 +86,10 @@ class FroopManager: ObservableObject {
     @Published var showInviteUrlView: Bool = false
     @Published var froopInviteUrl: String = ""
     
+    var appStateManager: AppStateManager {
+        return AppStateManager.shared
+    }
+    
     var froopHistoryUpdateSubject = PassthroughSubject<Void, Never>()
     
     var getHostedFroopCount: [FroopHistory] {
@@ -1027,8 +1031,8 @@ class FroopManager: ObservableObject {
     func postToFroopGroupChat(content: String) {
         guard !content.isEmpty else { return }
 
-        let froopId = AppStateManager.shared.currentFilteredFroopHistory[safe: AppStateManager.shared.aFHI]?.froop.froopId  ?? "" // Hardcoded Froop ID
-        let hostId = AppStateManager.shared.currentFilteredFroopHistory[safe: AppStateManager.shared.aFHI]?.host.froopUserID ?? ""          // Hardcoded Host ID
+        let froopId = appStateManager.currentFilteredFroopHistory[safe: appStateManager.aFHI]?.froop.froopId  ?? "" // Hardcoded Froop ID
+        let hostId = appStateManager.currentFilteredFroopHistory[safe: appStateManager.aFHI]?.host.froopUserID ?? ""          // Hardcoded Host ID
         let groupChatRef = db.collection("users").document(hostId)
                              .collection("myFroops").document(froopId)
                              .collection("chats").document("froopGroupChat")

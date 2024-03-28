@@ -38,7 +38,7 @@ struct DetailsHostMessageEditView: View {
     @ObservedObject var froopManager = FroopManager.shared
     @ObservedObject var friendViewController = FriendViewController.shared
     @ObservedObject var timeZoneManager: TimeZoneManager = TimeZoneManager()
-    @ObservedObject var froopData: FroopData = FroopData()
+    @ObservedObject var froopData = FroopData.shared
     //    @ObservedObject var friendData: UserData = UserData()
     
     @State private var showingAlert = false
@@ -81,7 +81,7 @@ struct DetailsHostMessageEditView: View {
                                 .padding(.bottom, UIScreen.screenHeight * 0.025)
                         }
                         HStack {
-                            Text("Edit: Host Message")
+                            Text("Create a Host Message Everyone Will See or...")
                                 .font(.system(size: 16))
                                 .foregroundColor(Color(red: 50/255, green: 46/255, blue: 62/255))
                                 .opacity(0.7)
@@ -134,7 +134,7 @@ struct DetailsHostMessageEditView: View {
                 
                 VStack (spacing: 7) {
                     HStack {
-                        Text("Intro Video")
+                        Text("Upload a Video for a Personal Greeting.")
                             .font(.system(size: 16))
                             .foregroundColor(Color(red: 50/255, green: 46/255, blue: 62/255))
                             .opacity(0.7)
@@ -355,8 +355,8 @@ struct DetailsHostMessageEditView: View {
     }
     
     func uploadVideo(_ videoURL: URL, onVideoUploaded: @escaping (URL) -> Void, onUploadComplete: @escaping () -> Void) {
-        let froopId = AppStateManager.shared.currentFilteredFroopHistory[safe: AppStateManager.shared.aFHI]?.froop.froopId ?? ""
-        let froopHost = AppStateManager.shared.currentFilteredFroopHistory[safe: AppStateManager.shared.aFHI]?.froop.froopHost ?? ""
+        let froopId = appStateManager.currentFilteredFroopHistory[safe: appStateManager.aFHI]?.froop.froopId ?? ""
+        let froopHost = appStateManager.currentFilteredFroopHistory[safe: appStateManager.aFHI]?.froop.froopHost ?? ""
         let storage = Storage.storage()
         let storageRef = storage.reference()
         let froopMediaAssetsRef = storageRef.child("FroopMediaAssets/\(froopHost)/\(froopId)")
@@ -440,6 +440,10 @@ struct FocusableTextEditor: UIViewRepresentable {
         let textView = UITextView()
         textView.backgroundColor = UIColor.clear // Make background transparent
         textView.delegate = context.coordinator
+        
+        // Set text color to dark gray (or any color you prefer) that remains the same in both light and dark mode
+        textView.textColor = UIColor(red: 50/255, green: 46/255, blue: 62/255, alpha: 0.75)
+        
         return textView
     }
     

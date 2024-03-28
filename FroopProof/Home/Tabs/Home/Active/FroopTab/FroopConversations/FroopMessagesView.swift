@@ -31,7 +31,7 @@ struct FroopMessagesView: View {
     let uid = FirebaseServices.shared.uid
     
     var userIdsForChat: [String] {
-        let confirmedFriends = AppStateManager.shared.currentFilteredFroopHistory[safe: AppStateManager.shared.aFHI]?.confirmedFriends ?? []
+        let confirmedFriends = appStateManager.currentFilteredFroopHistory[safe: appStateManager.aFHI]?.confirmedFriends ?? []
         return confirmedFriends.map { $0.froopUserID }
     }
     
@@ -45,6 +45,11 @@ struct FroopMessagesView: View {
     var body: some View {
         
         ZStack {
+            FTVBackGroundComponent()
+            Rectangle()
+                .foregroundColor(.clear)
+                .background(.ultraThinMaterial)
+                .ignoresSafeArea()
             Text(String(describing: appStateManager.aFHI))
                 .foregroundColor(.white)
             VStack(spacing: 0) {
@@ -63,7 +68,7 @@ struct FroopMessagesView: View {
                                 .shadow(color: Color.white.opacity(0.7), radius: 7, x: -4, y: -4)
                         }
                     }
-                    .padding(.top, 100)
+                    .padding(.top, 95)
                 }
                 .onAppear {
                     print("Froop Conversations and Messages: \(chatManager.froopConversationsAndMessages)")
@@ -106,7 +111,7 @@ struct FroopMessagesView: View {
                 Spacer()
             }
         }
-        .background(.white)
+        .padding(.top, 95)
         .onAppear {
             self.chatManager.loadConversationsForCurrentUser()
         }

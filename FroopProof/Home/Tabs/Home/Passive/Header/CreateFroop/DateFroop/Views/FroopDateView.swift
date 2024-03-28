@@ -14,7 +14,7 @@ struct FroopDateView: View {
     @Environment(\.colorScheme) var colorScheme
     @ObservedObject var printControl = PrintControl.shared
     // @ObservedObject var froopDataListener = FroopDataListener.shared
-    @ObservedObject var froopData: FroopData
+    @ObservedObject var froopData = FroopData.shared
     @ObservedObject var changeView = ChangeView.shared
     
     @ObservedObject var myData = MyData.shared
@@ -24,7 +24,7 @@ struct FroopDateView: View {
     @State var selectedDate = Date()
     @State var startTime: Date = Date()
     @State var endTime: Date = Date()
-    
+
     let dateFormatter = DateFormatter()
     var dateString: String {
         dateFormatter.dateFormat = "MMMM yyyy"
@@ -55,7 +55,6 @@ struct FroopDateView: View {
             TimePickView(transClock: $transClock, datePicked: $datePicked, duraVis: $duraVis, froopData: froopData, changeView: changeView)
 //                .offset(y: -30)
         }
-        
         .onChange(of: datePicked) { newValue, _ in
             if newValue {
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {

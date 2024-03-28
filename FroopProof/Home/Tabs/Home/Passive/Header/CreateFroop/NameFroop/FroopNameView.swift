@@ -18,14 +18,14 @@ struct FroopNameView: View {
     @Environment(\.colorScheme) var colorScheme
     @ObservedObject var printControl = PrintControl.shared
     @ObservedObject var appStateManager = AppStateManager.shared
-    @ObservedObject var froopData: FroopData
+    @ObservedObject var froopData = FroopData.shared
     @ObservedObject var changeView = ChangeView.shared
     var onFroopNamed: (() -> Void)?
     @State private var showAlert = false
     @State private var froopNameTextFieldValue: String = ""
     @State var animationAmount = 1.0
     @State private var isEditing = false
-    
+
     
     var body: some View {
             ZStack {
@@ -86,7 +86,7 @@ struct FroopNameView: View {
                         DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
                             if appStateManager.froopIsEditing {
                                 withAnimation {
-                                    changeView.pageNumber = 5
+                                    changeView.pageNumber = changeView.showSummary1
                                 }
                             } else {
                                 changeView.pageNumber += 1

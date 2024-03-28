@@ -292,33 +292,38 @@ struct FroopConfirmedCardView: View {
                     }
                     .frame(height: 120)
                     
-                    VStack {
-                        if froopHostAndFriends.froop.froopHost == uid {
-                            ZStack {
-                                RoundedRectangle(cornerRadius: 10)
-                                    .fill(.white)
-                                    .opacity(0.5)
-                                    .frame(width: 50, height: 50)
-                                    .shadow(color: Color(red: 50/255, green: 46/255, blue: 62/255).opacity(0.4), radius: 4, x: 4, y: 4)
-                                    .shadow(color: Color.white.opacity(0.9), radius: 4, x: -4, y: -4)
-                                VStack(alignment: /*@START_MENU_TOKEN@*/.center/*@END_MENU_TOKEN@*/, content: {
-                                    Text("Share")
-                                        .font(.system(size: 14))
-                                        .fontWeight(.light)
-                                        .foregroundColor(Color(red: 50/255, green: 46/255, blue: 62/255))
-                                })
+                    if froopHostAndFriends.host.premiumAccount || froopHostAndFriends.host.professionalAccount {
+                        VStack {
+                            if froopHostAndFriends.froop.froopHost == uid {
+                                ZStack {
+                                    RoundedRectangle(cornerRadius: 10)
+                                        .fill(.white)
+                                        .opacity(0.5)
+                                        .frame(width: 50, height: 50)
+                                        .shadow(color: Color(red: 50/255, green: 46/255, blue: 62/255).opacity(0.4), radius: 4, x: 4, y: 4)
+                                        .shadow(color: Color.white.opacity(0.9), radius: 4, x: -4, y: -4)
+                                    VStack(alignment: /*@START_MENU_TOKEN@*/.center/*@END_MENU_TOKEN@*/, content: {
+                                        Text("Share")
+                                            .font(.system(size: 14))
+                                            .fontWeight(.light)
+                                            .foregroundColor(Color(red: 50/255, green: 46/255, blue: 62/255))
+                                    })
+                                }
+                                .padding(.trailing, 30)
+                                .frame(width: 80)
+                                .onTapGesture {
+                                    froopManager.selectedFroopHistory = froopHostAndFriends
+                                    froopManager.showInviteUrlView = true
+                                }
                             }
-                            .padding(.trailing, 30)
-                            .frame(width: 80)
-                            .onTapGesture {
-                                froopManager.selectedFroopHistory = froopHostAndFriends
-                                froopManager.showInviteUrlView = true
-                            }
+                            
+                            Spacer()
                         }
-                        
-                        Spacer()
+                        .frame(height: 120)
+                    } else {
+                        EmptyView()
                     }
-                    .frame(height: 120)
+                    
                 }
                 .frame(height: 120)
                 .padding(.leading, 5)

@@ -18,17 +18,17 @@ struct FroopTypeOrTemplate: View {
     @ObservedObject var printControl = PrintControl.shared
     @ObservedObject var locationServices = LocationServices.shared
     @ObservedObject var changeView = ChangeView.shared
-
+    @ObservedObject var myData = MyData.shared
     // @ObservedObject var froopDataListener = FroopDataListener.shared
     @State private var mapState = MapViewState.noInput
-    @ObservedObject var froopData: FroopData
+    @ObservedObject var froopData = FroopData.shared
     var onFroopNamed: (() -> Void)?
     @State private var showAlert = false
     @EnvironmentObject var locationViewModel: LocationSearchViewModel
     @ObservedObject var froopTypeStore = FroopTypeStore()
     @State var searchText: String = ""
     @State var selectedFroopType: FroopType?
-    
+
     // Add a state variable for the selected tab
     @State private var selectedTab = 0
 
@@ -37,7 +37,7 @@ struct FroopTypeOrTemplate: View {
             ZStack {
                 Color.offWhite
                 VStack {
-                    Text("What kind of Froop do you want to create? \(froopData.froopType) / \(changeView.froopTypeData?.id ?? 0)")
+                    Text("What kind of Froop do you want to create?")
                         .frame(maxWidth: 400)
                         .fontWeight(.semibold)
                         .font(.system(size: 26))
@@ -46,7 +46,7 @@ struct FroopTypeOrTemplate: View {
                         .foregroundColor(Color(red: 50/255, green: 46/255, blue: 62/255))
                         .padding(.leading, 25)
                         .padding(.trailing, 25)
-                       
+                    
                     TextField("Search", text: $searchText)
                         .frame(maxWidth: 400)
                         .foregroundColor(colorScheme == .dark ? .white : Color(red: 50/255, green: 46/255, blue: 62/255))
@@ -55,29 +55,36 @@ struct FroopTypeOrTemplate: View {
                         .cornerRadius(12)
                         .padding(.trailing, 15)
                         .padding(.leading, 15)
-                        
                     
-                    // Add a Picker for the tabs
-                    Picker("", selection: $selectedTab) {
-                        Text("Select Type").tag(0)
-                        Text("Saved Templates").tag(1)
+                    if myData.premiumAccount || myData.professionalAccount {
+                        // Add a Picker for the tabs
+                        Picker("", selection: $selectedTab) {
+                            Text("Select Type").tag(0)
+                            Text("Saved Templates").tag(1)
+                        }
+                        .foregroundColor(colorScheme == .dark ? Color(red: 50/255, green: 46/255, blue: 62/255) : Color(red: 50/255, green: 46/255, blue: 62/255))
+                        .pickerStyle(SegmentedPickerStyle())
+                        .padding(.leading, 15)
+                        .padding(.trailing, 15)
                     }
-                    .foregroundColor(colorScheme == .dark ? Color(red: 50/255, green: 46/255, blue: 62/255) : Color(red: 50/255, green: 46/255, blue: 62/255))
-                    .pickerStyle(SegmentedPickerStyle())
-                    .padding(.leading, 15)
-                    .padding(.trailing, 15)
-                    
                     // Add a TabView for the content
-                    TabView(selection: $selectedTab) {
+                    if myData.premiumAccount || myData.professionalAccount {
+                        
+                        TabView(selection: $selectedTab) {
+                            FroopTypeView(froopData: froopData, searchText: $searchText)
+                                .tag(0)
+                            
+                            FroopSavedTemplates(froopData: froopData)
+                                .tag(1)
+                        }
+                    } else {
                         FroopTypeView(froopData: froopData, searchText: $searchText)
-                            .tag(0)
-                        FroopSavedTemplates(froopData: froopData)
-                            .tag(1)
+                            .padding(.top, 15)
                     }
                 }
-    
             }
-        
+            .padding(.top, 90)
+            .ignoresSafeArea()
     }
 }
 

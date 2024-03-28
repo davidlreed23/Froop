@@ -47,6 +47,10 @@ final class MyData: ObservableObject {
     @Published var creationDate: Date = Date()
     @Published var userDescription: String = ""
     
+    @Published var myLocDerivedTitle: String? = nil
+    @Published var myLocDerivedSubtitle: String? = nil
+    
+    
     @Published var coordinate: CLLocationCoordinate2D = CLLocationCoordinate2D()
     var geoPoint: GeoPoint {
         get {
@@ -94,7 +98,6 @@ final class MyData: ObservableObject {
     
     init?(dictionary: [String: Any]) {
         updateProperties(with: dictionary)
-        
         // Check if the required properties have been set
         guard !self.froopUserID.isEmpty else {
             return nil
@@ -109,11 +112,9 @@ final class MyData: ObservableObject {
         guard !FirebaseServices.shared.uid.isEmpty else {
             PrintControl.shared.printErrorMessages("Error: no user is currently signed in.")
             return
-            
         }
         let uid = Auth.auth().currentUser?.uid ?? ""
         // handle the case when no user is signed in or UID is empty
-        
         
         let docRef = db.collection("users").document(uid)
         
@@ -140,6 +141,14 @@ final class MyData: ObservableObject {
                 }
             }
             .store(in: &cancellables)
+        Task {
+            let (title, subtitle) = await fetchAddressTitleAndSubtitle()
+            await MainActor.run {
+                // This block is guaranteed to run on the main thread.
+                myLocDerivedTitle = title
+                myLocDerivedSubtitle = subtitle
+            }
+        }
     }
     
     deinit {

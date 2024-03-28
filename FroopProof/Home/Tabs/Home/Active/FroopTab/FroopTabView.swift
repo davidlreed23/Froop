@@ -21,7 +21,7 @@ struct FroopTabView: View {
     @ObservedObject var friendStore = FriendStore.shared
     @ObservedObject var printControl = PrintControl.shared
     @ObservedObject var appStateManager = AppStateManager.shared
-//    @ObservedObject var froopDataListener = FroopDataListener.shared
+    //    @ObservedObject var froopDataListener = FroopDataListener.shared
     @ObservedObject var locationManager = LocationManager.shared
     @ObservedObject var notificationsManager = NotificationsManager.shared
     @ObservedObject var mapManager = MapManager.shared
@@ -49,7 +49,7 @@ struct FroopTabView: View {
     @State private var currentIndex: Int = 0
     @Binding var globalChat: Bool
     let uid = FirebaseServices.shared.uid
-
+    
     @State private var internalRegion = MKCoordinateRegion(
         center: CLLocationCoordinate2D(latitude: 39.50, longitude: -98.35),
         span: MKCoordinateSpan(latitudeDelta: 0.2, longitudeDelta: 0.2)
@@ -95,7 +95,7 @@ struct FroopTabView: View {
     }
     
     var sortedFroopsForUser: [FroopHistory] {
-//        froopManager.hostedFroopCount = displayedFroops.count
+        //        froopManager.hostedFroopCount = displayedFroops.count
         return displayedFroops.sorted(by: { $0.froop.froopStartTime > $1.froop.froopStartTime })
     }
     
@@ -107,11 +107,11 @@ struct FroopTabView: View {
         return froopManager.froopHistory.filter { froopHistory in
             switch froopHistory.froopStatus {
                 case .invited, .confirmed, .archived, .memory:
-                return true
-            case .declined:
-                return froopHistory.froop.froopHost == uid
-            default:
-                return false
+                    return true
+                case .declined:
+                    return froopHistory.froop.froopHost == uid
+                default:
+                    return false
             }
         }
     }
@@ -120,7 +120,6 @@ struct FroopTabView: View {
     var body: some View {
         ZStack (alignment: .top){
             ZStack (alignment: .top) {
-        
                 
                 ZStack {
                     switch LocationServices.shared.selectedFroopTab {
@@ -144,27 +143,31 @@ struct FroopTabView: View {
                                                             appStateManager.aFHI = index // Reset the aFHI to this card's index
                                                             print(appStateManager.aFHI)
                                                             LocationServices.shared.selectedFroopTab = .map
+                                                            
+                                                            DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                                                                FroopManager.shared.createFroopHistoryArray() { froopHistory in
+                                                                    DispatchQueue.main.async {
+                                                                        FroopManager.shared.froopHistory = froopHistory
+                                                                        PrintControl.shared.printData("FroopHistory collection updated. Total count: \(FroopManager.shared.froopHistory.count)")
+                                                                    }
+                                                                }
+                                                            }
                                                         }
-//                                                        .onAppear {
-//                                                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-//                                                                currentIndex += 1
-//                                                            }
-//                                                        }
                                                 }
                                             }
                                             Spacer()
                                         }
                                         .padding(.top, 10)
                                         .padding(.bottom, 75)
-                                        //                            }
                                     }
                                 }
                                 .padding(.top, 100)
+
                                 VStack {
                                     ZStack {
                                         Rectangle()
                                             .foregroundColor(Color(red: 50/255, green: 46/255, blue: 62/255))
-                                            .opacity(0.8)
+                                            .opacity(1)
                                             .frame(height: 100)
                                         
                                         RoundedRectangle(cornerRadius: 10, style: .continuous)
@@ -193,8 +196,9 @@ struct FroopTabView: View {
                                     LocationServices.shared.selectedFroopTab = .map
                                     print(appStateManager.appStateToggle)
                                 }
-                            
                             }
+                            .padding(.top, 95)
+
                     }
                     
                     VStack {
@@ -202,9 +206,9 @@ struct FroopTabView: View {
                         ZStack {
                             RoundedRectangle(cornerRadius: 25)
                                 .foregroundColor(.white)
-                                .frame(height: AppStateManager.shared.appState == .active ? 50 : 0)
+                                .frame(width: UIScreen.screenWidth * 0.9, height: AppStateManager.shared.appState == .active ? 50 : 0)
                                 .opacity(0.75)
-                                .ignoresSafeArea()
+//                                .ignoresSafeArea()
                             
                             HStack (spacing: 35){
                                 tabButton(title: "info.square.fill", tab: .info)
@@ -215,15 +219,15 @@ struct FroopTabView: View {
                             }
                             .fontWeight(.light)
                         }
-                        .padding(.leading, 30)
-                        .padding(.trailing, 30)
-                        .offset(y: appStateManager.appState == .active && appStateManager.appStateToggle ? 6 : 175)
-                        .offset(y: MapManager.shared.tabUp ? 6 : 175)
+                        .padding(.horizontal)
+                        .offset(y: appStateManager.appState == .active && appStateManager.appStateToggle ? -25 : 100)
+                        .offset(y: MapManager.shared.tabUp ? -25 : 100)
+                        .animation(.smooth(duration: 0.3), value: appStateManager.appStateToggle)
                         .animation(.easeInOut(duration: 0.3), value: appStateManager.isFroopTabUp)
                         .animation(.easeInOut(duration: 0.3), value: MapManager.shared.tabUp)
                     }
-                    .padding(.bottom, 15)
                 }
+                .frame(width: UIScreen.screenWidth, height: UIScreen.screenHeight)
             }
         }
     }
@@ -238,7 +242,7 @@ struct FroopTabView: View {
         }) {
             Image(systemName: title)
                 .font(.system(size: 30))
-                .foregroundColor(LocationServices.shared.selectedFroopTab == tab ? Color(red: 249/255, green: 0/255, blue: 95/255) : Color(red: 50/255, green: 46/255, blue: 62/255).opacity(0.4))
+                .foregroundColor(LocationServices.shared.selectedFroopTab == tab ? Color(red: 249/255, green: 0/255, blue: 98/255) : Color(red: 50/255, green: 46/255, blue: 62/255).opacity(0.75))
                 .fontWeight(.thin)
                 .opacity(AppStateManager.shared.appState == .active ? 1.0 : 0.0)
         }

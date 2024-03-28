@@ -86,7 +86,8 @@ struct RootView: View {
                     }
                     
                 }
-                .navigationTitle("Froop Beta")
+                .ignoresSafeArea()
+                .navigationTitle("Froop")
                 .foregroundColor(colorScheme == .dark ? .white : Color(red: 255/255 ,green: 255/255,blue: 255/255))
                 .navigationBarTitleDisplayMode(.inline)
                 .toolbarBackground(Color.black.opacity(0.8), for: .navigationBar)
@@ -154,10 +155,7 @@ struct RootView: View {
             
             .fullScreenCover(isPresented: $notificationsManager.openGlobalChat) {
             } content: {
-                //                Text("hello")
-                //                    .onTapGesture {
-                //                        notificationsManager.openGlobalChat.toggle()
-                //                    }
+
                 FroopGlobalMessagesView()
             }
             

@@ -199,6 +199,7 @@ struct FroopInvitesCardView: View {
                             .fontWeight(.light)
                             .foregroundColor(Color(red: 249/255, green: 0/255, blue: 98/255 ))
                         VStack (alignment: .leading){
+                            
                             Text(froopHostAndFriends.froop.froopLocationtitle)
                                 .font(.system(size: 16))
                                 .fontWeight(.medium)

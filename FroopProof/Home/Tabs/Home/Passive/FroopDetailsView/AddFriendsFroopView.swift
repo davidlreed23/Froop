@@ -143,7 +143,7 @@ struct AddFriendsFroopView: View {
                     Task {
                         do {
 
-                            let modifiedInvitedFriends = try await froopDataController.addInvitedFriendstoFroop(invitedFriends: invitedFriends, instanceFroop: instanceFroop.froop)
+                            let modifiedInvitedFriends = try await froopDataController.addInvitedFriendstoFroop(invitedFriends: invitedFriends, instanceFroopId: instanceFroop.froop.froopId, instanceHostId: instanceFroop.froop.froopHost)
                             // Update the invitedFriends with the modified list
                             invitedFriends = modifiedInvitedFriends
                             self.showingAlert = true

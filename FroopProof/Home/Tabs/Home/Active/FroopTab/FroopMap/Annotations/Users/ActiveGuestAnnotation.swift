@@ -30,7 +30,7 @@ struct ActiveGuestAnnotation: View {
         self._globalChat = globalChat
         
         // Subscribe to updates
-        AppStateManager.shared.$currentFilteredFroopHistory
+        appStateManager.$currentFilteredFroopHistory
             .compactMap { $0[safe: AppStateManager.shared.aFHI]?.confirmedFriends }
             .flatMap { $0.publisher }
             .filter { $0.froopUserID == guest.froopUserID }

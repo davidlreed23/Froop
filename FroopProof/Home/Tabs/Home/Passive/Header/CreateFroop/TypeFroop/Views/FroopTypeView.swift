@@ -22,7 +22,7 @@ struct FroopTypeView: View {
     // @ObservedObject var froopDataListener = FroopDataListener.shared
     @State private var mapState = MapViewState.noInput
     @ObservedObject var changeView = ChangeView.shared
-    @ObservedObject var froopData: FroopData
+    @ObservedObject var froopData = FroopData.shared
     var onFroopNamed: (() -> Void)?
     @State private var showAlert = false
     @EnvironmentObject var locationViewModel: LocationSearchViewModel
@@ -35,8 +35,11 @@ struct FroopTypeView: View {
     var body: some View {
         ZStack {
             Color.offWhite
+//            Rectangle()
+//                .foregroundColor(Color.offWhite)
+//                .frame(width: UIScreen.screenWidth, height: UIScreen.screenHeight)
+            
             VStack {
-                
                 ScrollView (showsIndicators: false) {
                     VStack(spacing: 10) {
                         ForEach(
@@ -82,7 +85,6 @@ struct FroopTypeView: View {
                                     .frame(minWidth: 100, maxWidth: 120, minHeight: 100, maxHeight: 120)
                                     .background(Color.white)
                                     .cornerRadius(10)
-                                    // remove this line to get rid of the border
                                     // .border(Color.gray, width: 1)
                                     .background(RoundedRectangle(cornerRadius: 10)
                                         .fill(Color.offWhite))
@@ -90,16 +92,22 @@ struct FroopTypeView: View {
                                     .shadow(color: Color.white.opacity(0.7), radius: 7, x: -4, y: -4)
                                     .ignoresSafeArea()
                                     .onTapGesture {
+                                        froopData.froopType = froopType.id
+                                        print("🚼froopData.froopType \(froopData.froopType) / \(froopType.id)")
                                         changeView.froopTypeData = froopType
-
+                                        
+                                        if changeView.froopTypeData?.viewPositions[1] == 0 {
+                                            changeView.addressAtMyLocation = true
+                                        } else {
+                                            changeView.addressAtMyLocation = false
+                                        }
+                                        
                                         changeView.configureViewBuildOrder()
                                         //uploadFroopTypes()
 //                                        print(froopTypeStore.froopTypes)
                                         withAnimation(.spring()) {
                                             mapState = .searchingForLocation
                                         }
-                                        froopData.froopType = froopType.id
-                                        
                                         // If this froop type has associated topics, show them, otherwise proceed.
                                         if hasAssociatedTopics(for: froopType) {
                                             selectedTopic = froopType.name
@@ -137,7 +145,7 @@ struct FroopTypeView: View {
             .padding(.leading, 10)
             //            .padding(.trailing, 10)
         }
-        //        .ignoresSafeArea()
+                .ignoresSafeArea()
     }
     
     func uploadFroopTypes() {

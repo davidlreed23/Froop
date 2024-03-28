@@ -22,8 +22,6 @@ struct FroopBaseTView: View {
     let db = FirebaseServices.shared.db
     @State private var profileImageUrl: URL?
     
-    
-    
     var body: some View {
         ZStack (alignment: .top){
             Rectangle()
@@ -40,7 +38,6 @@ struct FroopBaseTView: View {
                         .frame(minWidth: 0,maxWidth: .infinity, minHeight: 125, maxHeight: 125, alignment: .top)
                         .foregroundColor(Color(red: 50/255, green: 46/255, blue: 62/255))
                         .opacity(0.5)
-                    //.ignoresSafeArea()
                         .offset(y: 0)
                     HStack {
                         Rectangle()
@@ -65,12 +62,9 @@ struct FroopBaseTView: View {
                                         TimerServices.shared.shouldCallupdateUserLocationInFirestore = false
                                         TimerServices.shared.shouldCallAppStateTransition = false
                                     }
-//                                    print("CreateNewFriend")
                                 } label: {
                                     Text("Edit")
                                         .foregroundColor(.white)
-                                    
-                                    
                                 }
                                 .padding(.trailing, 25)
                             }
@@ -78,24 +72,10 @@ struct FroopBaseTView: View {
                         }
                         .frame(height: 126)
                     }
-                    //                        .onAppear {
-                    //                            FirebaseServices.shared.getDownloadUrl(uid: uid) { url in
-                    //                                self.profileImageUrl = url
-                    //                            }
-                    //                        }
                     .padding(.top, 20)
                     
                 }
             }
-            
         }
-        
-        
-        //        .navigationTitle("Froop Beta 2")
-        //        .navigationBarTitleDisplayMode(.inline)
-        //        .toolbarBackground(Color.gray, for: .navigationBar)
-        //        .toolbarBackground(.visible, for: .navigationBar)
-        //        .toolbarColorScheme(.dark, for: .navigationBar)
-        
     }
 }

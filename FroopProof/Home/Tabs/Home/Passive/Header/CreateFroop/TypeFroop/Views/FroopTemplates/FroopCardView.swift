@@ -17,7 +17,7 @@ struct FroopCardView: View {
     @ObservedObject var printControl = PrintControl.shared
     @ObservedObject var locationServices = LocationServices.shared
     // @ObservedObject var froopDataListener = FroopDataListener.shared
-    @ObservedObject var froopData: FroopData
+    @ObservedObject var froopData = FroopData.shared
     @ObservedObject var changeView = ChangeView.shared
 
     
@@ -190,7 +190,6 @@ struct FroopCardView: View {
         }
         .onTapGesture {
             froopData.froopName = froop.froopName
-            froopData.froopType = froop.froopType
             froopData.froopLocationtitle = froop.froopLocationtitle
             froopData.froopLocationsubtitle = froop.froopLocationsubtitle
             froopData.froopLocationCoordinate = froop.froopLocationCoordinate ?? CLLocationCoordinate2D()
@@ -200,8 +199,37 @@ struct FroopCardView: View {
             froopData.froopMessage = froop.froopMessage
             froopData.froopList = froop.froopList
             froopData.template = froop.template
+            froopData.froopInvitedFriends = froop.froopInvitedFriends
             
-            changeView.pageNumber = 5
+            var froopTypeData: FroopType? {
+                FroopTypeStore.shared.froopTypes.first { $0.id == froop.froopType }
+            }
+        
+            changeView.froopTypeData = froopTypeData
+            
+            if let froopTypeData = FroopTypeStore.shared.froopTypes.first(where: { $0.id == froop.froopType }) {
+                froopData.froopType = froopTypeData.id
+            }
+            
+            if changeView.froopTypeData?.viewPositions[1] == 0 {
+                changeView.addressAtMyLocation = true
+            } else {
+                changeView.addressAtMyLocation = false
+            }
+            
+            changeView.configureViewBuildOrder()
+            
+            appStateManager.froopIsEditing = true
+            
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                if appStateManager.froopIsEditing {
+                    withAnimation {
+                        changeView.pageNumber = changeView.showSummary1
+                    }
+                } else {
+                    changeView.pageNumber += 1
+                }
+            }
 //            print(changeView.pageNumber)
         }
     }

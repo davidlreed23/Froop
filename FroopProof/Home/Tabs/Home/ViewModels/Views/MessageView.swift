@@ -26,7 +26,7 @@ struct MessageView: UIViewControllerRepresentable {
         let messageComposeViewController = MFMessageComposeViewController()
         messageComposeViewController.messageComposeDelegate = context.coordinator
         messageComposeViewController.recipients = [phoneNumber]
-        messageComposeViewController.body = "Hey, I'm now using an app called Froop to organize getting together with friends, It's in a closed Beta, but I have an invite for you.  Download it at https://testflight.apple.com/join/ex7x1Z8o and join me."
+        messageComposeViewController.body = "Hey, I'm now using an app called Froop to organize getting together with friends."
         return messageComposeViewController
     }
     

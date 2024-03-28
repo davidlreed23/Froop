@@ -19,7 +19,7 @@ struct FroopFroopsView: View {
     
     @ObservedObject var myData = MyData.shared
     @ObservedObject var changeView = ChangeView()
-    @ObservedObject var froopData = FroopData()
+    @ObservedObject var froopData = FroopData.shared
     @State private var thisFroopType: String = ""
     
     @State private var froopFeed: [FroopHostAndFriends] = []
