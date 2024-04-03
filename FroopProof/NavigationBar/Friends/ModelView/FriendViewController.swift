@@ -189,6 +189,7 @@ class FriendViewController: NSObject, ObservableObject, MFMessageComposeViewCont
     }
 
     func convertListToFriendData(uidList: [String], completion: @escaping ([UserData], Error?) -> Void) {
+        print("🚫froopId array \(uidList)")
         guard !uidList.isEmpty else {
             completion([], NSError(domain: "", code: -1, userInfo: [NSLocalizedDescriptionKey: "UID list is empty"]))
             return
@@ -204,6 +205,7 @@ class FriendViewController: NSObject, ObservableObject, MFMessageComposeViewCont
                     let friendData = UserData(dictionary: data)
                     friendDataArray.append(friendData ?? UserData())
                 } else if let error = error {
+                    friendDataArray = []
                     print("🚫Error fetching user: \(error.localizedDescription)")
                 }
                 dispatchGroup.leave()
@@ -217,6 +219,22 @@ class FriendViewController: NSObject, ObservableObject, MFMessageComposeViewCont
                 completion(friendDataArray, nil)
                 self.friendDataList = friendDataArray
                 print("friendDataList: \(self.friendDataList)")
+            }
+        }
+    }
+    
+    func getFroopInvitedFriends(froopId: String, hostId: String, completion: @escaping ([String], Error?) -> Void) {
+        guard !froopId.isEmpty else {
+            print("🚫froopId: \(froopId), / hostId: \(hostId)")
+            completion([], NSError(domain: "", code: -1, userInfo: [NSLocalizedDescriptionKey: "Froop ID is empty"]))
+            return
+        }
+        let froopRef = db.collection("users").document(hostId).collection("myFroops").document(froopId)
+        froopRef.getDocument { document, error in
+            if let document = document, document.exists, let froopInvitedFriends = document.data()?["froopInvitedFriends"] as? [String] {
+                completion(froopInvitedFriends, nil)
+            } else {
+                completion([], error ?? NSError(domain: "", code: -1, userInfo: [NSLocalizedDescriptionKey: "Friend UIDs not found"]))
             }
         }
     }

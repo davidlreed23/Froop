@@ -45,9 +45,7 @@ struct FroopSaveButtonSummaryView: View {
 //                        froopData.froopType = changeView.froopTypeData.id
                         if froopData.froopType == 5001 {
                             froopData.froopName = ("Picking up \(MyData.shared.firstName) \(MyData.shared.lastName)")
-                        } else {
-                            froopData.froopName = ("No Name")
-                        }
+                        } 
                         // Save the Froop document and obtain the froopId
                         let froopId = try await froopData.saveData()
                         
@@ -90,8 +88,4 @@ struct FroopSaveButtonSummaryView: View {
         }
         .ignoresSafeArea()
     }
-}
-
-#Preview {
-    FroopSaveButtonSummaryView()
 }

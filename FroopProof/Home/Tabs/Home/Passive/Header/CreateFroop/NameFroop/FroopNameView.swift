@@ -86,7 +86,7 @@ struct FroopNameView: View {
                         DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
                             if appStateManager.froopIsEditing {
                                 withAnimation {
-                                    changeView.pageNumber = changeView.showSummary1
+                                    changeView.pageNumber = changeView.showSummary
                                 }
                             } else {
                                 changeView.pageNumber += 1

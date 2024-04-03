@@ -36,6 +36,7 @@ struct FroopSummaryView: View {
     @State private var showMap = false
     @State private var hide: Bool = false
     @State private var changeFroopType: Bool = false
+    @State private var changeTemplateInvites = false
     
     
     var body: some View {
@@ -92,6 +93,7 @@ struct FroopSummaryView: View {
                     }
                     Spacer()
                 }
+                
                 ScrollView (showsIndicators: false) {
                     
                     //MARK: Title
@@ -102,6 +104,14 @@ struct FroopSummaryView: View {
                     //MARK: SingleGuest View
                     if changeView.showGuest != 0 {
                         FroopGuestSummaryView()
+                    }
+                    
+                    //MARK: MultipleGuests View
+                    if changeView.showGuests != 0 {
+                        FroopGuestsSummaryView()
+                            .onTapGesture {
+                                changeTemplateInvites = true
+                            }
                     }
                     
                     //MARK: Froop Date
@@ -124,6 +134,8 @@ struct FroopSummaryView: View {
                         }
                 }
                 .padding(.top, 15)
+                .frame(height: UIScreen.screenHeight * 0.575)
+
                 Spacer()
 
             }
@@ -156,6 +168,9 @@ struct FroopSummaryView: View {
             .alert(isPresented: $changeFroopType) {
                 Alert(title: Text("About Changing Froop Type"), message: Text("If you want to change your Froop Type you should tap Exit in the top left navigation bar.  You can them proceed to selecting a new Froop Type.  However, you will lose any data you have added to this Froop when you do."), dismissButton: .default(Text("I Understand")))
             }
+            .alert(isPresented: $changeTemplateInvites) {
+                Alert(title: Text("Templates"), message: Text("Templates are designed to make creating Froops for repeating activities easy.  If you need to change the invite list please create a New Froop."), dismissButton: .default(Text("Ok")))
+            }
             .onChange(of: payManager.showIAPView) { oldValue, newValue in
                 if newValue {
                     Task {
@@ -169,7 +184,6 @@ struct FroopSummaryView: View {
                 }
             }
         }
-
     }
     
     func uploadData(froopData: FroopData) {

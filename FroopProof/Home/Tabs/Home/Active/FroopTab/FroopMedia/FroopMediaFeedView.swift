@@ -306,21 +306,29 @@ struct ToggleViewButton: View {
                     numColumns = (numColumns == 1) ? 3 : 1
                 }
             }, label: {
-                HStack(spacing: 5) {
-                    Spacer()
-                    Text(numColumns == 1 ? "CHANGE TO GRID VIEW" : "CHANGE TO EXPANDED VIEW")
-                        .font(.system(size: 14))
-                        .fontWeight(.bold)
-                        .foregroundColor(Color(red: 249/255, green: 0/255, blue: 95/255).opacity(1))
-                    Image(systemName: numColumns == 1 ? "square.grid.3x3.square" : "square.dashed.inset.filled")
-                        .font(.system(size: 36))
-                        .fontWeight(.ultraLight)
-                        .foregroundColor(Color(red: 249/255, green: 0/255, blue: 95/255))
+                ZStack (alignment: .center) {
+                    Rectangle ()
+                        .frame(width: UIScreen.screenWidth + 50, height: 50)
+                        .foregroundColor(Color(.white).opacity(0.5))
+                        .ignoresSafeArea()
+                    
+                    HStack(spacing: 5) {
+                        Spacer()
+                        Text(numColumns == 1 ? "CHANGE TO GRID VIEW" : "CHANGE TO EXPANDED VIEW")
+                            .font(.system(size: 14))
+                            .fontWeight(.bold)
+                            .foregroundColor(Color(red: 249/255, green: 0/255, blue: 95/255).opacity(1))
+                        Image(systemName: numColumns == 1 ? "square.grid.3x3.square" : "square.dashed.inset.filled")
+                            .font(.system(size: 36))
+                            .fontWeight(.ultraLight)
+                            .foregroundColor(Color(red: 249/255, green: 0/255, blue: 95/255))
+                    }
+                    .frame(width: UIScreen.screenWidth, height: 50)
+                    .padding(.trailing, 15)
+
                 }
             })
             .background(.clear)
-            .padding(.trailing, 15)
-            .padding(.top, 15)
         }
         .frame(maxHeight: 50)
     }
@@ -351,7 +359,7 @@ struct DownloadedMediaGridView: View {
                 .background(.ultraThinMaterial)
                 .ignoresSafeArea()
             VStack {
-                ToggleViewButton(numColumns: $numColumns)
+                ToggleViewButton(numColumns: $numColumns) 
                 GeometryReader { geometry in
                     ScrollView(showsIndicators: false) {
                         LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 5), count: numColumns), spacing: 3) {

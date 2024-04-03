@@ -7,31 +7,29 @@
 
 import Foundation
 import CoreLocation
-import Foundation
-import CoreLocation
+import SwiftUI
 
 
 class TimeZoneManager: NSObject, ObservableObject, CLLocationManagerDelegate {
     static let shared = TimeZoneManager()
-    private let locationManager = CLLocationManager()
     @Published var userAccountTimeZone: TimeZone?
     @Published var userLocationTimeZone: TimeZone?
     @Published var froopTimeZone: TimeZone?
     @Published var locationTimeZone: TimeZone?
-    
+    var currentTimeZone: TimeZone? {
+        return TimeZone.current
+    }
     
     override init() {
         super.init()
-        self.locationManager.delegate = self
-        self.locationManager.requestWhenInUseAuthorization()
-        self.locationManager.startUpdatingLocation()
     }
     
     func convertDateToLocalTime(for date: Date) -> Date {
         //print("convertDataToLocalTime Function is firing: ⏱️⏱️")
         //print("UTC Date: \(date) ⏱️⏱️⏱️⏱️")
 
-        if let timeZone = TimeZoneManager.shared.userLocationTimeZone {
+        if let timeZone = currentTimeZone {
+//            print("🕐🕑🕒 \(timeZone) / and \(String(describing: currentTimeZone))")
             let secondsFromGMT = timeZone.secondsFromGMT(for: date)
             let localDate = Date(timeInterval: TimeInterval(secondsFromGMT), since: date)
             //print("Local Date: \(localDate) ⏱️⏱️⏱️⏱️⏱️")
@@ -40,7 +38,6 @@ class TimeZoneManager: NSObject, ObservableObject, CLLocationManagerDelegate {
             let dateFormatter = DateFormatter()
             dateFormatter.timeZone = timeZone
             dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
-            let localDateString = dateFormatter.string(from: date)
             //print("Formatted Local Date: \(localDateString)")
 
             return localDate

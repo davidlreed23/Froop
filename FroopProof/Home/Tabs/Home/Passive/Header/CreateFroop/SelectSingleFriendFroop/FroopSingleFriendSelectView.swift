@@ -70,7 +70,7 @@ struct FroopSingleFriendSelectView: View {
                 }
             
             VStack {
-                Text("Who will pick you up? \(changeView.showGuest)")
+                Text("Who will pick you up?")
                     .font(.system(size: 36))
                     .fontWeight(.thin)
                     .multilineTextAlignment(.center)
@@ -106,30 +106,17 @@ struct FroopSingleFriendSelectView: View {
                             DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
                                 if appStateManager.froopIsEditing {
                                     withAnimation {
-                                        changeView.pageNumber = changeView.showSummary1
+                                        changeView.pageNumber = changeView.showSummary
                                     }
                                 } else {
                                     changeView.pageNumber += 1
                                 }
                             }
                             print("Friend invited: \(selectedFriend.firstName) \(selectedFriend.lastName)")
-                            // Clear the selected friend if needed
-                            //                            self.selectedFriend = nil
                         }
                     }
-//                    } else {
-//                        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-//                            if appStateManager.froopIsEditing {
-//                                withAnimation {
-//                                    changeView.pageNumber = changeView.showSummary1
-//                                }
-//                            } else {
-//                                changeView.pageNumber += 1
-//                            }
-//                        }
-//                    }
                 }) {
-                    Text(changeView.friendSelected ? "Confirm Friend" : "Select Later")
+                    Text(changeView.singleUserData.froopUserID == "" ? "Confirm Friend" : "Select Later")
                         .font(.headline)
                         .foregroundColor(Color(red: 50/255, green: 46/255, blue: 62/255))
                         .font(.system(size: 24))

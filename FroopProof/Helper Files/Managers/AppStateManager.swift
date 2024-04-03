@@ -141,9 +141,9 @@ class AppStateManager: ObservableObject {
     @Published var archiveAppChat: Bool = false
     @Published var centerCoordinate: CLLocationCoordinate2D?
     @Published var inMapChat: Bool = false
+    @Published var activeOrPassiveOnAppear: Bool = true
     
     private let timerKey = "appStateManagerTimer"
-    
     var timerCancellable: Cancellable?
     var now = Date()
     var timer: Timer?
@@ -156,11 +156,11 @@ class AppStateManager: ObservableObject {
     var updateTimer: Timer?
     var currentStage: Stage {
         let now = Date()
-        if now < currentFilteredFroopHistory[safe: aFHI]?.froop.froopStartTime ?? Date(){
+        if now < currentFilteredFroopHistory[safe: aFHI]?.froop.froopStartTime ?? Date() {
             return .starting
-        } else if now > currentFilteredFroopHistory[safe: aFHI]?.froop.froopStartTime ?? Date() && now < currentFilteredFroopHistory[safe: aFHI]?.froop.froopStartTime ?? Date() {
+        } else if now > currentFilteredFroopHistory[safe: aFHI]?.froop.froopStartTime ?? Date() && now < currentFilteredFroopHistory[safe: aFHI]?.froop.froopEndTime ?? Date() {
             return .running
-        } else if now > currentFilteredFroopHistory[safe: aFHI]?.froop.froopStartTime ?? Date() - (5 * 60) && now < currentFilteredFroopHistory[safe: aFHI]?.froop.froopStartTime ?? Date() {
+        } else if now > currentFilteredFroopHistory[safe: aFHI]?.froop.froopEndTime ?? Date() - (5 * 60) && now < currentFilteredFroopHistory[safe: aFHI]?.froop.froopEndTime ?? Date() {
             return .ending
         } else {
             return .none
@@ -190,6 +190,7 @@ class AppStateManager: ObservableObject {
             return
         }
         startTimer()
+        TimerServices.shared.startFroopHistoryArrayTimer()
     }
     
     var printControl: PrintControl {
@@ -218,7 +219,7 @@ class AppStateManager: ObservableObject {
         
         self.timer?.invalidate()
         
-        self.timer = Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(self.timerFired), userInfo: nil, repeats: true)
+        self.timer = Timer.scheduledTimer(timeInterval: 10, target: self, selector: #selector(self.timerFired), userInfo: nil, repeats: true)
         
     }
     

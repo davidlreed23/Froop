@@ -144,14 +144,14 @@ struct FroopTabView: View {
                                                             print(appStateManager.aFHI)
                                                             LocationServices.shared.selectedFroopTab = .map
                                                             
-                                                            DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-                                                                FroopManager.shared.createFroopHistoryArray() { froopHistory in
-                                                                    DispatchQueue.main.async {
-                                                                        FroopManager.shared.froopHistory = froopHistory
-                                                                        PrintControl.shared.printData("FroopHistory collection updated. Total count: \(FroopManager.shared.froopHistory.count)")
-                                                                    }
-                                                                }
-                                                            }
+//                                                            DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+//                                                                FroopManager.shared.createFroopHistoryArray() { froopHistory in
+//                                                                    DispatchQueue.main.async {
+//                                                                        FroopManager.shared.froopHistory = froopHistory
+//                                                                        PrintControl.shared.printData("FroopHistory collection updated. Total count: \(FroopManager.shared.froopHistory.count)")
+//                                                                    }
+//                                                                }
+//                                                            }
                                                         }
                                                 }
                                             }
@@ -238,6 +238,9 @@ struct FroopTabView: View {
         Button(action: {
             if AppStateManager.shared.appState != .passive {
                 LocationServices.shared.selectedFroopTab = tab
+            }
+            if LocationServices.shared.selectedFroopTab == .map {
+                TimerServices.shared.startAnnotationTimer()
             }
         }) {
             Image(systemName: title)

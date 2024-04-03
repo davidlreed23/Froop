@@ -79,70 +79,72 @@ struct DetailsHeaderView: View {
                     .frame(height: 200)
                     .foregroundColor(colorScheme == .dark ? Color(red: 50/255, green: 46/255, blue: 62/255) : Color(red: 50/255, green: 46/255, blue: 62/255))
                 if FirebaseServices.shared.uid == froopManager.selectedFroopHistory.host.froopUserID {
-                    if myData.premiumAccount || myData.professionalAccount {
-                        ZStack {
-                            VStack {
-                                HStack {
+                    if froopManager.selectedFroopHistory.froop.froopType != 5001 {
+                        if myData.premiumAccount || myData.professionalAccount {
+                            ZStack {
+                                VStack {
+                                    HStack {
+                                        Spacer()
+                                        if templateMade {
+                                            ZStack {
+                                                RoundedRectangle(cornerRadius: 10)
+                                                    .fill(Color(red: 50/255, green: 46/255, blue: 62/255))
+                                                    .frame(width: 70, height: 50)
+                                                    .shadow(color: Color.white.opacity(0.3), radius: 4, x: 4, y: 4)
+                                                    .shadow(color: Color(.black).opacity(1), radius: 4, x: -4, y: -4)
+                                                VStack {
+                                                    Text("Made From")
+                                                        .font(.system(size: 12))
+                                                        .fontWeight(.light)
+                                                        .foregroundColor(.white)
+                                                    Text("Template")
+                                                        .font(.system(size: 12))
+                                                        .fontWeight(.light)
+                                                        .foregroundColor(.white)
+                                                }
+                                            }
+                                        } else {
+                                            ZStack {
+                                                RoundedRectangle(cornerRadius: 10)
+                                                    .fill(Color(red: 50/255, green: 46/255, blue: 62/255))
+                                                    .frame(width: 70, height: 50)
+                                                    .shadow(color: Color.white.opacity(0.1), radius: 4, x: 4, y: 4)
+                                                    .shadow(color: Color(.black).opacity(1), radius: 4, x: -4, y: -4)
+                                                VStack {
+                                                    Text(froopManager.selectedFroopHistory.froop.template ? "" : "Create")
+                                                        .font(.system(size: 12))
+                                                        .fontWeight(.light)
+                                                        .foregroundColor(.white)
+                                                    Text(froopManager.selectedFroopHistory.froop.template ? "" : "Template")
+                                                        .font(.system(size: 12))
+                                                        .fontWeight(.light)
+                                                        .foregroundColor(.white)
+                                                }
+                                            }
+                                        }
+                                    }
                                     Spacer()
-                                    if templateMade {
-                                        ZStack {
-                                            RoundedRectangle(cornerRadius: 10)
-                                                .fill(Color(red: 50/255, green: 46/255, blue: 62/255))
-                                                .frame(width: 70, height: 50)
-                                                .shadow(color: Color.white.opacity(0.3), radius: 4, x: 4, y: 4)
-                                                .shadow(color: Color(.black).opacity(1), radius: 4, x: -4, y: -4)
-                                            VStack {
-                                                Text("Made From")
-                                                    .font(.system(size: 12))
-                                                    .fontWeight(.light)
-                                                    .foregroundColor(.white)
-                                                Text("Template")
-                                                    .font(.system(size: 12))
-                                                    .fontWeight(.light)
-                                                    .foregroundColor(.white)
-                                            }
-                                        }
-                                    } else {
-                                        ZStack {
-                                            RoundedRectangle(cornerRadius: 10)
-                                                .fill(Color(red: 50/255, green: 46/255, blue: 62/255))
-                                                .frame(width: 70, height: 50)
-                                                .shadow(color: Color.white.opacity(0.1), radius: 4, x: 4, y: 4)
-                                                .shadow(color: Color(.black).opacity(1), radius: 4, x: -4, y: -4)
-                                            VStack {
-                                                Text(froopManager.selectedFroopHistory.froop.template ? "" : "Create")
-                                                    .font(.system(size: 12))
-                                                    .fontWeight(.light)
-                                                    .foregroundColor(.white)
-                                                Text(froopManager.selectedFroopHistory.froop.template ? "" : "Template")
-                                                    .font(.system(size: 12))
-                                                    .fontWeight(.light)
-                                                    .foregroundColor(.white)
-                                            }
+                                }
+                                .padding(.top, 60)
+                                .padding(.trailing, 15)
+                                .onTapGesture {
+                                    //                        print("tapped")
+                                    templateMade = true
+                                    froopManager.saveFroopAsTemplate(froopId: "froopId") { error in
+                                        if let error = error {
+                                            print("🚫Error copying froop to templates: \(error.localizedDescription)")
+                                        } else {
+                                            print("Froop successfully copied to templates with confirmed friends.")
                                         }
                                     }
                                 }
-                                Spacer()
                             }
-                            .padding(.top, 60)
-                            .padding(.trailing, 15)
-                            .onTapGesture {
-                                //                        print("tapped")
-                                templateMade = true
-                                froopManager.saveFroopAsTemplate(froopId: "froopId") { error in
-                                    if let error = error {
-                                        print("🚫Error copying froop to templates: \(error.localizedDescription)")
-                                    } else {
-                                        print("Froop successfully copied to templates with confirmed friends.")
-                                    }
-                                }
-                            }
+                            .frame(maxHeight: 200)
                         }
-                        .frame(maxHeight: 200)
+                    } else {
+                        EmptyView()
+                            .frame(height: 200)
                     }
-                } else {
-                    EmptyView()
-                        .frame(height: 200)
                 }
             }
             

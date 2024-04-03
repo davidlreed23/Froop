@@ -20,6 +20,7 @@ struct ActiveMapView: View {
     @ObservedObject var froopHistory: FroopHistory
     @ObservedObject var dataController = DataController.shared
     @ObservedObject var annotationManager = AnnotationManager.shared
+    @ObservedObject var timerServices = TimerServices.shared
     
     /// TRACKING PROPERTIESS
     @State private var mapRegion: MKCoordinateRegion = MKCoordinateRegion.myRegion
@@ -66,7 +67,6 @@ struct ActiveMapView: View {
         
     init(froopHistory: FroopHistory, globalChat: Binding <Bool>) {
         UITabBar.appearance().isHidden = true
-        _globalChat = globalChat
         self.froopHistory = FroopHistory(
             froop: Froop(dictionary: [:]),
             host: UserData(),
@@ -86,6 +86,7 @@ struct ActiveMapView: View {
                 froopVideoThumbnails: []
             )
         )
+        _globalChat = globalChat
     }
     
     var body: some View {
@@ -129,7 +130,6 @@ struct ActiveMapView: View {
                             .tag(appStateManager.currentFilteredFroopHistory[appStateManager.aFHI].froop.froopId)
                     }
                     .frame(width: UIScreen.screenWidth, height: UIScreen.screenHeight)
-
                     .onChange(of: mapSelection) { oldValue, newValue in
                         if let selectedId = newValue, selectedId != selectedMarkerId {
                             selectedMarkerId = selectedId
@@ -181,8 +181,10 @@ struct ActiveMapView: View {
                             MapManager.shared.cameraPosition = .region(region)
                         }
                         
-                        locationManager.startUpdating()
-                        
+                        Task {
+                            await locationManager.startLiveLocationUpdates()
+                        }
+                        timerServices.startAnnotationTimer()
                         mapSelection = appStateManager.currentFilteredFroopHistory[appStateManager.aFHI].froop.froopId
                         DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
                             // Ensure user location is available before fetching the route

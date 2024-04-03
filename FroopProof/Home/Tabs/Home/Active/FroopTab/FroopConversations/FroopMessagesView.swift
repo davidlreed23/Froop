@@ -87,7 +87,7 @@ struct FroopMessagesView: View {
             VStack {
                 HStack {
                     Spacer()
-                    Text("FROOP")
+                    Text("FROOP") 
                         .font(.system(size: 24))
                         .fontWeight(.bold)
                         .foregroundColor(.white)

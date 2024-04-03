@@ -273,7 +273,6 @@ class FroopDataController: NSObject, ObservableObject, MFMessageComposeViewContr
         }
     }
     
-    
     func moveArchivedInvitation(uid: String, froopId: String, froopHost: String) {
         print("♻️ moveArchivedInvitation function firing")
         print("♻️ uid: \(uid), froopId: \(froopId), froopHost: \(froopHost)")
@@ -332,7 +331,6 @@ class FroopDataController: NSObject, ObservableObject, MFMessageComposeViewContr
             }
         }
     }
-    
     
     func moveFroopInvitation(uid: String, froopId: String, froopHost: String, decision: String) {
         guard !uid.isEmpty, !froopId.isEmpty, !froopHost.isEmpty else {
@@ -578,6 +576,8 @@ class FroopDataController: NSObject, ObservableObject, MFMessageComposeViewContr
             }
         }
     }
+    
+    
     
     func addInvitedFriendstoFroop(invitedFriends: [UserData], instanceFroopId: String, instanceHostId: String) async throws -> [UserData] {
         print("🚦 FirebaseServices.shared.uid:  \(FirebaseServices.shared.uid)")

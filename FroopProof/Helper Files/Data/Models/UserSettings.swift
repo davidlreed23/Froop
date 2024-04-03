@@ -70,10 +70,6 @@ class UserSettings: NSObject, ObservableObject, CLLocationManagerDelegate {
         }
     }
   
-    func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
-        checkLocationPermissions()
-    }
-  
     func checkNotificationPermissions() {
         UNUserNotificationCenter.current().getNotificationSettings { settings in
             DispatchQueue.main.async {

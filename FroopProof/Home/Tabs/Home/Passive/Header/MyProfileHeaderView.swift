@@ -15,6 +15,8 @@ struct MyProfileHeaderView: View {
     @ObservedObject var dataController = DataController.shared
     @ObservedObject var changeView = ChangeView.shared
     @ObservedObject var froopData = FroopData.shared
+    @ObservedObject var timerServices = TimerServices.shared
+    @State var locationManager = LocationManager.shared
     @Environment(\.colorScheme) var colorScheme
     // @ObservedObject var froopDataListener = FroopDataListener.shared
     @ObservedObject var timeZoneManager: TimeZoneManager = TimeZoneManager()
@@ -92,6 +94,9 @@ struct MyProfileHeaderView: View {
                                 
                             }
                         }
+                        .onAppear {
+                            timerServices.stopAnnotationTimer()
+                        }
                     
                     VStack(alignment: .center) {
                         
@@ -161,10 +166,11 @@ struct MyProfileHeaderView: View {
                                     
                                 }
                                 .onTapGesture {
+                                    TimerServices.shared.shouldCallupdateUserLocationInFirestore = false
                                     appStateManager.froopIsEditing = false
                                     TimerServices.shared.shouldCallupdateUserLocationInFirestore = false
                                     TimerServices.shared.shouldCallAppStateTransition = false
-                                    LocationManager.shared.requestAlwaysAuthorization()
+                                    locationManager.requestAlwaysAuthorization()
                                     //                                    self.showSheet = false  // Dismiss the blurred sheet
                                     ChangeView.shared.pageNumber = 1
                                     self.walkthroughScreen = NFWalkthroughScreen(froopAdded: $froopAdded)
@@ -227,7 +233,7 @@ struct MyProfileHeaderView: View {
                         ZStack {
                             walkthroughScreen
                         }
-                        .navigationTitle("Froop Creation") // Set your title
+                        .navigationTitle("Froop Creation")
                         .foregroundColor(colorScheme == .dark ? .white : .black)
                         .navigationBarTitleDisplayMode(.inline)
                         .toolbarBackground(Color.black.opacity(0.8), for: .navigationBar)
@@ -239,6 +245,7 @@ struct MyProfileHeaderView: View {
                                 Button(action: {
                                     self.changeView.showNFWalkthroughScreen = false
                                     froopData.resetData()
+                                    TimerServices.shared.shouldCallupdateUserLocationInFirestore = true
                                 }) {
                                     HStack (spacing: 0){
                                         Image(systemName: "chevron.left")

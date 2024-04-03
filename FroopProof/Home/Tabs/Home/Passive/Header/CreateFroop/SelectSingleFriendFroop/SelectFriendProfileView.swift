@@ -69,7 +69,6 @@ struct SelectFriendProfileView: View {
         }
         .onTapGesture {
             handleTap(for: friend.froopUserID)
-            changeView.friendSelected.toggle()
         }
     }
     

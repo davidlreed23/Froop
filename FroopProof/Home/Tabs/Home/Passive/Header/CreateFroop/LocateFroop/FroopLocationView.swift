@@ -33,9 +33,11 @@ struct FroopLocationView: View {
                 FroopMapViewRepresentable(froopData: froopData, mapState: $mapState)
                     .blur(radius: mapState == .searchingForLocation ? 10 : 0)
                     .onAppear {
-                        LocationManager.shared.startUpdating()
+                        Task {
+                            await locationManager.startLiveLocationUpdates()
+                        }
                         DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {
-                           // LocationManager.shared.stopUpdating()
+                            // LocationManager.shared.stopUpdating()
                         }
                     }
                 Rectangle()

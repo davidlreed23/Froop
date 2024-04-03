@@ -75,10 +75,10 @@ struct DetailsMapView: View {
                         
                         VStack  {
                             Text("Open")
-                                .foregroundColor(colorScheme == .dark ? .white : .white)
+                                .foregroundColor(colorScheme == .dark ? Color(red: 50/255, green: 46/255, blue: 62/255) : Color(red: 50/255, green: 46/255, blue: 62/255))
                                 .font(.system(size: 16))
                             Text("Map")
-                                .foregroundColor(colorScheme == .dark ? .white : .white)
+                                .foregroundColor(colorScheme == .dark ? Color(red: 50/255, green: 46/255, blue: 62/255) : Color(red: 50/255, green: 46/255, blue: 62/255))
                                 .font(.system(size: 16))
                         }
                         .font(.system(size: 12))

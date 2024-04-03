@@ -30,7 +30,6 @@ struct AddFriendsActiveFroopView: View {
     var uid = FirebaseServices.shared.uid
     var db = FirebaseServices.shared.db
     @ObservedObject var friendData: UserData = UserData()
-    @ObservedObject var userData = UserData()
     @ObservedObject var friendViewController = FriendViewController.shared
     @ObservedObject var friendListData = FriendListData(dictionary: [:])
     @Binding var friendDetailOpen: Bool
@@ -110,37 +109,28 @@ struct AddFriendsActiveFroopView: View {
                     .multilineTextAlignment(.center)
                     .padding(.top, 100)
                     .foregroundColor(Color(red: 50/255, green: 46/255, blue: 62/255))
+                
+                SearchBar(text: $searchText)
                     .onAppear {
-                        FriendViewController.shared.getUserFriends(userID: uid) { uidFriendsList, error in
-                            if let error = error {
-                                print("🚫Error getting user friends: \(error.localizedDescription)")
-                                return
-                            }
-                            FriendViewController.shared.convertListToFriendData(uidList: uidFriendsList) { userFriendList, error in
-                                if let error = error {
-                                    print("🚫Error converting list to friend data: \(error.localizedDescription)")
-                                    return
-                                }
-                                self.userFriendList = userFriendList
-                            }
-                        }
+                        FirebaseServices.shared.checkSMSInvitations()
                     }
+                    .padding(.leading, 25)
+                    .padding(.trailing, 25)
+                    .padding(.bottom, 15)
+                    .padding(.top, 15)
+                    .font(.system(size: 18))
+                    .foregroundColor(Color(red: 50/255, green: 46/255, blue: 62/255))
                 
                 ScrollView(showsIndicators: false) {
                     VStack(spacing: 0) {
-                        ForEach(filteredFriends.chunked(into: 3), id: \.self) { friendGroup in
+                        ForEach(uniqueFriends(friends: myData.myFriends, searchText: searchText).chunked(into: 3), id: \.self) { friendGroup in
                             HStack(spacing: 0) {
                                 ForEach(friendGroup, id: \.id) { friend in
-                                    AddFriendCardView(
-                                        friendDetailOpen: $friendDetailOpen,
+                                    ActiveAddFriendCardView(
                                         invitedFriends: $invitedFriends, // Provide a non-optional binding
                                         friend: friend,
                                         detailGuests: $detailGuests
                                     )
-//                                        .onAppear {
-//                                            print("Processing friend: \(friend.firstName)")
-//                                            
-//                                        }
                                 }
                             }
                         }
@@ -228,6 +218,21 @@ struct AddFriendsActiveFroopView: View {
             }
         }
     }
+    
+    func uniqueFriends(friends: [UserData], searchText: String) -> [UserData] {
+        var uniqueFriendIDs = Set<String>()
+        var uniqueFriends: [UserData] = []
+
+        for friend in friends {
+            if uniqueFriendIDs.insert(friend.froopUserID).inserted {
+                if searchText.isEmpty || friend.firstName.localizedCaseInsensitiveContains(searchText) || friend.lastName.localizedCaseInsensitiveContains(searchText) {
+                    uniqueFriends.append(friend)
+                }
+            }
+        }
+        return uniqueFriends
+    }
+    
 }
 
 

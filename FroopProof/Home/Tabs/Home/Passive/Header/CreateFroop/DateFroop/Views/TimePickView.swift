@@ -87,7 +87,7 @@ struct TimePickView: View {
                     } else {
                         scrollTrig.updateDateFromIndices()
                         if appStateManager.froopIsEditing {
-                            changeView.pageNumber = changeView.showSummary1
+                            changeView.pageNumber = changeView.showSummary
                         } else {
                             changeView.pageNumber += 1
                         }

@@ -108,7 +108,7 @@ struct OnboardThree: View {
                     
                     ///PHONE TEXT FIELD
                     VStack (alignment: .leading){
-                        Text("ADD PHONE NUMBER \(String(describing: OTPSent))")
+                        Text("ADD PHONE NUMBER)")
                             .font(.system(size: 14))
                             .fontWeight(/*@START_MENU_TOKEN@*/.bold/*@END_MENU_TOKEN@*/)
                             .foregroundColor(Color(red: 50/255, green: 46/255, blue: 62/255))

@@ -47,6 +47,7 @@ class AnnotationManager: ObservableObject {
     func manuallyUpdateAnnotations() {
         let updatedGuests = guestAnnotations.map { guest -> UserData in
             if let updatedGuest = AppStateManager.shared.currentFilteredFroopHistory.first?.confirmedFriends.first(where: { $0.froopUserID == guest.froopUserID }) {
+                
                 // Assuming you want to update the coordinate and potentially other fields
                 guest.coordinate = updatedGuest.coordinate
                 // Add any other property updates here
@@ -54,6 +55,7 @@ class AnnotationManager: ObservableObject {
             return guest
         }
         DispatchQueue.main.async {
+            print("♏️♏️ \(updatedGuests)")
             self.guestAnnotations = updatedGuests
         }
     }
@@ -61,7 +63,7 @@ class AnnotationManager: ObservableObject {
     func refreshGuestAnnotations() {
         // Assuming AppStateManager has a method or property to access the current guest list with updated UserData
         let updatedGuests = AppStateManager.shared.currentFilteredFroopHistory.first?.confirmedFriends ?? []
-        
+        print("♏️ \(updatedGuests)")
         // Iterate through the local annotations to update their details
         for (index, guestAnnotation) in guestAnnotations.enumerated() {
             if let updatedGuest = updatedGuests.first(where: { $0.froopUserID == guestAnnotation.froopUserID }) {

@@ -190,7 +190,9 @@ struct PassiveMapView: View {
                         MapManager.shared.cameraPosition = .region(region)
                     }
                     
-                    locationManager.startUpdating()
+                    Task {
+                        await locationManager.startLiveLocationUpdates()
+                    }
                     
                     mapSelection = froopManager.selectedFroopHistory.froop.froopId
                     DispatchQueue.main.asyncAfter(deadline: .now() + 1) {

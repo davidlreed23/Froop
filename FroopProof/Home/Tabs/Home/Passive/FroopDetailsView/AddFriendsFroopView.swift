@@ -25,7 +25,6 @@ struct AddFriendsFroopView: View {
     @ObservedObject var froopDataController = FroopDataController.shared
     @ObservedObject var froopManager = FroopManager.shared
     
-    
     var db = FirebaseServices.shared.db
     var uid = FirebaseServices.shared.uid
     @ObservedObject var friendData: UserData = UserData()
@@ -63,6 +62,7 @@ struct AddFriendsFroopView: View {
             froopVideoThumbnails: []
         )
     )
+    @Binding var selectedFroopHistory: FroopHistory
     @Environment(\.presentationMode) var presentationMode
     @State private var showingAlert = false
     
@@ -76,6 +76,12 @@ struct AddFriendsFroopView: View {
         return FriendViewController.shared.filteredFriends(friends: userFriendList, searchText: searchText)
     }
     
+    var isSelectedFroopInFilteredHistory: Bool {
+        appStateManager.currentFilteredFroopHistory.contains { froopHistory in
+            froopHistory.froop.froopId == froopManager.selectedFroopHistory.froop.froopId
+        }
+    }
+    
     var blurRadius = 10
     
     var body: some View {
@@ -83,10 +89,12 @@ struct AddFriendsFroopView: View {
             Rectangle()
                 .foregroundColor(.white)
                 .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)
-            
                 .onAppear {
-                    if appStateManager.appState == .passive {
-                        instanceFroop = froopManager.selectedFroopHistory
+                    instanceFroop = froopManager.selectedFroopHistory
+                    invitedFriends = instanceFroop.confirmedFriends
+                    invitedFriends.forEach { friend in
+                        print("😭 Printing Friend Details: \(friend.firstName) froopUserID: \(friend.froopUserID)")
+                        print("✴️")
                     }
                 }
             
@@ -95,39 +103,33 @@ struct AddFriendsFroopView: View {
                     .font(.system(size: 36))
                     .fontWeight(.thin)
                     .multilineTextAlignment(.center)
-                    .padding(.top, 100)
+                    .padding(.top, 50)
                     .foregroundColor(Color(red: 50/255, green: 46/255, blue: 62/255))
+                
+                SearchBar(text: $searchText)
                     .onAppear {
-                        FriendViewController.shared.getUserFriends(userID: uid) { uidFriendsList, error in
-                            if let error = error {
-                                print("🚫Error getting user friends: \(error.localizedDescription)")
-                                return
-                            }
-                            FriendViewController.shared.convertListToFriendData(uidList: uidFriendsList) { userFriendList, error in
-                                if let error = error {
-                                    print("🚫Error converting list to friend data: \(error.localizedDescription)")
-                                    return
-                                }
-                                self.userFriendList = userFriendList
-                            }
-                        }
+                        FirebaseServices.shared.checkSMSInvitations()
                     }
+                    .padding(.leading, 25)
+                    .padding(.trailing, 25)
+                    .padding(.bottom, 15)
+                    .padding(.top, 15)
+                    .font(.system(size: 18))
+                    .foregroundColor(Color(red: 50/255, green: 46/255, blue: 62/255))
                 
                 ScrollView(showsIndicators: false) {
                     VStack(spacing: 0) {
-                        ForEach(filteredFriends.chunked(into: 3), id: \.self) { friendGroup in
+                        ForEach(uniqueFriends(friends: myData.myFriends, searchText: searchText).chunked(into: 3), id: \.self) { friendGroup in
                             HStack(spacing: 0) {
                                 ForEach(friendGroup, id: \.id) { friend in
                                     AddFriendCardView(
-                                        friendDetailOpen: $friendDetailOpen,
                                         invitedFriends: $invitedFriends, // Provide a non-optional binding
                                         friend: friend,
                                         detailGuests: $detailGuests
                                     )
-                                        .onAppear {
-//                                            print("Processing friend: \(friend.firstName)")
-                                            
-                                        }
+                                    .onAppear {
+                                        print("👩‍❤️‍👨 \(friend.firstName) \(friend.lastName) \(friend.froopUserID)")
+                                    }
                                 }
                             }
                         }
@@ -194,6 +196,20 @@ struct AddFriendsFroopView: View {
                 }
             }
         }
+    }
+    
+    func uniqueFriends(friends: [UserData], searchText: String) -> [UserData] {
+        var uniqueFriendIDs = Set<String>()
+        var uniqueFriends: [UserData] = []
+
+        for friend in friends {
+            if uniqueFriendIDs.insert(friend.froopUserID).inserted {
+                if searchText.isEmpty || friend.firstName.localizedCaseInsensitiveContains(searchText) || friend.lastName.localizedCaseInsensitiveContains(searchText) {
+                    uniqueFriends.append(friend)
+                }
+            }
+        }
+        return uniqueFriends
     }
 }
 

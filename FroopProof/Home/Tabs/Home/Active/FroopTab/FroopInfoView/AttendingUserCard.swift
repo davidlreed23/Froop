@@ -45,6 +45,16 @@ struct AttendingUserCard: View {
                         }
                     }
                 }
+                .onChange(of: friend.coordinate.latitude) { oldValue, newValue in
+                    LocationManager.shared.calculateTravelTime(from: friend.coordinate,
+                                                               to: appStateManager.currentFilteredFroopHistory[safe: appStateManager.aFHI]?.froop.froopLocationCoordinate ?? CLLocationCoordinate2D()) { travelTime in
+                        if let travelTime = travelTime {
+                            // convert travel time to minutes
+                            let travelTimeMinutes = Double(travelTime / 60)
+                            distance = travelTimeMinutes
+                        }
+                    }
+                }
             
             HStack {
                 ZStack {

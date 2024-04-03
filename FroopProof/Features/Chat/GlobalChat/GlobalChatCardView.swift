@@ -44,6 +44,7 @@ struct GlobalChatCardView: View {
                         }
                         Text(lastMessageText)
                             .font(.system(size: 18))
+                            .lineLimit(2)
                             .fontWeight(.light)
                             .foregroundColor(Color(red: 50/255, green: 46/255, blue: 62/255))
                             .padding(.top, 3)

@@ -93,7 +93,6 @@ class InviteManager: ObservableObject {
             print("🚫Error loading pending invitations: \(error)")
         }
     }
-
     
     func handleInvitation(inviteUid: String) async {
         guard let inviteData = await fetchInviteDataAndAddUser(inviteUid: inviteUid) else {
@@ -143,8 +142,6 @@ class InviteManager: ObservableObject {
             return nil
         }
     }
-
-    
     
     func processCurrentUserInvitation(inviteData: InviteData) async throws {
         print("🍉 processCurrentUserInvitation Function Firing")

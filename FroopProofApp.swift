@@ -28,14 +28,13 @@ class AppDelegate: NSObject, ObservableObject, UIApplicationDelegate, UNUserNoti
     
     var window: UIWindow?
     
-    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
+    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) async -> Bool {
         
         NSSetUncaughtExceptionHandler { exception in
             print("Uncaught exception: \(exception)")
             print("Stack trace: \(exception.callStackSymbols)")
         }
         Purchases.configure(withAPIKey: Secrets.apiKey)
-        FirebaseApp.configure()
         Messaging.messaging().delegate = self
         
         Crashlytics.crashlytics().setCrashlyticsCollectionEnabled(true)
@@ -81,8 +80,8 @@ class AppDelegate: NSObject, ObservableObject, UIApplicationDelegate, UNUserNoti
         UIApplication.shared.registerForRemoteNotifications()
         
         let locationManager = LocationManager.shared
-           locationManager.requestAlwaysAuthorization() // Or requestAlwaysAuthorization()
-           locationManager.startUpdating()
+        locationManager.requestAlwaysAuthorization() // Or requestAlwaysAuthorization()
+        await locationManager.startLiveLocationUpdates()
         
         FirebaseServices.requestBadgePermission { granted in
             if granted {
@@ -376,7 +375,10 @@ struct MyApp: App {
     @State private var overlayWindow: UIWindow?
     @StateObject var listenerStateService = ListenerStateService.shared
     
-    
+    init() {
+        FirebaseApp.configure()
+        Purchases.configure(withAPIKey: "appl_zsbWOZPceVxoPJKVxdDezDdiSNU" )
+    }
     
     var body: some Scene {
         
@@ -460,7 +462,6 @@ class AuthState: ObservableObject {
     init() {
         authHandle = Auth.auth().addStateDidChangeListener { (auth, user) in
             self.isFirebaseAuthDone = true
-
             if let user = user, !user.uid.isEmpty {
                 self.isAuthenticated = true
             } else {

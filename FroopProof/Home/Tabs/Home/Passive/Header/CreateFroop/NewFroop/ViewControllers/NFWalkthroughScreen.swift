@@ -40,10 +40,12 @@ class ChangeView: ObservableObject {
     @Published var showDuration: Int = 0
     @Published var showName: Int = 0
     @Published var showGuest: Int = 0
-    @Published var showSummary1: Int = 0
+    @Published var showGuests: Int = 0
+    @Published var showSummary: Int = 0
     @Published var addressAtMyLocation: Bool = false
     @Published var locDerivedTitle: String? = nil
     @Published var locDerivedSubtitle: String? = nil
+    @Published var invitedFriends: [UserData] = []
     
 
     func configureViewBuildOrder() {
@@ -68,7 +70,12 @@ class ChangeView: ObservableObject {
         showDate = 0
         showDuration = 0
         showGuest = 0
-        showSummary1 = 0
+        if froopData.template {
+            showGuests = 1
+        } else {
+            showGuests = 0
+        }
+        showSummary = 0
 
         // Iterate over the sorted order to set the show properties based on their new positions
         for (newPosition, originalPosition) in currentViewBuildOrder.enumerated() {
@@ -83,9 +90,11 @@ class ChangeView: ObservableObject {
                 case 4:
                     showTitle = newPosition + 1
                 case 5:
-                    showSummary1 = newPosition + 1
+                    showSummary = newPosition + 1
                 case 6:
                     showGuest = newPosition + 1
+                case 7:
+                    showGuests = newPosition + 1
                 // Add additional cases as needed
                 default:
                     break
@@ -171,7 +180,7 @@ class ChangeView: ObservableObject {
 
 struct NFWalkthroughScreen: View {
     @Environment(\.colorScheme) var colorScheme
-    @StateObject var locationViewModel = LocationSearchViewModel()
+    @State var locationViewModel = LocationSearchViewModel()
     @ObservedObject var myData = MyData.shared
     @ObservedObject var changeView = ChangeView.shared
     @State private var homeViewModel = HomeViewModel()

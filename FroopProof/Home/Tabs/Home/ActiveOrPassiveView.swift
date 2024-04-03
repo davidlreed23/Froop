@@ -51,11 +51,10 @@ struct ActiveOrPassiveView: View {
     var body: some View {
         ZStack {
             ZStack{
-                
                 ActiveMapView(froopHistory: instanceFroop, globalChat: $globalChat)
-                
                 FroopPassiveView(instanceFroop: instanceFroop, globalChat: $globalChat)
                     .opacity(appStateManager.appState == .passive || !appStateManager.appStateToggle ? 1.0 : 0.0)
+                
             }
         }
         .onAppear {
@@ -65,12 +64,15 @@ struct ActiveOrPassiveView: View {
                 FroopDataListener.shared.myDeclinedList = FroopDataController.shared.myDeclinedList
                 FroopDataListener.shared.myArchivedList = FroopDataController.shared.myArchivedList
                 
-                FroopManager.shared.createFroopHistoryArray { froopHistory in
-                    
-                    print("Froop History Array created \(FroopManager.shared.froopHistory.count)")
-                    print("CurrentFiltered Active FroopHistories:  \(String(describing: appStateManager.currentFilteredFroopHistory.count))")
-                    LoadingManager.shared.froopHistoryLoaded = true
-                    
+                if appStateManager.activeOrPassiveOnAppear {
+                    FroopManager.shared.createFroopHistoryArray { froopHistory in
+                        
+                        print("Froop History Array created \(FroopManager.shared.froopHistory.count)")
+                        print("CurrentFiltered Active FroopHistories:  \(String(describing: appStateManager.currentFilteredFroopHistory.count))")
+                        LoadingManager.shared.froopHistoryLoaded = true
+                        
+                    }
+                    appStateManager.activeOrPassiveOnAppear = false
                 }
             }
             Task {

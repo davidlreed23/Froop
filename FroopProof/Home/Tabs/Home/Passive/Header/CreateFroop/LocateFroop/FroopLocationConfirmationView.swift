@@ -52,7 +52,7 @@ struct FroopLocationConfirmationView: View {
                             PrintControl.shared.printLocationServices(froopData.froopName)
                             PrintControl.shared.printLocationServices(froopData.froopType.description)
                             if appStateManager.froopIsEditing {
-                                changeView.pageNumber = changeView.showSummary1
+                                changeView.pageNumber = changeView.showSummary
                             } else {
                                 changeView.pageNumber += 1
                             }

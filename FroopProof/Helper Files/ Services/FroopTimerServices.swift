@@ -9,23 +9,77 @@ import Foundation
 import SwiftUI
 import UIKit
 import ObjectiveC
+import CoreLocation
 
 class TimerServices: ObservableObject {
     static let shared = TimerServices()
-    
-    
-    
     var timer: Timer?
+    var annotationTimer: Timer?
     var shouldCallAppStateTransition = true
     var shouldCallupdateUserLocationInFirestore = true
+    var shouldUpdateAnnotations = true
+    var shouldUpdateFroopHistoryArray = true
     
     init() {
         startTimer()
     }
     
+    var annotationManager: AnnotationManager {
+        return AnnotationManager.shared
+    }
     
     var firebaseServices: FirebaseServices {
         return FirebaseServices.shared
+    }
+   
+    
+    func startFroopHistoryArrayTimer() {
+        
+        guard firebaseServices.isAuthenticated else {
+            return
+        }
+        
+        self.annotationTimer = Timer.scheduledTimer(timeInterval: 3, target: self, selector: #selector(self.annotationTimerFired), userInfo: nil, repeats: true)
+    }
+    
+    func stopFroopHistoryArrayTimer() {
+        // Invalidate the timer
+        annotationTimer?.invalidate()
+        annotationTimer = nil
+    }
+    
+    @objc func froopHistoryArrayTimerFired() {
+        // This function will be called every time the timer fires
+      
+        if shouldUpdateFroopHistoryArray {
+            FroopManager.shared.createFroopHistoryArray { froopHistory in
+                PrintControl.shared.printFroopHistoryServices("froopHistory created \(froopHistory.count)")
+            }
+        }
+    }
+    
+    
+    func startAnnotationTimer() {
+        
+        guard firebaseServices.isAuthenticated else {
+            return
+        }
+        
+        self.annotationTimer = Timer.scheduledTimer(timeInterval: 60, target: self, selector: #selector(self.annotationTimerFired), userInfo: nil, repeats: true)
+    }
+    
+    func stopAnnotationTimer() {
+        // Invalidate the timer
+        annotationTimer?.invalidate()
+        annotationTimer = nil
+    }
+    
+    @objc func annotationTimerFired() {
+        // This function will be called every time the timer fires
+      
+        if shouldUpdateAnnotations {
+            annotationManager.manuallyUpdateAnnotations()
+        }
     }
     
     func startTimer() {
@@ -43,7 +97,7 @@ class TimerServices: ObservableObject {
             self.timer?.invalidate()
             
             // Create and schedule a new timer
-            self.timer = Timer.scheduledTimer(timeInterval: 15, target: self, selector: #selector(self.timerFired), userInfo: nil, repeats: true)
+            self.timer = Timer.scheduledTimer(timeInterval: 3, target: self, selector: #selector(self.timerFired), userInfo: nil, repeats: true)
         }
     }
     
@@ -68,5 +122,4 @@ class TimerServices: ObservableObject {
         formatter.dateFormat = "EEEE MMMM dd, yyyy"
         return formatter.string(from: date)
     }
-    
 }

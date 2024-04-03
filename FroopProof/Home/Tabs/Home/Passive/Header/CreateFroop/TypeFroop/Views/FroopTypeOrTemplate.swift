@@ -66,10 +66,7 @@ struct FroopTypeOrTemplate: View {
                         .pickerStyle(SegmentedPickerStyle())
                         .padding(.leading, 15)
                         .padding(.trailing, 15)
-                    }
-                    // Add a TabView for the content
-                    if myData.premiumAccount || myData.professionalAccount {
-                        
+                                            
                         TabView(selection: $selectedTab) {
                             FroopTypeView(froopData: froopData, searchText: $searchText)
                                 .tag(0)

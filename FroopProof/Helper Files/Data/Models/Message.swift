@@ -24,28 +24,28 @@ struct Message: Decodable, Identifiable, Hashable {
     // Initializer from a Firestore Document
     init?(document: DocumentSnapshot) {
         guard let data = document.data() else {
-            print("Document data is nil for document ID: \(document.documentID)")
+//            print("Document data is nil for document ID: \(document.documentID)")
             return nil
         }
         print("Document data for \(document.documentID): \(data)")
 
         guard let text = data["text"] as? String else {
-            print("Text field is missing or not a string in document ID: \(document.documentID)")
+//            print("Text field is missing or not a string in document ID: \(document.documentID)")
             return nil
         }
         print("Text: \(text)")
 
         guard let senderId = data["senderId"] as? String else {
-            print("SenderId field is missing or not a string in document ID: \(document.documentID)")
+//            print("SenderId field is missing or not a string in document ID: \(document.documentID)")
             return nil
         }
         print("SenderId: \(senderId)")
 
         guard let timestamp = (data["timestamp"] as? Timestamp)?.dateValue() else {
-            print("Timestamp field is missing or not a Timestamp in document ID: \(document.documentID)")
+//            print("Timestamp field is missing or not a Timestamp in document ID: \(document.documentID)")
             return nil
         }
-        print("Timestamp: \(timestamp)")
+//        print("Timestamp: \(timestamp)")
 
         let receiverId = data["receiverId"] as? String
         let froopId = data["froopId"] as? String

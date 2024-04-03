@@ -1,5 +1,5 @@
 //
-//  AddFriendCardView.swift
+//  ActiveAddFriendCardView.swift
 //  FroopProof
 //
 //  Created by David Reed on 3/8/23.
@@ -12,7 +12,7 @@ import Firebase
 import FirebaseAuth
 import FirebaseFirestore
 
-struct AddFriendCardView: View {
+struct ActiveAddFriendCardView: View {
     @ObservedObject var froopManager = FroopManager.shared
     @ObservedObject var appStateManager = AppStateManager.shared
     @ObservedObject var printControl = PrintControl.shared
@@ -24,12 +24,6 @@ struct AddFriendCardView: View {
     var friend: UserData
     @State var selectedGuest = false
     @Binding var detailGuests: [UserData]
-    
-    var isSelectedFroopInFilteredHistory: Bool {
-        appStateManager.currentFilteredFroopHistory.contains { froopHistory in
-            froopHistory.froop.froopId == froopManager.selectedFroopHistory.froop.froopId
-        }
-    }
     
     var body: some View {
         ZStack {
@@ -79,12 +73,7 @@ struct AddFriendCardView: View {
             let uid = FirebaseServices.shared.uid
           
             let invitedFriendsRef: CollectionReference
-              
-              if !isSelectedFroopInFilteredHistory {
-                  invitedFriendsRef = db.collection("users").document(froopManager.selectedFroopHistory.host.froopUserID).collection("myFroops").document(froopManager.selectedFroopUUID ?? "" ).collection("invitedFriends")
-              } else {
-                  invitedFriendsRef = db.collection("users").document(appStateManager.currentFilteredFroopHistory[appStateManager.aFHI].host.froopUserID).collection("myFroops").document(appStateManager.currentFilteredFroopHistory[safe: appStateManager.aFHI]?.froop.froopId ?? "" ).collection("invitedFriends")
-              }
+            invitedFriendsRef = db.collection("users").document(appStateManager.currentFilteredFroopHistory[appStateManager.aFHI].host.froopUserID).collection("myFroops").document(appStateManager.currentFilteredFroopHistory[safe: appStateManager.aFHI]?.froop.froopId ?? "" ).collection("invitedFriends")
             
             let inviteListDocRef = invitedFriendsRef.document("inviteList")
             let declinedListDocRef = invitedFriendsRef.document("declinedList")

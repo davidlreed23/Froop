@@ -57,23 +57,38 @@ struct FroopCardView: View {
 
     var body: some View {
         
-        ZStack (alignment: .top){
+        ZStack (alignment: .top) {
             RoundedRectangle(cornerRadius: 10)
-                .fill(
-                    LinearGradient(gradient: Gradient(colors: [Color(red: 255/255, green: 255/255, blue: 255/255), Color(red: 244/255, green: 255/255, blue: 244/255)]), startPoint: .top, endPoint: .bottom)
-                )
+                .fill(.white)
                 .padding(.top, 20)
                 .padding(.leading, 25)
                 .padding(.trailing, 25)
-                .frame(height: 285)
+                .frame(height: 300)
                 .shadow(color: .gray, radius: 2)
-                .onAppear {
-                    FroopManager.shared.froopHolder = froop
-                    fetchFriendsData(from: froop.froopInvitedFriends) { fetchedFriends in
-                        self.confirmedFriends = fetchedFriends
-                        // Additional actions if needed
+            VStack (spacing: 0){
+                RoundedRectangle(cornerRadius: 10)
+                    .fill(.white)
+                    .padding(.top, 20)
+                    .padding(.leading, 25)
+                    .padding(.trailing, 25)
+                    .frame(height: 85)
+                    .onAppear {
+                        FroopManager.shared.froopHolder = froop
+                        fetchFriendsData(from: froop.froopInvitedFriends) { fetchedFriends in
+                            self.confirmedFriends = fetchedFriends
+                            // Additional actions if needed
+                        }
                     }
-                }
+                RoundedRectangle(cornerRadius: 10)
+                    .fill(Color(red: 245 / 255, green: 245 / 255, blue: 255 / 255 ))
+                    .padding(.leading, 25)
+                    .padding(.trailing, 25)
+                    .frame(height: 215)
+                
+            }
+            .frame(height: 300)
+           
+            
             
             VStack (alignment: .leading) {
                 HStack (spacing: 0 ){
@@ -96,56 +111,54 @@ struct FroopCardView: View {
                 .padding(.top, 35)
                 .padding(.leading, 35)
                 
-//                Divider()
-//                    .padding(.leading, 35)
-//                    .padding(.trailing, 35)
-//                    .padding(1)
-//                    .padding(1)
-                
                 ZStack {
-                    RoundedRectangle(cornerRadius: 5)
-                        .fill(
-                            LinearGradient(gradient: Gradient(colors: [Color(red: 244/255, green: 255/255, blue: 244/255), Color(red: 255/255, green: 255/255, blue: 255/255)]), startPoint: .top, endPoint: .bottom)
-                        )
-                        .frame(height: 75)
-                        .padding(.leading, 27)
-                        .padding(.trailing, 27)
-                    ScrollView(.horizontal, showsIndicators: false) {
+                    VStack {
                         HStack {
-                            ForEach(confirmedFriends.prefix(visibleFriendsLimit - 1), id: \.self.id) { friend in
-                                FriendProfilePhotoView(imageUrl: friend.profileImageUrl)
-                                    .frame(width: 45, height: 45)
-                            }
-                            
-                            if confirmedFriends.isEmpty {
-                                Text("Invited Friends \(froop.froopInvitedFriends.count) confirmedFriends: \(confirmedFriends.count)")
-                                    .font(.system(size: 16))
-                                    .foregroundColor(Color(red: 249/255, green: 0/255, blue: 98/255))
-                                    .frame(height: 45)
-                            } else if confirmedFriends.count > visibleFriendsLimit {
-                                ZStack {
-                                    FriendProfilePhotoView(imageUrl: "")
+                            Text("Invite List")
+                                .font(.system(size: 12))
+                                .fontWeight(.medium)
+                                .foregroundColor(Color(red: 50/255, green: 46/255, blue: 62/255))
+                                .multilineTextAlignment(.leading)
+                                .padding(.leading, 5)
+                        Spacer()
+                        }
+                        
+                        ScrollView(.horizontal, showsIndicators: false) {
+                            HStack {
+                                ForEach(confirmedFriends.prefix(visibleFriendsLimit - 1), id: \.self.id) { friend in
+                                    FriendProfilePhotoView(imageUrl: friend.profileImageUrl)
                                         .frame(width: 45, height: 45)
-                                        .opacity(0.5)
-                                    
-                                    Text("+\(confirmedFriends.count - visibleFriendsLimit + 1)")
+                                }
+                                
+                                if confirmedFriends.isEmpty {
+                                    Text("Invited Friends \(froop.froopInvitedFriends.count) confirmedFriends: \(confirmedFriends.count)")
                                         .font(.system(size: 16))
-                                        .foregroundColor(.white)
+                                        .foregroundColor(Color(red: 249/255, green: 0/255, blue: 98/255))
+                                        .frame(height: 45)
+                                } else if confirmedFriends.count > visibleFriendsLimit {
+                                    ZStack {
+                                        FriendProfilePhotoView(imageUrl: "")
+                                            .frame(width: 45, height: 45)
+                                            .opacity(0.5)
+                                        
+                                        Text("+\(confirmedFriends.count - visibleFriendsLimit + 1)")
+                                            .font(.system(size: 16))
+                                            .foregroundColor(.white)
+                                    }
                                 }
                             }
+                            .background(.clear)
                         }
-                        .background(.clear)
                     }
                     .background(.clear)
                     .padding(.leading, 35)
                     .padding(.trailing, 35)
                 }
+                .padding(.top, 20)
                 
-//                Divider()
-//                    .padding(.leading, 35)
-//                    .padding(.trailing, 35)
-//                    .padding(1)
-//                    .padding(1)
+                Divider()
+                    .padding(.leading, 35)
+                    .padding(.trailing, 35)
                 
                 VStack (alignment: .leading) {
                     HStack {
@@ -207,6 +220,7 @@ struct FroopCardView: View {
         
             changeView.froopTypeData = froopTypeData
             
+            
             if let froopTypeData = FroopTypeStore.shared.froopTypes.first(where: { $0.id == froop.froopType }) {
                 froopData.froopType = froopTypeData.id
             }
@@ -224,7 +238,7 @@ struct FroopCardView: View {
             DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
                 if appStateManager.froopIsEditing {
                     withAnimation {
-                        changeView.pageNumber = changeView.showSummary1
+                        changeView.pageNumber = changeView.showSummary
                     }
                 } else {
                     changeView.pageNumber += 1

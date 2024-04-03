@@ -299,39 +299,29 @@ struct FroopDetailsView: View {
                     .ignoresSafeArea()
             }
             
-            .blurredSheet(.init(.ultraThinMaterial), show: $froopManager.addFriendsOpen) {
+            .fullScreenCover(isPresented: $froopManager.addFriendsOpen) {
             } content: {
                 ZStack {
                     VStack {
                         Spacer()
-                        AddFriendsFroopView(friendData: friendData, friendDetailOpen: $froopManager.friendDetailOpen, addFriendsOpen: $froopManager.addFriendsOpen, timestamp: timestamp, detailGuests: $detailGuests)
-                    }
-                    
-                    
-                    VStack {
-                        Rectangle()
-                            .foregroundColor(.white)
-                            .opacity(0.01)
-                            .onTapGesture {
-                                self.froopManager.addFriendsOpen = false
-                            }
-                            .frame(maxWidth: .infinity, maxHeight: 100)
-                            .ignoresSafeArea()
-                        Spacer()
+                        AddFriendsFroopView(friendDetailOpen: $friendDetailOpen, addFriendsOpen: $froopManager.addFriendsOpen, timestamp: timestamp, detailGuests: $detailGuests, selectedFroopHistory: $froopManager.selectedFroopHistory)
                     }
                     VStack {
-                        Text("tap to close")
-                            .font(.system(size: 18))
-                            .fontWeight(.light)
-                            .foregroundColor(Color(red: 50/255, green: 46/255, blue: 62/255).opacity(0.75))
-                            .padding(.top, 25)
-                            .opacity(0.5)
-                        Image(systemName: "chevron.down")
-                            .font(.system(size: 24))
-                            .foregroundColor(Color(red: 50/255, green: 46/255, blue: 62/255).opacity(0.75))
+                        HStack {
+                            Spacer()
+                            Image(systemName: "xmark")
+                                .font(.system(size: 24))
+                                .foregroundColor(.white)
+                                .blendMode(.difference)
+                                .padding(.trailing, 40)
+                                .padding(.top, UIScreen.screenHeight * 0.005)
+                                .onTapGesture {
+                                    self.froopManager.addFriendsOpen = false
+                                }
+                        }
+                        .frame(alignment: .trailing)
                         Spacer()
                     }
-                    .frame(alignment: .top)
                 }
                 .presentationDetents([.large])
             }

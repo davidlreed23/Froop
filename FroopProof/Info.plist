@@ -12,8 +12,6 @@
 	</array>
 	<key>CFBundleGetInfoString</key>
 	<string></string>
-	<key>CFBundleSignature</key>
-	<dict/>
 	<key>CFBundleURLTypes</key>
 	<array>
 		<dict>

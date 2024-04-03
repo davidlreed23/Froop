@@ -889,76 +889,7 @@ extension FroopHistory {
 
 
 extension LocationManager {
-    func getCurrentLocationAddress(_ location: CLLocation, completion: @escaping (String?) -> Void) {
-        PrintControl.shared.printLocationServices("-LocationManager: Function: getCurrentLocationAddress is firing!")
-        let geoCoder = CLGeocoder()
-        geoCoder.reverseGeocodeLocation(location) { placemarks, error in
-            if let error = error {
-                PrintControl.shared.printErrorMessages("Error getting location address: \(error.localizedDescription)")
-                completion(nil)
-                return
-            }
-            guard let placemarks = placemarks, let placemark = placemarks.first else {
-                completion(nil)
-                return
-            }
-            // Use the placemark to get the address
-            var addressString = ""
-            if let streetNumber = placemark.subThoroughfare {
-                addressString += streetNumber + " "
-            }
-            if let streetName = placemark.thoroughfare {
-                addressString += streetName + ", "
-            }
-            if let city = placemark.locality {
-                addressString += city + ", "
-            }
-            if let state = placemark.administrativeArea {
-                addressString += state + " "
-            }
-            if let postalCode = placemark.postalCode {
-                addressString += postalCode + ", "
-            }
-            if let country = placemark.country {
-                addressString += country
-            }
-            completion(addressString)
-        }
-    }
     
-    func getAddress(from location: FroopData) {
-        PrintControl.shared.printLocationServices("-LocationManager: Function: getAddress is firing!")
-        let geocoder = CLGeocoder()
-        let location = CLLocation(latitude: location.coordinate.latitude, longitude: location.coordinate.longitude)
-        geocoder.reverseGeocodeLocation(location) { (placemarks, error) in
-            if let error = error {
-                PrintControl.shared.printErrorMessages(error.localizedDescription)
-            } else if let placemarks = placemarks {
-                if let placemark = placemarks.first {
-                    var addressString = ""
-                    if let streetNumber = placemark.subThoroughfare {
-                        addressString += streetNumber + " "
-                    }
-                    if let streetName = placemark.thoroughfare {
-                        addressString += streetName + ", "
-                    }
-                    if let city = placemark.locality {
-                        addressString += city + ", "
-                    }
-                    if let state = placemark.administrativeArea {
-                        addressString += state + " "
-                    }
-                    if let postalCode = placemark.postalCode {
-                        addressString += postalCode + ", "
-                    }
-                    if let country = placemark.country {
-                        addressString += country
-                    }
-                    PrintControl.shared.printLocationServices(addressString)
-                }
-            }
-        }
-    }
 }
 
 

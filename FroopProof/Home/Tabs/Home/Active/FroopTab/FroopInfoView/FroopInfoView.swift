@@ -92,8 +92,8 @@ struct FroopInfoView: View {
                                 HStack {
                                     switch AppStateManager.shared.currentStage {
                                         case .starting:
-                                            Text("Froop Starts in: \(timeZoneManager.formatDuration2(durationInMinutes: (appStateManager.currentFilteredFroopHistory[safe: appStateManager.aFHI]?.froop.froopStartTime.timeIntervalSince(now) ?? 0.0 )/60))")
-                                            Text("Froop Starts in:")
+                                            Text("Froop Starts in: \(timeZoneManager.formatDuration2(durationInMinutes: (appStateManager.currentFilteredFroopHistory[safe: appStateManager.aFHI]?.froop.froopStartTime.timeIntervalSince(now) ?? 0.0 ) / 60))")
+//                                            Text("Froop Starts in:")
                                                 .font(.system(size: 16))
                                                 .fontWeight(.medium)
                                                 .multilineTextAlignment(.leading)
@@ -120,7 +120,6 @@ struct FroopInfoView: View {
                                                 
                                             }
                                         case .ending:
-                                            Text("Froop is Ending Soon.")
                                             Text("Froop Archive in: \(timeZoneManager.formatDuration2(durationInMinutes: ((appStateManager.currentFilteredFroopHistory[safe: appStateManager.aFHI]?.froop.froopEndTime.timeIntervalSince(now) ?? 0.0 ))))")
                                                 .font(.system(size: 16))
                                                 .fontWeight(.medium)
@@ -133,13 +132,6 @@ struct FroopInfoView: View {
                                                 .foregroundColor(colorScheme == .dark ? Color(red: 249/255, green: 0/255, blue: 95/255) : Color(red: 249/255, green: 0/255, blue: 95/255))
                                                 .multilineTextAlignment(.leading)
                                     }
-                                }
-                                .onTapGesture {
-                                    let startTime = appStateManager.currentFilteredFroopHistory[safe: appStateManager.aFHI]?.froop.froopStartTime
-                                    let endTime = appStateManager.currentFilteredFroopHistory[safe: appStateManager.aFHI]?.froop.froopEndTime
-                                    print("Current Time: \(appStateManager.now)")
-                                    
-                                    print("🕗")
                                 }
                                 
                                 .padding(.leading, 20)
@@ -204,7 +196,7 @@ struct FroopInfoView: View {
                                             .foregroundColor(Color(red: 50/255, green: 46/255, blue: 62/255))
                                             .multilineTextAlignment(.leading)
                                             .padding(.top, 0)
-                                        Text("End: \(formatDate(for: appStateManager.currentFilteredFroopHistory[safe: appStateManager.aFHI]?.froop.froopEndTime ?? Date() ))")
+                                        Text("End: \(formatDate(for: appStateManager.currentFilteredFroopHistory[safe: appStateManager.aFHI]?.froop.froopEndTime ?? Date(), in: (String(describing: TimeZoneManager.shared.userLocationTimeZone))))")
                                             .font(.system(size:14))
                                             .fontWeight(.light)
                                             .foregroundColor(Color(red: 50/255, green: 46/255, blue: 62/255))
@@ -267,10 +259,10 @@ struct FroopInfoView: View {
                                             
                                             VStack  {
                                                 Text("Open")
-                                                    .foregroundColor(colorScheme == .dark ? .white : .white)
+                                                    .foregroundColor(colorScheme == .dark ? Color(red: 50/255, green: 46/255, blue: 62/255) : Color(red: 50/255, green: 46/255, blue: 62/255))
                                                     .font(.system(size: 16))
                                                 Text("Map")
-                                                    .foregroundColor(colorScheme == .dark ? .white : .white)
+                                                    .foregroundColor(colorScheme == .dark ? Color(red: 50/255, green: 46/255, blue: 62/255) : Color(red: 50/255, green: 46/255, blue: 62/255))
                                                     .font(.system(size: 16))
                                             }
                                             .font(.system(size: 12))
