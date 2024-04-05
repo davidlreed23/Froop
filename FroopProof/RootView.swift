@@ -87,7 +87,7 @@ struct RootView: View {
                     
                 }
                 .ignoresSafeArea()
-                .navigationTitle("Froop")
+                .navigationTitle(myData.premiumAccount ? "Froop Premium" : "Froop")
                 .foregroundColor(colorScheme == .dark ? .white : Color(red: 255/255 ,green: 255/255,blue: 255/255))
                 .navigationBarTitleDisplayMode(.inline)
                 .toolbarBackground(Color.black.opacity(0.8), for: .navigationBar)

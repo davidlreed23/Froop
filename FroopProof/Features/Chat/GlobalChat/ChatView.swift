@@ -17,17 +17,16 @@ struct ChatView: View {
     @ObservedObject var appStateManager = AppStateManager.shared
     @ObservedObject var notificationsManager = NotificationsManager.shared
     @ObservedObject var chatManager = GlobalChatNotificationsManager.shared
+    @ObservedObject var friendRequestManager = FriendRequestManager.shared
     @State var messageText: String = ""
     @State private var keyboardHeight: CGFloat = 0
     @State private var keyboardHeightPublisher: AnyCancellable?
     @State var messages: [Message] = []
     @State private var chatListener: ListenerRegistration?
-    @Binding var selectedFriend: UserData
     @Binding var conversationId: String
     var toUserId: String = ""
     
-    init(selectedFriend: Binding<UserData>, conversationId: Binding<String>) {
-        _selectedFriend = selectedFriend
+    init(conversationId: Binding<String>) {
         _conversationId = conversationId
         UITableView.appearance().separatorStyle = .none
     }
@@ -97,7 +96,7 @@ struct ChatView: View {
                 .background(.clear)
                 
                 ChatInputView(messageText: $messageText, onSend: {
-                    notificationsManager.sendMessage(content: self.messageText, toUserId: selectedFriend.froopUserID)
+                    notificationsManager.sendMessage(content: self.messageText, toUserId: friendRequestManager.selectedFriend.froopUserID)
                 })
                     .padding(.bottom, notificationsManager.chatEntered ? 10 : 10) // Conditional padding
             }
@@ -133,7 +132,7 @@ struct ChatView: View {
             
             setupGlobalChatListener(conversationId: chatManager.conversationId)
             setupKeyboardHeightPublisher()
-            chatManager.setupConversation(with: selectedFriend.froopUserID)
+            chatManager.setupConversation(with: friendRequestManager.selectedFriend.froopUserID)
             
             //            NotificationsManager.shared.printAllConversationAndMessagesDetails()
         }

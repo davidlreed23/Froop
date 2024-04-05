@@ -221,6 +221,8 @@ class FroopData: NSObject, ObservableObject, Decodable {
     func saveData() async throws -> String {
         PrintControl.shared.printFroopData("-FroopData: Function: saveData firing")
         let dateFormatter = DateFormatter()
+        let newFroopId = UUID().uuidString
+        self.froopId = newFroopId
         dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZ"
         dateFormatter.timeZone = TimeZone(identifier: "America/Los_Angeles")
         
@@ -232,7 +234,6 @@ class FroopData: NSObject, ObservableObject, Decodable {
         self.froopList = [""]
         self.froopMessage = "The Host has not added a message yet, stay tuned!"
         let uid = FirebaseServices.shared.uid
-        let froopId = id.uuidString
         
         // Save Froop data to Firestore
         let myFroopDocRef = db.collection("users").document(uid).collection("myFroops").document(froopId)
@@ -274,7 +275,7 @@ class FroopData: NSObject, ObservableObject, Decodable {
                 }
             }
         }
-        return froopId
+        return newFroopId
     }
     
     func convertLocalDateToUTC(date: Date, froopTimeZone: TimeZone) -> Date {
@@ -503,7 +504,7 @@ extension FroopData {
             froopType = newFroopType
         }
         // Reset all other properties
-        froopId = ""
+        froopId = UUID().uuidString // This generates a new unique identifier
         froopName = ""
         froopLocationid = 0
         froopLocationTimeZone = ""
@@ -525,7 +526,7 @@ extension FroopData {
         froopVideoThumbnails = []
         froopIntroVideo = ""
         froopIntroVideoThumbnail = ""
-        froopHost = ""
+        froopHost = uid
         froopHostPic = ""
         froopTimeZone = ""
         froopMessage = ""

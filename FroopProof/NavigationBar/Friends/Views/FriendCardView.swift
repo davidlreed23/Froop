@@ -14,9 +14,9 @@ struct FriendCardView: View {
 //    @ObservedObject var appStateManager = AppStateManager.shared
     @ObservedObject var printControl = PrintControl.shared
     @ObservedObject var locationServices = LocationServices.shared
+    @ObservedObject var friendRequestManager = FriendRequestManager.shared
     // @ObservedObject var froopDataListener = FroopDataListener.shared
  
-    @Binding var selectedFriend: UserData
     @Binding var friendDetailOpen: Bool
     var friend: UserData
     
@@ -42,7 +42,7 @@ struct FriendCardView: View {
             TapGesture()
                 .onEnded {
                     friendDetailOpen = true
-                    selectedFriend = friend
+                    friendRequestManager.selectedFriend = friend
                     print("\(friend.firstName) says he was tapped!")
                 }
         )

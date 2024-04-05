@@ -10,12 +10,11 @@ import UserNotifications
 
 struct FriendDetailView: View {
     @ObservedObject var dataController = DataController.shared
-
-    @Binding var selectedFriend: UserData
+    @ObservedObject var froopManager = FroopManager.shared
+    @ObservedObject var friendRequestManager = FriendRequestManager.shared
     @State var showInviteView = false
     @State var profileView: Bool = true
     @State var friendDetailOpen: Bool = false
-    @State var currentFriends: [UserData] = []
     @Binding var globalChat: Bool
     var body: some View {
         ZStack {
@@ -24,7 +23,7 @@ struct FriendDetailView: View {
                 let size = $0.size
                 let safeArea = $0.safeAreaInsets
                 
-                UserPublicView(size: size, safeArea: safeArea, selectedFriend: $selectedFriend, profileView: $profileView, friendDetailOpen: $friendDetailOpen, friends: $currentFriends, globalChat: $globalChat)
+                UserPublicView(size: size, safeArea: safeArea, profileView: $profileView, friendDetailOpen: $friendDetailOpen, globalChat: $globalChat) 
                     .ignoresSafeArea(.all, edges: .top)
             }
             
@@ -49,6 +48,21 @@ struct FriendDetailView: View {
                 .ignoresSafeArea()
             } else {
                 EmptyView()
+            }
+        }
+        .onAppear {
+            froopManager.fetchFriendLists(uid: friendRequestManager.selectedFriend.froopUserID) { friendList in
+                froopManager.fetchUserDataFor(uids: friendList) { result in
+                    switch result {
+                        case .success(let retrievedFriends):
+                            // If the operation is successful, assign the retrieved friends to currentFriends
+                            friendRequestManager.currentFriends = retrievedFriends
+                        case .failure(let error):
+                            // If the operation fails, handle the error (e.g., show an error message)
+                            print("Error fetching user data: \(error.localizedDescription)")
+                            friendRequestManager.currentFriends = [] // Optionally reset or handle the UI accordingly
+                    }
+                }
             }
         }
     }

@@ -9,14 +9,13 @@ import SwiftUI
 
 struct UserPublicView: View {
     @ObservedObject var inviteManager = InviteManager.shared
+    @ObservedObject var friendRequestManager = FriendRequestManager.shared
     var size: CGSize
     var safeArea: EdgeInsets
-    @Binding var selectedFriend: UserData
     @Binding var profileView: Bool
     @State var friendsView: Bool = false
     @State private var offsetY: CGFloat = 0
     @Binding var friendDetailOpen: Bool
-    @Binding var friends: [UserData]
     @Binding var globalChat: Bool
 
     
@@ -26,20 +25,20 @@ struct UserPublicView: View {
                 ZStack {
                     ScrollView(.vertical, showsIndicators: false) {
                         VStack(spacing: 5) {
-                            ProfileHeaderView(offsetY: $offsetY, selectedFriend: $selectedFriend, profileView: $profileView, size: size, safeArea: safeArea, friendDetailOpen: $friendDetailOpen, globalChat: $globalChat)
+                            ProfileHeaderView(offsetY: $offsetY, profileView: $profileView, size: size, safeArea: safeArea, friendDetailOpen: $friendDetailOpen, globalChat: $globalChat)
                                 .zIndex(1000)
                                 .ignoresSafeArea()
                             
                             if profileView {
-                                if selectedFriend.froopUserID == "froop" {
-                                    FroopFroopsView(selectedFriend: $selectedFriend, friendDetailOpen: $friendDetailOpen)
+                                if friendRequestManager.selectedFriend.froopUserID == "froop" {
+                                    FroopFroopsView(friendDetailOpen: $friendDetailOpen)
                                         .transition(.opacity)
                                 } else {
-                                    FriendFroopsView(selectedFriend: $selectedFriend, friendDetailOpen: $friendDetailOpen)
+                                    FriendFroopsView(friendDetailOpen: $friendDetailOpen)
                                         .transition(.opacity)
                                 }
                             } else {
-                                FriendListView(friends: $friends, selectedFriend: $selectedFriend)
+                                FriendListView() 
                                     .transition(.opacity)
                             }
                         }
@@ -65,7 +64,7 @@ struct UserPublicView: View {
             }
         }
         .onAppear {
-            inviteManager.fetchFriendList(for: selectedFriend.froopUserID) { result in
+            inviteManager.fetchFriendList(for: friendRequestManager.selectedFriend.froopUserID) { result in
                 switch result {
                     case .success(let fetchedFriends):
                         inviteManager.friends = fetchedFriends

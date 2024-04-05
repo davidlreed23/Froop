@@ -22,7 +22,7 @@ struct FroopPassiveView: View {
     @ObservedObject var froopData = FroopData.shared
 
     @State var instanceFroop: FroopHistory
-    @State var selectedFriend: UserData = UserData()
+//    @State var selectedFriend: UserData = UserData()
     @State private var walkthroughScreen: NFWalkthroughScreen? = nil
     @State var showSheet = false
     @State var froopAdded = false
@@ -64,7 +64,7 @@ struct FroopPassiveView: View {
             ZStack {
                 VStack {
                     Spacer()
-                    FriendDetailView(selectedFriend: $selectedFriend, globalChat: $globalChat)
+                    FriendDetailView(globalChat: $globalChat)
                     //                        .ignoresSafeArea()
                 }
                 VStack {

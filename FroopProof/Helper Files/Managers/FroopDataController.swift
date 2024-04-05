@@ -714,10 +714,7 @@ class FroopDataController: NSObject, ObservableObject, MFMessageComposeViewContr
     }
     
     func processPastEvents() {
-        
-        
         PrintControl.shared.printFroopDataController("-function processPastEvents firing")
-        
         
         let uid = FirebaseServices.shared.uid
         let userRef = db.collection("users").document(uid)

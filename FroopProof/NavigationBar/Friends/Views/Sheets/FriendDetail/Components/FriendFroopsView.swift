@@ -12,10 +12,10 @@ struct FriendFroopsView: View {
     @ObservedObject var appStateManager = AppStateManager.shared
     @ObservedObject var printControl = PrintControl.shared
     @ObservedObject var locationServices = LocationServices.shared
+    @ObservedObject var friendRequestManager = FriendRequestManager.shared
     // @ObservedObject var froopDataListener = FroopDataListener.shared
     @ObservedObject var froopManager = FroopManager.shared
     @ObservedObject var timeZoneManager:TimeZoneManager = TimeZoneManager()
-    @Binding var selectedFriend: UserData
     
     @ObservedObject var myData = MyData.shared
     @ObservedObject var changeView = ChangeView()
@@ -40,7 +40,7 @@ struct FriendFroopsView: View {
         return froopManager.froopHistory.filter {
             !$0.images.isEmpty &&
             $0.confirmedFriends.contains(where: { $0.froopUserID == currentUserId }) &&
-            $0.confirmedFriends.contains(where: { $0.froopUserID == selectedFriend.froopUserID }) &&
+            $0.confirmedFriends.contains(where: { $0.froopUserID == friendRequestManager.selectedFriend.froopUserID }) &&
             $0.host.froopUserID != "froop"
         }
     }
@@ -91,10 +91,9 @@ struct FriendFroopsView: View {
     }
     
     
-    init(selectedFriend: Binding<UserData>, friendDetailOpen: Binding<Bool>) {
-        _selectedFriend = selectedFriend
+    init(friendDetailOpen: Binding<Bool>) {
         _friendDetailOpen = friendDetailOpen
-        froopManager.fetchFroopData(fuid: selectedFriend.wrappedValue.froopUserID)
+        froopManager.fetchFroopData(fuid: friendRequestManager.selectedFriend.froopUserID)
     }
     
     var body: some View {

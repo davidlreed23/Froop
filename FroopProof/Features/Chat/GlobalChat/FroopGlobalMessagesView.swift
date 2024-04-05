@@ -138,7 +138,7 @@ struct FroopGlobalMessagesView: View {
             ZStack {
                 
                 VStack {
-                    ChatView(selectedFriend: $selectedFriend, conversationId: $conversationId) // Pass a binding to the state variable
+                    ChatView(conversationId: $conversationId) // Pass a binding to the state variable
                         .padding(.top, UIScreen.screenHeight / 15)
                         .ignoresSafeArea()
                 }

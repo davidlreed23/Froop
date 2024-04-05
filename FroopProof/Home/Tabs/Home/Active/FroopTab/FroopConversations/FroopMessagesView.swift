@@ -127,7 +127,7 @@ struct FroopMessagesView: View {
                         FroopGroupChatView()
                             .ignoresSafeArea()
                     } else {
-                        FroopChatView(selectedFriend: $selectedConversation, chatPartnerUID: selectedConversation.froopUserID, selectedConversation: $selectedConversation)
+                        FroopChatView(chatPartnerUID: selectedConversation.froopUserID)
                             .ignoresSafeArea()
                     }
                 }

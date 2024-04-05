@@ -20,8 +20,8 @@ struct ProfileHeaderView: View {
     @ObservedObject var notificationsManager = NotificationsManager.shared
     @ObservedObject var appStateManager = AppStateManager.shared
     @ObservedObject var inviteManager = InviteManager.shared
+    @ObservedObject var friendRequestManager = FriendRequestManager.shared
     @Binding var offsetY: CGFloat
-    @Binding var selectedFriend: UserData
     @Binding var profileView: Bool
     var size: CGSize
     var safeArea: EdgeInsets
@@ -71,7 +71,7 @@ struct ProfileHeaderView: View {
                 VStack(alignment: .center) {
                     HStack {
                         Spacer()
-                        if !inviteManager.isFriend(froopUserID: selectedFriend.froopUserID) && selectedFriend.froopUserID != uid {
+                        if !inviteManager.isFriend(froopUserID: friendRequestManager.selectedFriend.froopUserID) && friendRequestManager.selectedFriend.froopUserID != uid {
                             ZStack {
                                 RoundedRectangle(cornerRadius: 8)
                                     .fill(LinearGradient(gradient: Gradient(colors: [Color(red: 206/255, green: 206/255, blue: 206/255).opacity(0.25), Color(red: 255/255, green: 255/255, blue: 255/255)]), startPoint: .top, endPoint: .bottom))
@@ -86,18 +86,18 @@ struct ProfileHeaderView: View {
                                     .frame(alignment: .center)
                             }
                             .padding(.trailing, 5)
-                            .opacity(inviteManager.isFriend(froopUserID: selectedFriend.froopUserID) && selectedFriend.froopUserID != uid ? 1.0 : 0.0)
+                            .opacity(inviteManager.isFriend(froopUserID: friendRequestManager.selectedFriend.froopUserID) && friendRequestManager.selectedFriend.froopUserID != uid ? 1.0 : 0.0)
                             .onTapGesture {
-                                if inviteManager.isFriend(froopUserID: selectedFriend.froopUserID) && selectedFriend.froopUserID != uid {
+                                if inviteManager.isFriend(froopUserID: friendRequestManager.selectedFriend.froopUserID) && friendRequestManager.selectedFriend.froopUserID != uid {
                                     unFriendAlert = true
                                 }
                             }
                         }
                         
-                        ProfileImage(progress: progress, headerHeight: headerHeight, selectedFriend: $selectedFriend)
+                        ProfileImage(progress: progress, headerHeight: headerHeight)
                         
-                        if !inviteManager.isFriend(froopUserID: selectedFriend.froopUserID) && selectedFriend.froopUserID != uid {
-                            if isFriendshipRequested(toUserID: selectedFriend.froopUserID) {
+                        if !inviteManager.isFriend(froopUserID: friendRequestManager.selectedFriend.froopUserID) && friendRequestManager.selectedFriend.froopUserID != uid {
+                            if isFriendshipRequested(toUserID: friendRequestManager.selectedFriend.froopUserID) {
                                 Text("Friendship Requested")
                                     .font(.system(size: 14))
                                     .fontWeight(.regular)
@@ -120,7 +120,7 @@ struct ProfileHeaderView: View {
                                 }
                                 .onTapGesture {
                                     let timestamp = Date()
-                                    sendFriendRequest(fromUserID: uid, toUserID: selectedFriend.froopUserID, friendRequest: friendInviteData, timestamp: timestamp) { result in
+                                    sendFriendRequest(fromUserID: uid, toUserID: friendRequestManager.selectedFriend.froopUserID, friendRequest: friendInviteData, timestamp: timestamp) { result in
                                         switch result {
                                             case .success(let documentID):
                                                 print("Friend request sent: \(documentID)")
@@ -142,7 +142,7 @@ struct ProfileHeaderView: View {
                     
                     HStack {
                         Spacer()
-                        Text("\(selectedFriend.firstName) \(selectedFriend.lastName)")
+                        Text("\(friendRequestManager.selectedFriend.firstName) \(friendRequestManager.selectedFriend.lastName)")
                             .font(.title2)
                             .fontWeight(.bold)
                             .foregroundColor(Color(red: 50/255, green: 46/255, blue: 62/255))
@@ -177,12 +177,12 @@ struct ProfileHeaderView: View {
                         .offset(y: 25)
                         .frame(height: 50 - (1 * progress))
                         //                        .moveSymbols(progress, headerHeight, minimumHeaderHeight, headerWidth, minimumHeaderWidth)
-                        .opacity(selectedFriend.froopUserID == "froop" ? 1 : 0)
+                        .opacity(friendRequestManager.selectedFriend.froopUserID == "froop" ? 1 : 0)
                         
                         HStack (spacing: 45) {
                             Spacer()
                             Button(action: {
-                                self.makePhoneCall(phoneNumber: selectedFriend.phoneNumber)
+                                self.makePhoneCall(phoneNumber: friendRequestManager.selectedFriend.phoneNumber)
                             }) {
                                 Image(systemName: "phone.fill")
                                     .font(.system(size: 32))
@@ -195,10 +195,10 @@ struct ProfileHeaderView: View {
                                 print(globalChat)
                                 if globalChat {
                                     notificationsManager.currentChatContext = .global
-                                    globalChatManager.findOrCreateConversation(with: selectedFriend.froopUserID) { conversationId in
+                                    globalChatManager.findOrCreateConversation(with: friendRequestManager.selectedFriend.froopUserID) { conversationId in
                                         self.conversationId = conversationId
-                                        globalChatManager.otherUserId = selectedFriend.froopUserID
-                                        globalChatManager.selectedFriend = selectedFriend
+                                        globalChatManager.otherUserId = friendRequestManager.selectedFriend.froopUserID
+                                        globalChatManager.selectedFriend = friendRequestManager.selectedFriend
                                         globalChatManager.conversationId = conversationId
                                         print("👀\(conversationId)")
                                         print("👀👀\(globalChatManager.conversationId)")
@@ -213,9 +213,9 @@ struct ProfileHeaderView: View {
                                     chatViewOpen = true
                                     
                                     print("Current Chat Context: \(String(describing: notificationsManager.currentChatContext))")
-                                    print("selectedFriend: \(selectedFriend)")
-                                    print("chatPartnerUID: \(selectedFriend.froopUserID)")
-                                    print("Selected Conversation: \(selectedFriend)")
+                                    print("selectedFriend: \(friendRequestManager.selectedFriend)")
+                                    print("chatPartnerUID: \(friendRequestManager.selectedFriend.froopUserID)")
+                                    print("Selected Conversation: \(friendRequestManager.selectedFriend)")
                                     
                                 }
                                 
@@ -228,7 +228,7 @@ struct ProfileHeaderView: View {
                             }
                             
                             Button(action: {
-                                self.sendTextMessage(phoneNumber: selectedFriend.phoneNumber)
+                                self.sendTextMessage(phoneNumber: friendRequestManager.selectedFriend.phoneNumber)
                             }) {
                                 Image(systemName: "message.fill")
                                     .font(.system(size: 32))
@@ -241,12 +241,12 @@ struct ProfileHeaderView: View {
                         .offset(y: 25)
                         .frame(height: 50 - (1 * progress))
                         //                        .moveSymbols(progress, headerHeight, minimumHeaderHeight, headerWidth, minimumHeaderWidth)
-                        .opacity(selectedFriend.froopUserID == "froop" ? 0 : 1)
+                        .opacity(friendRequestManager.selectedFriend.froopUserID == "froop" ? 0 : 1)
                     }
                     
                     HStack {
                         Spacer()
-                        Text(selectedFriend.userDescription == "" ? ("Member since: \(formatDateToTimeZone(passedDate: selectedFriend.creationDate, timeZoneIdentifier: selectedFriend.timeZone))") : ("\(selectedFriend.userDescription)")).italic()
+                        Text(friendRequestManager.selectedFriend.userDescription == "" ? ("Member since: \(formatDateToTimeZone(passedDate: friendRequestManager.selectedFriend.creationDate, timeZoneIdentifier: friendRequestManager.selectedFriend.timeZone))") : ("\(friendRequestManager.selectedFriend.userDescription)")).italic()
                             .font(.system(size: 16))
                             .foregroundColor(Color(red: 50/255, green: 46/255, blue: 62/255))
                             .opacity(0.6)
@@ -265,7 +265,7 @@ struct ProfileHeaderView: View {
                     Spacer()
                     
                     Picker("", selection: $selectedTab) {
-                        if selectedFriend.froopUserID == "froop" {
+                        if friendRequestManager.selectedFriend.froopUserID == "froop" {
                             Text("Froops").tag(0)
                         } else {
                             Text("Froops").tag(0)
@@ -302,11 +302,11 @@ struct ProfileHeaderView: View {
                 VStack {
                     Spacer()
                     if globalChat {
-                        ChatView(selectedFriend: $selectedFriend, conversationId: $conversationId)
+                        ChatView(conversationId: $conversationId)
                             .padding(.top, UIScreen.screenHeight / 15)
                             .ignoresSafeArea()
                     } else {
-                        FroopChatView(selectedFriend: $selectedFriend, chatPartnerUID: selectedFriend.froopUserID, selectedConversation: $selectedFriend)
+                        FroopChatView(chatPartnerUID: friendRequestManager.selectedFriend.froopUserID)
                             .ignoresSafeArea()
                     }
                 }
@@ -323,12 +323,12 @@ struct ProfileHeaderView: View {
                         
                         VStack {
                             HStack {
-                                ProfileImage4(userUrl: selectedFriend.profileImageUrl)
+                                ProfileImage4(userUrl: friendRequestManager.selectedFriend.profileImageUrl)
                                 VStack (alignment: .leading){
                                     Text("CHATTING WITH")
                                         .font(.system(size: 12))
                                     
-                                    Text("\(selectedFriend.firstName.uppercased()) \(selectedFriend.lastName.uppercased())")
+                                    Text("\(friendRequestManager.selectedFriend.firstName.uppercased()) \(friendRequestManager.selectedFriend.lastName.uppercased())")
                                         .font(.system(size: 20))
                                 }
                                 .fontWeight(.bold)
@@ -372,13 +372,13 @@ struct ProfileHeaderView: View {
         }
         .alert(isPresented: $unFriendAlert) {
             Alert(
-                title: Text("Remove \(selectedFriend.firstName) \(selectedFriend.lastName) from your Friend List"),
+                title: Text("Remove \(friendRequestManager.selectedFriend.firstName) \(friendRequestManager.selectedFriend.lastName) from your Friend List"),
                 message: Text("Removing friends from your Friends List will make it harder to view Froops where you both have attended.  Are you sure?"),
                 primaryButton: .default(Text("Yes, I am sure.")) {
                     // Wrap asynchronous call in a Task
                     Task {
                         do {
-                            try await unFriend(currentUserID: uid, friendUserID: selectedFriend.froopUserID)
+                            try await unFriend(currentUserID: uid, friendUserID: friendRequestManager.selectedFriend.froopUserID)
                         } catch {
                             print("Failed to unfriend: \(error)")
                         }
@@ -493,85 +493,4 @@ struct ProfileHeaderView: View {
     }
 }
 
-struct ProfileImage: View {
-    
-    var progress: CGFloat
-    var headerHeight: CGFloat
-    @Binding var selectedFriend: UserData
-    
-    var body: some View {
-        GeometryReader {
-            let rect = $0.frame(in: .global)
-            let halfScaledHeight = (rect.height * 1) * 0.15
-            let halfScaledWidth = (rect.width * 0.4) * 0.5
-            let midY = rect.midY - rect.height / 2
-            let midX = rect.midX - rect.width / 2
-            let bottomPadding: CGFloat = 0
-            let leadingPadding: CGFloat = 0
-            let minimumHeaderHeight = 50
-            let minimumHeaderWidth = 50
-            let resizedOffsetY = (midY - (CGFloat(minimumHeaderHeight) - halfScaledHeight - bottomPadding))
-            let resizedOffsetX = (midX - (CGFloat(minimumHeaderWidth) - halfScaledWidth - leadingPadding))
-            ZStack {
-                Circle()
-                    .frame(width: (rect.width + 2) * 1, height: (rect.height + 2) * 1)
-                    .foregroundStyle(.white)
-                    .shadow(color: Color(red: 50/255, green: 46/255, blue: 62/255).opacity(0.2), radius: 7, x: 0, y: -7)
-                    .scaleEffect(1 - (progress * 0.6), anchor: .leading)
-                    .offset(x: -resizedOffsetX * progress, y: -resizedOffsetY * progress)
-                
-                KFImage(URL(string: selectedFriend.profileImageUrl))
-                    .resizable()
-                    .scaledToFill()
-                    .clipShape(Circle())
-                    .frame(width: rect.width * 1, height: rect.height * 1)
-                    .scaleEffect(1 - (progress * 0.6), anchor: .leading)
-                    .offset(x: -resizedOffsetX * progress, y: -resizedOffsetY * progress)
-            }
-        }
-        .frame(width: headerHeight * 0.35, height: headerHeight * 0.35)
-    }
-}
 
-struct ProfileImage2: View {
-    @ObservedObject var chatManager = GlobalChatNotificationsManager.shared
-    
-    var body: some View {
-        KFImage(URL(string: chatManager.otherUserProfileImageUrl))
-            .resizable()
-            .scaledToFill()
-            .frame(width: 50, height: 50)
-            .clipShape(Circle())
-            .frame(width: 50, height: 50)
-    }
-}
-
-
-
-struct ProfileImage3: View {
-    @ObservedObject var chatManager = GlobalChatNotificationsManager.shared
-    @Binding var selectedFriend: UserData
-    
-    var body: some View {
-        KFImage(URL(string: chatManager.otherUserProfileImageUrl))
-            .resizable()
-            .scaledToFill()
-            .frame(width: 50, height: 50)
-            .clipShape(Circle())
-            .frame(width: 50, height: 50)
-    }
-}
-
-struct ProfileImage4: View {
-//    @ObservedObject var chatManager = GlobalChatNotificationsManager.shared
-    let userUrl: String
-    
-    var body: some View {
-        KFImage(URL(string: userUrl))
-            .resizable()
-            .scaledToFill()
-            .frame(width: 50, height: 50)
-            .clipShape(Circle())
-            .frame(width: 50, height: 50)
-    }
-}

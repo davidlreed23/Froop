@@ -18,8 +18,9 @@ class FriendRequestManager: ObservableObject {
     @ObservedObject var printControl = PrintControl.shared
     @ObservedObject var notificationsManager = NotificationsManager.shared
     // @ObservedObject var froopDataListener = FroopDataListener.shared
-   
- 
+    @Published var currentFriends: [UserData] = []
+
+    @Published var selectedFriend: UserData = UserData()
     
     let db = FirebaseServices.shared.db
     var friendRequestRef: CollectionReference

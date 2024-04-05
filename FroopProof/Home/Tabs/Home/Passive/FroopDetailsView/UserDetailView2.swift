@@ -24,7 +24,7 @@ struct UserDetailView2: View {
                 let size = $0.size
                 let safeArea = $0.safeAreaInsets
                 
-                UserPublicView(size: size, safeArea: safeArea, selectedFriend: $selectedFriend, profileView: $profileView, friendDetailOpen: $friendDetailOpen, friends: $currentFriends, globalChat: $globalChat)
+                UserPublicView(size: size, safeArea: safeArea, profileView: $profileView, friendDetailOpen: $friendDetailOpen, globalChat: $globalChat)
                     .ignoresSafeArea(.all, edges: .top)
                     .onAppear {
                         dataController.getUserDataFriends(uid: selectedFriend.froopUserID) { result in
@@ -87,7 +87,7 @@ struct UserDetailView3: View {
                 let size = $0.size
                 let safeArea = $0.safeAreaInsets
                 
-                UserPublicView(size: size, safeArea: safeArea, selectedFriend: $selectedMapFriend, profileView: $profileView, friendDetailOpen: $friendDetailOpen, friends: $currentFriends, globalChat: $globalChat)
+                UserPublicView(size: size, safeArea: safeArea, profileView: $profileView, friendDetailOpen: $friendDetailOpen, globalChat: $globalChat)
                     .ignoresSafeArea(.all, edges: .top)
             }
             
@@ -138,7 +138,7 @@ struct UserDetailView4: View {
                 let size = $0.size
                 let safeArea = $0.safeAreaInsets
                 
-                UserPublicView(size: size, safeArea: safeArea, selectedFriend: $friend, profileView: $profileView, friendDetailOpen: $friendDetailOpen, friends: $currentFriends, globalChat: $globalChat)
+                UserPublicView(size: size, safeArea: safeArea, profileView: $profileView, friendDetailOpen: $friendDetailOpen, globalChat: $globalChat)
                     .ignoresSafeArea(.all, edges: .top)
                     .onAppear {
                         dataController.getUserDataFriends(uid: friend.froopUserID) { result in

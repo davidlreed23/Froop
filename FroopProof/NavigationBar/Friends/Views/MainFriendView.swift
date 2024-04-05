@@ -9,13 +9,13 @@ struct MainFriendView: View {
 //    @ObservedObject var printControl = PrintControl.shared
     @ObservedObject var locationServices = LocationServices.shared
     @ObservedObject var dataController = DataController.shared
+    @ObservedObject var friendRequestManager = FriendRequestManager.shared
     @ObservedObject var myData = MyData.shared
     var db = FirebaseServices.shared.db
     var uid = FirebaseServices.shared.uid
     @Binding var areThereFriendRequests: Bool
 //    @ObservedObject var friendInviteData: FriendInviteData
 //    @ObservedObject var friendStore = FriendStore()
-    @ObservedObject var friendRequestManager = FriendRequestManager(timestamp: Date())
     @ObservedObject var friendListData = FriendListData(dictionary: [:])
     @State var toUserInfo = UserData()
     @State var toUserID = String()
@@ -104,7 +104,7 @@ struct MainFriendView: View {
                         ForEach(uniqueFriends(friends: myData.myFriends, searchText: searchText).chunked(into: 3), id: \.self) { friendGroup in
                             HStack(spacing: 0) {
                                 ForEach(friendGroup, id: \.id) { friend in
-                                    FriendCardView(selectedFriend: $selectedFriend, friendDetailOpen: $friendDetailOpen, friend: friend)
+                                    FriendCardView(friendDetailOpen: $friendDetailOpen, friend: friend)
                                 }
                             }
                         }
@@ -239,7 +239,7 @@ struct MainFriendView: View {
             ZStack {
                 VStack {
                     Spacer()
-                    FriendDetailView(selectedFriend: $selectedFriend, globalChat: $globalChat)
+                    FriendDetailView(globalChat: $globalChat)
                     //                        .ignoresSafeArea()
                 }
                 VStack {

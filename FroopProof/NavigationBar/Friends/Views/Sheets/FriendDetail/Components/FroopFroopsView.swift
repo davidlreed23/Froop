@@ -12,11 +12,11 @@ struct FroopFroopsView: View {
     @ObservedObject var appStateManager = AppStateManager.shared
     @ObservedObject var printControl = PrintControl.shared
     @ObservedObject var locationServices = LocationServices.shared
+    @ObservedObject var friendRequestManager = FriendRequestManager.shared
     // @ObservedObject var froopDataListener = FroopDataListener.shared
     @ObservedObject var froopManager = FroopManager.shared
     @ObservedObject var timeZoneManager:TimeZoneManager = TimeZoneManager()
-    @Binding var selectedFriend: UserData
-    
+ 
     @ObservedObject var myData = MyData.shared
     @ObservedObject var changeView = ChangeView()
     @ObservedObject var froopData = FroopData.shared
@@ -89,10 +89,9 @@ struct FroopFroopsView: View {
     }
     
     
-    init(selectedFriend: Binding<UserData>, friendDetailOpen: Binding<Bool>) {
-        _selectedFriend = selectedFriend
+    init(friendDetailOpen: Binding<Bool>) {
         _friendDetailOpen = friendDetailOpen
-        froopManager.fetchFroopData(fuid: selectedFriend.wrappedValue.froopUserID)
+        froopManager.fetchFroopData(fuid: friendRequestManager.selectedFriend.froopUserID)
     }
     
     var body: some View {

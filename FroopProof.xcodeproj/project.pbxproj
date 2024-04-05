@@ -147,6 +147,7 @@
 		636162CB297FD06A00DC068B /* LocationFilter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 636162CA297FD06A00DC068B /* LocationFilter.swift */; };
 		63671218298A52D900946FC0 /* DurationPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63671217298A52D900946FC0 /* DurationPicker.swift */; };
 		6367121A298AD41600946FC0 /* TimeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63671219298AD41600946FC0 /* TimeViewController.swift */; };
+		636B4D412BBF336700916CC2 /* ProfileImageViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 636B4D402BBF336700916CC2 /* ProfileImageViews.swift */; };
 		636C21B32B4CE73F001C8DD3 /* DetailsGuestMessageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 636C21B22B4CE73F001C8DD3 /* DetailsGuestMessageView.swift */; };
 		636DCC462AC63E9100FA9F89 /* FindDevicePtSize.swift in Sources */ = {isa = PBXBuildFile; fileRef = 636DCC452AC63E9100FA9F89 /* FindDevicePtSize.swift */; };
 		636DCC482ACC8E2100FA9F89 /* NotificationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 636DCC472ACC8E2100FA9F89 /* NotificationView.swift */; };
@@ -469,6 +470,7 @@
 		636162CA297FD06A00DC068B /* LocationFilter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationFilter.swift; sourceTree = "<group>"; };
 		63671217298A52D900946FC0 /* DurationPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DurationPicker.swift; sourceTree = "<group>"; };
 		63671219298AD41600946FC0 /* TimeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeViewController.swift; sourceTree = "<group>"; };
+		636B4D402BBF336700916CC2 /* ProfileImageViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileImageViews.swift; sourceTree = "<group>"; };
 		636C21B22B4CE73F001C8DD3 /* DetailsGuestMessageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailsGuestMessageView.swift; sourceTree = "<group>"; };
 		636DCC452AC63E9100FA9F89 /* FindDevicePtSize.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FindDevicePtSize.swift; sourceTree = "<group>"; };
 		636DCC472ACC8E2100FA9F89 /* NotificationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationView.swift; sourceTree = "<group>"; };
@@ -1600,6 +1602,7 @@
 			children = (
 				634054F42A903BB40013CB9E /* MyProfileHeaderView.swift */,
 				634D591E297987120052BF16 /* CreateFroop */,
+				636B4D402BBF336700916CC2 /* ProfileImageViews.swift */,
 			);
 			path = Header;
 			sourceTree = "<group>";
@@ -2076,6 +2079,7 @@
 				634D596E29799E150052BF16 /* LocationManager.swift in Sources */,
 				63BAA29529C7AB0D00B3D9B8 /* TimeZoneManager.swift in Sources */,
 				63EFFB8029DE13B70069958A /* ContactPicker.swift in Sources */,
+				636B4D412BBF336700916CC2 /* ProfileImageViews.swift in Sources */,
 				63DC2AD029B4344700B739BD /* DataController.swift in Sources */,
 				637A963A2ABCB83400667262 /* OnboardThree.swift in Sources */,
 				6329EC1D2A60E4FA0095D9C7 /* CustomAnnotationPin.swift in Sources */,

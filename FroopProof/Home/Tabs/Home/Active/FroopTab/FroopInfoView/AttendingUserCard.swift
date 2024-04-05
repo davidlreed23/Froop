@@ -16,6 +16,7 @@ struct AttendingUserCard: View {
     @ObservedObject var appStateManager = AppStateManager.shared
     @ObservedObject var printControl = PrintControl.shared
     @ObservedObject var locationServices = LocationServices.shared
+    @ObservedObject var friendRequestManager = FriendRequestManager.shared
     // @ObservedObject var froopDataListener = FroopDataListener.shared
  
     
@@ -138,6 +139,9 @@ struct AttendingUserCard: View {
                     .frame(alignment: .trailing)
                     Spacer()
                 }
+            }
+            .onAppear {
+                friendRequestManager.selectedFriend = friend
             }
         }
      

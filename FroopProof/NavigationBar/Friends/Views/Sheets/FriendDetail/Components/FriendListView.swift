@@ -6,18 +6,14 @@ import SwiftUIBlurView
 
 struct FriendListView: View {
     
-//    @ObservedObject var appStateManager = AppStateManager.shared
     @ObservedObject var printControl = PrintControl.shared
-//    @ObservedObject var locationServices = LocationServices.shared
-//    @ObservedObject var froopDataListener = FroopDataListener.shared
-    
+    @ObservedObject var friendRequestManager = FriendRequestManager.shared
     var db = FirebaseServices.shared.db
-    @Binding var friends: [UserData]
 //    @ObservedObject var friendData: UserData = UserData()
     @ObservedObject var myData = MyData.shared
     @State var refresh = false
     @ObservedObject var friendStore = FriendStore()
-    @Binding var selectedFriend: UserData
+    let uid = FirebaseServices.shared.uid
     
     var body: some View {
         ZStack {
@@ -25,27 +21,25 @@ struct FriendListView: View {
                 .frame(height: 1200)
                 .foregroundColor(.white)
                 .opacity(0.001)
-            ScrollView(showsIndicators: false) {
-                VStack(spacing: 15) {
-                    ForEach(friends.chunked(into: 3), id: \.self) { friendGroup in
-                        HStack(spacing: 15) {
-                            ForEach(friendGroup, id: \.id) { friend in
-                                FriendOfFriendCardView(selectedFriend: $selectedFriend, friend: friend)
+            if myData.myFriends.contains(where: { $0.froopUserID == friendRequestManager.selectedFriend.froopUserID}) || uid == uid {
+                ScrollView(showsIndicators: false) {
+                    VStack(spacing: 15) {
+                        // Assuming friendRequestManager.currentFriends is an array of friends
+                        ForEach(friendRequestManager.currentFriends.chunked(into: 3), id: \.self) { friendGroup in
+                            HStack(spacing: 15) {
+                                ForEach(friendGroup, id: \.id) { friend in
+                                    FriendOfFriendCardView(friend: friend)
+                                }
                             }
                         }
                     }
-                    Spacer()
                 }
+                .padding(.top, 10)
+                .shadow(color: .gray, radius: 2)
+            } else {
+                // Optionally handle the case where the condition is not met
+                Text("You must be connected as Friends to see other people's friend lists.")
             }
-            .padding(.top, 10)
-            .shadow(color: .gray, radius: 2)
-//            .onAppear() {
-//                if friendStore.friends.isEmpty {
-//                    froopDataListener.getData(uid: selectedFriend.froopUserID)
-//                } else {
-//                    print("lovely")
-//                }
-//            }
         }
     }
 }

@@ -74,9 +74,6 @@ class AppDelegate: NSObject, ObservableObject, UIApplicationDelegate, UNUserNoti
             }
         }
         
-        let myDataManager = MyData.shared
-        myDataManager.updateSubscriptionStatus()
-        
         UIApplication.shared.registerForRemoteNotifications()
         
         let locationManager = LocationManager.shared
@@ -388,7 +385,7 @@ struct MyApp: App {
                 if authState.isAuthenticated {
                     RootView(friendData: UserData(), photoData: PhotoData(), appDelegate: AppDelegate(), confirmedFroopsList: ConfirmedFroopsList())
                         .onAppear(perform:  {
-                            
+                            myData.updateSubscriptionStatus()
                             Purchases.shared.getOfferings { (offerings, error) in
                                 if let packages = offerings?.current?.availablePackages {
                                     print(packages.map( {$0.offeringIdentifier }))

@@ -12,13 +12,13 @@ import Kingfisher
 struct FriendOfFriendCardView: View {
     
     @ObservedObject var dataController = DataController.shared
-//    @ObservedObject var appStateManager = AppStateManager.shared
     @ObservedObject var printControl = PrintControl.shared
     @ObservedObject var locationServices = LocationServices.shared
-    // @ObservedObject var froopDataListener = FroopDataListener.shared
+    @ObservedObject var friendRequestManager = FriendRequestManager.shared
+    @ObservedObject var froopManager = FroopManager.shared
     @State private var selected: Bool = false
+    @State var currentFriends: [UserData] = []
     
-    @Binding var selectedFriend: UserData
     var friend: UserData
     
     var body: some View {
@@ -27,7 +27,7 @@ struct FriendOfFriendCardView: View {
                 .resizable()
                 .scaledToFill()
                 .frame(width: 90, height: 90)
-                .border(selected ? .green : .clear, width: selected ? 2 : 0)
+                .border(.pink)
                 .clipShape(Circle())
                 .overlay(Circle().stroke(Color.gray, lineWidth: 0))
                 .opacity(selected ? 0.5 : 1.0)
@@ -41,7 +41,24 @@ struct FriendOfFriendCardView: View {
         .frame(width: 125, height: 125)
         .cornerRadius(10)
         .padding(.top, 5)
-//        .onTapGesture {
+        .onTapGesture {
+            withAnimation(.smooth()) {
+                friendRequestManager.selectedFriend = friend
+                
+                froopManager.fetchFriendLists(uid: friendRequestManager.selectedFriend.froopUserID) { friendList in
+                    froopManager.fetchUserDataFor(uids: friendList) { result in
+                        switch result {
+                            case .success(let retrievedFriends):
+                                // If the operation is successful, assign the retrieved friends to currentFriends
+                                friendRequestManager.currentFriends = retrievedFriends
+                            case .failure(let error):
+                                // If the operation fails, handle the error (e.g., show an error message)
+                                print("Error fetching user data: \(error.localizedDescription)")
+                                friendRequestManager.currentFriends = [] // Optionally reset or handle the UI accordingly
+                        }
+                    }
+                }
+            }
 //            selected.toggle()
 //            print("Selected was Toggled")
 //            if selected {
@@ -54,6 +71,6 @@ struct FriendOfFriendCardView: View {
 //            print(dataController.allSelected)
 //            print("selected or deselected")
 //            print("\(friend.firstName) says they were tapped!")
-//        }
+        }
     }
 }

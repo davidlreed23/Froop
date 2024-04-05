@@ -272,10 +272,11 @@ class FroopManager: ObservableObject {
             if let document = document, document.exists {
                 var userFriendUIDs = document.data()?["friendUIDs"] as? [String] ?? []
                 PrintControl.shared.printFroopManager("First Function: fetchFriendLists: \(userFriendUIDs.description)")
-                
+                print("First Function: fetchFriendLists: \(userFriendUIDs.description)")
+
                 // Append the current user's uid to the list
-                let currentUserUID = FirebaseServices.shared.uid
-                userFriendUIDs.append(currentUserUID)
+//                let currentUserUID = FirebaseServices.shared.uid
+//                userFriendUIDs.append(currentUserUID)
                 
                 
                 completion(userFriendUIDs)
