@@ -86,8 +86,8 @@ struct ActiveHostAnnotation: View {
                             .font(.system(size: 24))
                             .foregroundColor(.white)
                             .blendMode(.difference)
-                            .padding(.trailing, 25)
-                            .padding(.top, 20)
+                            .padding(.trailing, 40)
+                            .padding(.top, UIScreen.screenHeight * 0.005)
                             .onTapGesture {
                                 dataController.allSelected = 0
                                 appStateManager.inMapChat = false

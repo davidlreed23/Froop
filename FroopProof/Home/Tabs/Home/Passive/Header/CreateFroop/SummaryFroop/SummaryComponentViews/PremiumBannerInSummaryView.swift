@@ -146,8 +146,6 @@ struct PremiumBannerInSummaryView: View {
                         .frame(height: 125)
                         .ignoresSafeArea()
                 }
-                
-                
                 .padding(.top, UIScreen.screenHeight * 0.025 + 75)
                 .ignoresSafeArea()
             } else {

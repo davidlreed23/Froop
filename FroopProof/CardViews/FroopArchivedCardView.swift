@@ -209,7 +209,7 @@ struct FroopArchivedCardView: View {
                         VStack (alignment: .center) {
                             ZStack {
                                 RoundedRectangle(cornerRadius: 10)
-                                    .fill(Color(red: 0/255, green: 223/255, blue: 252/255))
+                                    .fill(Color(red: 50/255, green: 46/255, blue: 62/255))
                                     .opacity(1.0)
                                     .frame(width: 50, height: 50)
                                     .shadow(color: Color(red: 50/255, green: 46/255, blue: 62/255).opacity(0.4), radius: 4, x: 4, y: 4)
@@ -218,11 +218,12 @@ struct FroopArchivedCardView: View {
                                 VStack(alignment: /*@START_MENU_TOKEN@*/.center/*@END_MENU_TOKEN@*/, content: {
                                     Text("View")
                                         .font(.system(size: 14))
-                                        .fontWeight(.bold)
+                                        .foregroundColor(.white)
+                                        .fontWeight(.light)
                                         .foregroundColor(Color.white)
                                 })
                                 
-                            }
+                            } // View Button
                         }
                         .padding(.trailing, 30)
                         .onTapGesture {
@@ -276,7 +277,7 @@ struct FroopArchivedCardView: View {
                     
                     Divider()
                         .padding(.leading, 15)
-                        .padding(.trailing, 15)
+                        .padding(.trailing, 100)
                         .padding(1)
                         .padding(1)
                 HStack {
@@ -295,7 +296,7 @@ struct FroopArchivedCardView: View {
                                 .foregroundColor(Color(red: 50/255, green: 46/255, blue: 62/255))
                                 .padding(.leading, -15)
                             Spacer()
-                        }
+                        } // Clock Icon and Frop Time
                         HStack {
                             Image(systemName: "mappin.and.ellipse")
                                 .frame(width: 65, height: 30)
@@ -317,15 +318,43 @@ struct FroopArchivedCardView: View {
                             }
                             .padding(.leading, -15)
                             Spacer()
-                        }
+                        } // Map Pin Icon and Location
                     }
                     .frame(height: 120)
                     
                     VStack {
+                        
+                        if froopHostAndFriends.host.premiumAccount || froopHostAndFriends.host.professionalAccount {
+                            VStack {
+                                if froopHostAndFriends.froop.froopHost == uid {
+                                    ZStack {
+                                        RoundedRectangle(cornerRadius: 10)
+                                            .fill(Color(red: 249/255, green: 0/255, blue: 98/255))
+                                            .frame(width: 50, height: 50)
+                                            .shadow(color: Color(red: 50/255, green: 46/255, blue: 62/255).opacity(0.4), radius: 4, x: 4, y: 4)
+                                            .shadow(color: Color.white.opacity(0.9), radius: 4, x: -4, y: -4)
+                                        VStack(alignment: /*@START_MENU_TOKEN@*/.center/*@END_MENU_TOKEN@*/, content: {
+                                            Text("Share")
+                                                .font(.system(size: 14))
+                                                .fontWeight(.light)
+                                                .foregroundColor(.white)
+                                        })
+                                    }
+                                    .padding(.trailing, 30)
+                                    .frame(width: 80)
+                                    .onTapGesture {
+                                        froopManager.selectedFroopHistory = froopHostAndFriends
+                                        froopManager.showInviteUrlView = true
+                                    }
+                                }
+                            }
+                        } else {
+                            EmptyView()
+                        } // Share Button
+                        
                         ZStack {
                             RoundedRectangle(cornerRadius: 10)
                                 .fill(.white)
-                                .opacity(0.5)
                                 .frame(width: 50, height: 50)
                                 .shadow(color: Color(red: 50/255, green: 46/255, blue: 62/255).opacity(0.4), radius: 4, x: 4, y: 4)
                                 .shadow(color: Color.white.opacity(0.9), radius: 4, x: -4, y: -4)
@@ -335,9 +364,9 @@ struct FroopArchivedCardView: View {
                                     .fontWeight(.light)
                                     .foregroundColor(Color(red: 50/255, green: 46/255, blue: 62/255))
                             })
-                            
-                        }
+                        } // Hide Button
                         .padding(.trailing, 30)
+                        .padding(.top, 10)
                         .frame(width: 80)
                         .onTapGesture {
                             Task {
@@ -353,7 +382,6 @@ struct FroopArchivedCardView: View {
                                 }
                             }
                         }
-                        
                         Spacer()
                     }
                     .frame(height: 120)
@@ -435,96 +463,7 @@ struct FroopArchivedCardView: View {
         return formattedTime
     }
     
-//    func loadInvitedFriends() {
-//        let uid = FirebaseServices.shared.uid
-//        let froopRef = db.collection("users").document(uid).collection("myFroops").document(froopHostAndFriends.froop.froopId).collection("invitedFriends").document("inviteList")
-//        
-//        froopRef.getDocument { (document, error) in
-//            if let document = document, document.exists {
-//                let invitedFriendUIDs = document.data()?["uid"] as? [String] ?? []
-//                self.fetchFriendsData(from: invitedFriendUIDs) { invitedFriends in
-//                    self.invitedFriends = invitedFriends
-//                }
-//            } else {
-//                print("No friends found in the invite list.")
-//            }
-//        }
-//    }
-//    
-//    func loadConfirmedFriends() {
-//        let uid = FirebaseServices.shared.uid
-//        let froopRef = db.collection("users").document(uid).collection("myFroops").document(froopHostAndFriends.froop.froopId).collection("invitedFriends").document("confirmedList")
-//        
-//        froopRef.getDocument { (document, error) in
-//            if let document = document, document.exists {
-//                let confirmedFriendUIDs = document.data()?["uid"] as? [String] ?? []
-//                self.fetchFriendsData(from: confirmedFriendUIDs) { confirmedFriends in
-//                    self.confirmedFriends = confirmedFriends
-//                }
-//            } else {
-//                print("No friends found in the confirmed list.")
-//            }
-//        }
-//    }
-//    
-//    func loadDeclinedFriends() {
-//        let uid = FirebaseServices.shared.uid
-//        let froopRef = db.collection("users").document(uid).collection("myFroops").document(froopHostAndFriends.froop.froopId).collection("invitedFriends").document("declinedList")
-//        
-//        froopRef.getDocument { (document, error) in
-//            if let document = document, document.exists {
-//                let declinedFriendUIDs = document.data()?["uid"] as? [String] ?? []
-//                self.fetchFriendsData(from: declinedFriendUIDs) { declinedFriends in
-//                    self.declinedFriends = declinedFriends
-//                }
-//            } else {
-//                print("No friends found in the declined list.")
-//            }
-//        }
-//    }
-//    
-//    func fetchConfirmedFriends() {
-//        let uid = FirebaseServices.shared.uid
-//        
-//        let invitedFriendsRef = db.collection("users").document(uid).collection("myFroops").document(froopHostAndFriends.froop.froopId).collection("invitedFriends")
-//        
-//        let confirmedListDocRef = invitedFriendsRef.document("confirmedList")
-//        
-//        confirmedListDocRef.getDocument { document, error in
-//            if let document = document, document.exists {
-//                let confirmedFriendUIDs = document.data()?["uid"] as? [String] ?? []
-//                
-//                // Fetch confirmed friends data from Firestore and update confirmedFriends array
-//                fetchFriendsData(from: confirmedFriendUIDs) { friends in
-//                    confirmedFriends = friends
-//                }
-//            }
-//        }
-//    }
-//    
-//    func fetchFriendsData(from friendUIDs: [String], completion: @escaping ([UserData]) -> Void) {
-//        
-//        let usersRef = db.collection("users")
-//        var friends: [UserData] = []
-//        
-//        let group = DispatchGroup()
-//        
-//        for friendUID in friendUIDs {
-//            group.enter()
-//            
-//            usersRef.document(friendUID).getDocument { document, error in
-//                if let document = document, document.exists, let friendData = document.data() {
-//                    let friend = UserData(dictionary: friendData)
-//                    friends.append(friend ?? UserData())
-//                }
-//                group.leave()
-//            }
-//        }
-//        
-//        group.notify(queue: .main) {
-//            completion(friends)
-//        }
-//    }
+
     
     func formatDate(for date: Date) -> String {
 //        let localDate = TimeZoneManager.shared.convertDateToLocalTime(for: date)

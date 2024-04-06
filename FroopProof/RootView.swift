@@ -33,6 +33,10 @@ struct RootView: View {
     @ObservedObject var photoData = PhotoData()
     @ObservedObject var myData = MyData.shared
     @ObservedObject var confirmedFroopsList: ConfirmedFroopsList
+    
+    @ObservedObject var payManager = PayWallManager.shared
+    @ObservedObject var model: PaywallModel = PaywallModel(dictionary: [:])
+    
 //    @ObservedObject var versionChecker: VersionChecker = VersionChecker.shared
     @State var statusX: String = "pending"
     @State var selectedTab: Tab = .froop
@@ -84,7 +88,6 @@ struct RootView: View {
                                 .tag(Tab.froop)
                         }
                     }
-                    
                 }
                 .ignoresSafeArea()
                 .navigationTitle(myData.premiumAccount ? "Froop Premium" : "Froop")
@@ -155,9 +158,10 @@ struct RootView: View {
             
             .fullScreenCover(isPresented: $notificationsManager.openGlobalChat) {
             } content: {
-
                 FroopGlobalMessagesView()
             }
+            
+            
             
         }
     }

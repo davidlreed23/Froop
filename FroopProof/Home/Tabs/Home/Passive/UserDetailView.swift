@@ -14,7 +14,8 @@ struct UserDetailView: View {
     @ObservedObject var appStateManager = AppStateManager.shared
     @ObservedObject var locationServices = LocationServices.shared
     @ObservedObject var froopListStatus = HomeView2ViewModel()
-    
+    @ObservedObject var payManager = PayWallManager.shared
+
     @State private var mapState = MapViewState.locationSelected
     @State var showInviteView = false
     @State var profileView: Bool = true
@@ -70,33 +71,34 @@ struct UserDetailView: View {
                     }
                 }
                 .ignoresSafeArea()
-                
-                VStack {
-                    Text("tap to close")
-                        .font(.system(size: 18))
-                        .fontWeight(.light)
-                        .foregroundColor(.white).opacity(1)
-                        .padding(.top, 20)
-                    Image(systemName: "chevron.down")
-                        .font(.system(size: 24))
-                        .foregroundColor(.white).opacity(1)
-                    Spacer()
-                }
-                .opacity(froopManager.froopMapOpen ? 0 : 1.0)
-                .offset(y: -25)
-                .onTapGesture {
-                    if appStateManager.appState == .active && froopManager.comeFrom {
-                        froopManager.froopDetailOpen = false
-                        locationServices.selectedTab = .froop
-                        locationServices.selectedFroopTab = .info
-                        froopManager.comeFrom = false
-                    } else {
-                        froopManager.froopDetailOpen = false
-                        froopManager.froopListener?.remove()
+                if payManager.showIAPView == false {
+                    VStack {
+                        Text("tap to close")
+                            .font(.system(size: 18))
+                            .fontWeight(.light)
+                            .foregroundColor(.white).opacity(1)
+                            .padding(.top, 20)
+                        Image(systemName: "chevron.down")
+                            .font(.system(size: 24))
+                            .foregroundColor(.white).opacity(1)
+                        Spacer()
                     }
+                    .opacity(froopManager.froopMapOpen ? 0 : 1.0)
+                    .offset(y: -25)
+                    .onTapGesture {
+                        if appStateManager.appState == .active && froopManager.comeFrom {
+                            froopManager.froopDetailOpen = false
+                            locationServices.selectedTab = .froop
+                            locationServices.selectedFroopTab = .info
+                            froopManager.comeFrom = false
+                        } else {
+                            froopManager.froopDetailOpen = false
+                            froopManager.froopListener?.remove()
+                        }
+                    }
+                    .frame(alignment: .center)
+                    .padding(.top, 10)
                 }
-                .frame(alignment: .center)
-                .padding(.top, 10)
             }
             .presentationDetents([.large])
         }

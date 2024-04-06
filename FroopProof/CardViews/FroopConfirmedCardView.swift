@@ -111,7 +111,11 @@ struct FroopConfirmedCardView: View {
         
         ZStack (alignment: .top) {
             RoundedRectangle(cornerRadius: 10)
-                .fill(LinearGradient(gradient: Gradient(colors: isCurrentUserApproved ? [Color(red: 255/255, green: 255/255, blue: 255/255).opacity(0.25), Color(red: 206/255, green: 206/255, blue: 206/255)] : [Color(red: 223/255, green: 223/255, blue: 223/255).opacity(0.25), Color(red: 255/255, green: 255/255, blue: 255/255)]), startPoint: .top, endPoint: .bottom))
+                .fill(
+                    LinearGradient(gradient: Gradient(colors: [Color(red: 255/255, green: 255/255, blue: 255/255), Color(red: 244/255, green: 250/255, blue: 255/255)]), startPoint: .top, endPoint: .bottom)
+                )
+            
+                .fill(LinearGradient(gradient: Gradient(colors: isCurrentUserApproved ? [Color(red: 255/255, green: 255/255, blue: 255/255).opacity(0.25), Color(red: 244/255, green: 255/255, blue: 250/255)] : [Color(red: 255/255, green: 255/255, blue: 255/255).opacity(0.25), Color(red: 206/255, green: 244/255, blue: 250/255)]), startPoint: .top, endPoint: .bottom))
                 .shadow(color: Color(red: 50/255, green: 46/255, blue: 62/255).opacity(0.2), radius: 7, x: 7, y: 7)
                 .shadow(color: Color.white.opacity(0.7), radius: 7, x: -4, y: -4)
                 .overlay(
@@ -183,16 +187,18 @@ struct FroopConfirmedCardView: View {
                         VStack (alignment: .center) {
                             ZStack {
                                 RoundedRectangle(cornerRadius: 10)
-                                    .fill(Color(red: 255/255, green: 49/255, blue: 97/255))
-                                    .opacity(1)
+                                    .fill(Color(red: 50/255, green: 46/255, blue: 62/255))
+                                    .opacity(1.0)
                                     .frame(width: 50, height: 50)
-                                    .shadow(color: Color(red: 61/255, green: 76/255, blue: 8/255).opacity(0.4), radius: 4, x: 4, y: 4)
-//                                    .shadow(color: Color(red: 206/255, green: 255/255, blue: 28/255).opacity(0.9), radius: 4, x: -4, y: -4)
+                                    .shadow(color: Color(red: 50/255, green: 46/255, blue: 62/255).opacity(0.4), radius: 4, x: 4, y: 4)
+                                    .shadow(color: Color.white.opacity(0.9), radius: 4, x: -4, y: -4)
+
                                 VStack(alignment: /*@START_MENU_TOKEN@*/.center/*@END_MENU_TOKEN@*/, content: {
                                     Text("View")
                                         .font(.system(size: 14))
-                                        .fontWeight(.regular)
                                         .foregroundColor(.white)
+                                        .fontWeight(.light)
+                                        .foregroundColor(Color.white)
                                 })
                                 
                             }
@@ -297,8 +303,7 @@ struct FroopConfirmedCardView: View {
                             if froopHostAndFriends.froop.froopHost == uid {
                                 ZStack {
                                     RoundedRectangle(cornerRadius: 10)
-                                        .fill(.white)
-                                        .opacity(0.5)
+                                        .fill(Color(red: 249/255, green: 0/255, blue: 98/255))
                                         .frame(width: 50, height: 50)
                                         .shadow(color: Color(red: 50/255, green: 46/255, blue: 62/255).opacity(0.4), radius: 4, x: 4, y: 4)
                                         .shadow(color: Color.white.opacity(0.9), radius: 4, x: -4, y: -4)
@@ -306,7 +311,7 @@ struct FroopConfirmedCardView: View {
                                         Text("Share")
                                             .font(.system(size: 14))
                                             .fontWeight(.light)
-                                            .foregroundColor(Color(red: 50/255, green: 46/255, blue: 62/255))
+                                            .foregroundColor(.white)
                                     })
                                 }
                                 .padding(.trailing, 30)

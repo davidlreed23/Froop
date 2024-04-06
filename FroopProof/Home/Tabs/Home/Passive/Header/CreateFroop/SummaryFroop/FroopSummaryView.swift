@@ -82,8 +82,7 @@ struct FroopSummaryView: View {
                                 .fontWeight(.semibold)
                                 .foregroundColor(Color(red: 50/255, green: 46/255, blue: 62/255).opacity(0.9))
                             
-//                            Text("Tap below to make changes.")
-                            Text("froopId: \(froopData.froopId)")
+                            Text("Tap below to make changes.")
                                 .font(.system(size: 16))
                                 .fontWeight(.regular)
                                 .foregroundColor(Color(red: 50/255, green: 46/255, blue: 62/255).opacity(0.5))

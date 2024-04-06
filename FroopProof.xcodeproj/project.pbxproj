@@ -23,7 +23,6 @@
 		6311DD282978E646009063AC /* FirebaseDatabase in Frameworks */ = {isa = PBXBuildFile; productRef = 6311DD272978E646009063AC /* FirebaseDatabase */; };
 		6311DD2A2978E646009063AC /* FirebaseDatabaseSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 6311DD292978E646009063AC /* FirebaseDatabaseSwift */; };
 		6311DD2C2978E646009063AC /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 6311DD2B2978E646009063AC /* FirebaseFirestore */; };
-		6311DD2E2978E646009063AC /* FirebaseFirestoreSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 6311DD2D2978E646009063AC /* FirebaseFirestoreSwift */; };
 		6311DD302978E646009063AC /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = 6311DD2F2978E646009063AC /* FirebaseStorage */; };
 		6311DD332978E695009063AC /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = 6311DD322978E695009063AC /* GoogleSignIn */; };
 		6311DD352978E695009063AC /* GoogleSignInSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 6311DD342978E695009063AC /* GoogleSignInSwift */; };
@@ -272,6 +271,7 @@
 		63DC2ACB29B2D99600B739BD /* FroopMapBackgroundView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63DC2ACA29B2D99600B739BD /* FroopMapBackgroundView.swift */; };
 		63DC2ACE29B3EA1400B739BD /* UserFriendListImagesData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63DC2ACD29B3EA1400B739BD /* UserFriendListImagesData.swift */; };
 		63DC2AD029B4344700B739BD /* DataController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63DC2ACF29B4344700B739BD /* DataController.swift */; };
+		63DC7F742BC0D9EC00424BC8 /* PremiumBannerDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63DC7F732BC0D9EC00424BC8 /* PremiumBannerDetailsView.swift */; };
 		63DF3CB32ADAF29500B4C1E6 /* Version.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63DF3CB22ADAF29500B4C1E6 /* Version.swift */; };
 		63E1AF5C2B99619300DEA8E1 /* PendingGuestView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63E1AF5B2B99619300DEA8E1 /* PendingGuestView.swift */; };
 		63E1AF6E2B9A6FF200DEA8E1 /* FroopMediaShareViewParent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63E1AF6D2B9A6FF200DEA8E1 /* FroopMediaShareViewParent.swift */; };
@@ -591,6 +591,7 @@
 		63DC2ACA29B2D99600B739BD /* FroopMapBackgroundView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FroopMapBackgroundView.swift; sourceTree = "<group>"; };
 		63DC2ACD29B3EA1400B739BD /* UserFriendListImagesData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserFriendListImagesData.swift; sourceTree = "<group>"; };
 		63DC2ACF29B4344700B739BD /* DataController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataController.swift; sourceTree = "<group>"; };
+		63DC7F732BC0D9EC00424BC8 /* PremiumBannerDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PremiumBannerDetailsView.swift; sourceTree = "<group>"; };
 		63DF3CB22ADAF29500B4C1E6 /* Version.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Version.swift; sourceTree = "<group>"; };
 		63E1AF5B2B99619300DEA8E1 /* PendingGuestView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PendingGuestView.swift; sourceTree = "<group>"; };
 		63E1AF6D2B9A6FF200DEA8E1 /* FroopMediaShareViewParent.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FroopMediaShareViewParent.swift; sourceTree = "<group>"; };
@@ -648,7 +649,6 @@
 				63871BF02B619DDD00AF747C /* RevenueCat in Frameworks */,
 				6311DD382978E6DD009063AC /* iPhoneNumberField in Frameworks */,
 				6311DD262978E646009063AC /* FirebaseAuth in Frameworks */,
-				6311DD2E2978E646009063AC /* FirebaseFirestoreSwift in Frameworks */,
 				6311DD282978E646009063AC /* FirebaseDatabase in Frameworks */,
 				6311DD352978E695009063AC /* GoogleSignInSwift in Frameworks */,
 				633CC9F12A01B7E300F94093 /* NavigationStack in Frameworks */,
@@ -1438,6 +1438,7 @@
 		63CB194A2A423F7B007106F6 /* FroopDetailsView */ = {
 			isa = PBXGroup;
 			children = (
+				63DC7F732BC0D9EC00424BC8 /* PremiumBannerDetailsView.swift */,
 				63CB194C2A423FAB007106F6 /* FroopDetailsView.swift */,
 				63CB19582A424029007106F6 /* DetailsHeaderView.swift */,
 				63CB19632A43D374007106F6 /* DetailsAddFriendsView.swift */,
@@ -1917,7 +1918,6 @@
 				6311DD272978E646009063AC /* FirebaseDatabase */,
 				6311DD292978E646009063AC /* FirebaseDatabaseSwift */,
 				6311DD2B2978E646009063AC /* FirebaseFirestore */,
-				6311DD2D2978E646009063AC /* FirebaseFirestoreSwift */,
 				6311DD2F2978E646009063AC /* FirebaseStorage */,
 				6311DD322978E695009063AC /* GoogleSignIn */,
 				6311DD342978E695009063AC /* GoogleSignInSwift */,
@@ -2202,6 +2202,7 @@
 				632AE8C72A86F35D0019C027 /* FriendFroopsView.swift in Sources */,
 				6342519E2AE19A83003A7BA2 /* FroopHistoryService.swift in Sources */,
 				6304C04029CFED6B00041661 /* FroopDataController.swift in Sources */,
+				63DC7F742BC0D9EC00424BC8 /* PremiumBannerDetailsView.swift in Sources */,
 				636162A3297E33FA00DC068B /* KeyListener.swift in Sources */,
 				636DCC5E2ACE1FC700FA9F89 /* DetailsMediaView.swift in Sources */,
 				63140CB92B0AAC1C00979042 /* LoadingManager.swift in Sources */,
@@ -2491,7 +2492,7 @@
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CODE_SIGN_ENTITLEMENTS = FroopProof/FroopProof.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 42;
+				CURRENT_PROJECT_VERSION = 44;
 				DEVELOPMENT_ASSET_PATHS = "\"FroopProof/Preview Content\"";
 				DEVELOPMENT_TEAM = BVM3V493PM;
 				ENABLE_PREVIEWS = YES;
@@ -2519,7 +2520,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0.0;
+				MARKETING_VERSION = 1.0.2;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = com.agencytheory.froopproof;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -2542,7 +2543,7 @@
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CODE_SIGN_ENTITLEMENTS = FroopProof/FroopProof.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 42;
+				CURRENT_PROJECT_VERSION = 44;
 				DEVELOPMENT_ASSET_PATHS = "\"FroopProof/Preview Content\"";
 				DEVELOPMENT_TEAM = BVM3V493PM;
 				ENABLE_PREVIEWS = YES;
@@ -2571,7 +2572,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0.0;
+				MARKETING_VERSION = 1.0.2;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = com.agencytheory.froopproof;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -2589,7 +2590,7 @@
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = FNS/FNS.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 42;
+				CURRENT_PROJECT_VERSION = 44;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = BVM3V493PM;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -2603,7 +2604,7 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				MARKETING_VERSION = 1.0.0;
+				MARKETING_VERSION = 1.0.2;
 				PRODUCT_BUNDLE_IDENTIFIER = com.agencytheory.froopproof.FNS;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -2618,7 +2619,7 @@
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = FNS/FNS.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 42;
+				CURRENT_PROJECT_VERSION = 44;
 				DEVELOPMENT_TEAM = BVM3V493PM;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = FNS/Info.plist;
@@ -2631,7 +2632,7 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				MARKETING_VERSION = 1.0.0;
+				MARKETING_VERSION = 1.0.2;
 				PRODUCT_BUNDLE_IDENTIFIER = com.agencytheory.froopproof.FNS;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -2802,11 +2803,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 6311DD202978E646009063AC /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
 			productName = FirebaseFirestore;
-		};
-		6311DD2D2978E646009063AC /* FirebaseFirestoreSwift */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 6311DD202978E646009063AC /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
-			productName = FirebaseFirestoreSwift;
 		};
 		6311DD2F2978E646009063AC /* FirebaseStorage */ = {
 			isa = XCSwiftPackageProductDependency;

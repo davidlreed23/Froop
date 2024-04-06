@@ -23,6 +23,7 @@ struct DetailsHeaderView: View {
     @ObservedObject var printControl = PrintControl.shared
     @ObservedObject var froopManager = FroopManager.shared
     @Binding var templateMade: Bool
+    @State private var swingIn: Bool = false
     
     var timeUntilStart: String {
         let calendar = Calendar.current
@@ -85,61 +86,48 @@ struct DetailsHeaderView: View {
                                 VStack {
                                     HStack {
                                         Spacer()
-                                        if templateMade {
-                                            ZStack {
-                                                RoundedRectangle(cornerRadius: 10)
-                                                    .fill(Color(red: 50/255, green: 46/255, blue: 62/255))
-                                                    .frame(width: 70, height: 50)
-                                                    .shadow(color: Color.white.opacity(0.3), radius: 4, x: 4, y: 4)
-                                                    .shadow(color: Color(.black).opacity(1), radius: 4, x: -4, y: -4)
-                                                VStack {
-                                                    Text("Made From")
-                                                        .font(.system(size: 12))
-                                                        .fontWeight(.light)
-                                                        .foregroundColor(.white)
-                                                    Text("Template")
-                                                        .font(.system(size: 12))
-                                                        .fontWeight(.light)
-                                                        .foregroundColor(.white)
-                                                }
-                                            }
-                                        } else {
-                                            ZStack {
-                                                RoundedRectangle(cornerRadius: 10)
-                                                    .fill(Color(red: 50/255, green: 46/255, blue: 62/255))
-                                                    .frame(width: 70, height: 50)
-                                                    .shadow(color: Color.white.opacity(0.1), radius: 4, x: 4, y: 4)
-                                                    .shadow(color: Color(.black).opacity(1), radius: 4, x: -4, y: -4)
-                                                VStack {
-                                                    Text(froopManager.selectedFroopHistory.froop.template ? "" : "Create")
-                                                        .font(.system(size: 12))
-                                                        .fontWeight(.light)
-                                                        .foregroundColor(.white)
-                                                    Text(froopManager.selectedFroopHistory.froop.template ? "" : "Template")
-                                                        .font(.system(size: 12))
-                                                        .fontWeight(.light)
-                                                        .foregroundColor(.white)
-                                                }
+                                        ZStack {
+                                            RoundedRectangle(cornerRadius: 0)
+                                                .fill(froopManager.selectedFroopHistory.froop.template || templateMade ? Color(red: 0/255, green: 150/255, blue: 160/255) : Color(red: 249/255, green: 0/255, blue: 98/255))
+                                                .frame(width: 70, height: 50)
+                                                .shadow(color: Color(.black).opacity(0.5), radius: 4, x: 4, y: 4)
+                                            VStack {
+                                                Text(froopManager.selectedFroopHistory.froop.template || templateMade ? "Made From" : "Create")
+                                                    .font(.system(size: 12))
+                                                    .fontWeight(.regular)
+                                                    .foregroundColor(.white)
+                                                Text(froopManager.selectedFroopHistory.froop.template || templateMade ? "Template" : "Template")
+                                                    .font(.system(size: 12))
+                                                    .fontWeight(.regular)
+                                                    .foregroundColor(.white)
                                             }
                                         }
                                     }
                                     Spacer()
                                 }
                                 .padding(.top, 60)
-                                .padding(.trailing, 15)
                                 .onTapGesture {
-                                    //                        print("tapped")
+                                    //print("tapped")
                                     templateMade = true
-                                    froopManager.saveFroopAsTemplate(froopId: "froopId") { error in
-                                        if let error = error {
-                                            print("🚫Error copying froop to templates: \(error.localizedDescription)")
-                                        } else {
-                                            print("Froop successfully copied to templates with confirmed friends.")
+                                    if !froopManager.selectedFroopHistory.froop.template || !templateMade {
+                                        froopManager.saveFroopAsTemplate(froopId: "froopId") { error in
+                                            if let error = error {
+                                                print("🚫Error copying froop to templates: \(error.localizedDescription)")
+                                                print(froopManager.selectedFroopHistory.froop.froopId)
+                                            } else {
+                                                print("Froop successfully copied to templates with confirmed friends.")
+                                            }
                                         }
                                     }
                                 }
                             }
                             .frame(maxHeight: 200)
+                            .offset(x: swingIn ? 0 : 100)
+                            .onAppear {
+                                withAnimation(.interactiveSpring(response: 0.55, dampingFraction: 0.65, blendDuration: 0.65)) {
+                                    swingIn = true
+                                }
+                            }
                         }
                     } else {
                         EmptyView()
@@ -147,51 +135,53 @@ struct DetailsHeaderView: View {
                     }
                 }
             }
-            
-            VStack {
-                Spacer()
-                HStack {
-                    ZStack {
-                        Circle()
-                            .frame(width: 75)
-                            .foregroundColor(colorScheme == .dark ? .white : .white)
-                        KFImage(URL(string: froopManager.selectedFroopHistory.host.profileImageUrl))
-                            .placeholder {
-                                ProgressView()
-                            }
-                            .resizable()
-                            .scaledToFill()
-                            .frame(width: 75, height: 75, alignment: .center)
-                            .clipShape(Circle())
-                    }
-                    
-                    VStack (alignment: .leading){
-                        Text(froopManager.selectedFroopHistory.froop.froopName )
-                            .foregroundColor(colorScheme == .dark ? .white: .white)
-                            .font(.system(size: 24))
-                        Text("Host: \(froopManager.selectedFroopHistory.host.firstName ) \(froopManager.selectedFroopHistory.host.lastName)")
-                            .foregroundColor(colorScheme == .dark ? .white: .white)
-                            .font(.system(size: 14))
-                            .offset(y: 8)
-                        Text(timeUntilStart)
-                            .font(.system(size: 14))
-                            .fontWeight(.regular)
-                            .foregroundColor(.white).opacity(0.4)
-                            .frame(alignment: .leading)
-                            .offset(y: 8)
-                        
-                    }
-                    .offset(y: -5)
-                    .padding(.leading, 15)
-                    
+            ZStack {
+                VStack {
                     Spacer()
+                    HStack {
+                        ZStack {
+                            Circle()
+                                .frame(width: 75)
+                                .foregroundColor(colorScheme == .dark ? .white : .white)
+                            KFImage(URL(string: froopManager.selectedFroopHistory.host.profileImageUrl))
+                                .placeholder {
+                                    ProgressView()
+                                }
+                                .resizable()
+                                .scaledToFill()
+                                .frame(width: 75, height: 75, alignment: .center)
+                                .clipShape(Circle())
+                        }
+                        
+                        VStack (alignment: .leading){
+                            Text(froopManager.selectedFroopHistory.froop.froopName )
+                                .foregroundColor(colorScheme == .dark ? .white: .white)
+                                .font(.system(size: 24))
+                            Text("Host: \(froopManager.selectedFroopHistory.host.firstName ) \(froopManager.selectedFroopHistory.host.lastName)")
+                                .foregroundColor(colorScheme == .dark ? .white: .white)
+                                .font(.system(size: 14))
+                                .offset(y: 8)
+                            Text(timeUntilStart)
+                                .font(.system(size: 14))
+                                .fontWeight(.regular)
+                                .foregroundColor(.white).opacity(0.4)
+                                .frame(alignment: .leading)
+                                .offset(y: 8)
+                            
+                        }
+                        .offset(y: -5)
+                        .padding(.leading, 15)
+                        
+                        Spacer()
+                    }
+                    
                 }
+                .frame(maxHeight: 200)
+                .padding(.bottom, 10)
+                .padding(.trailing, 25)
+                .padding(.leading, 25)
                 
             }
-            .frame(maxHeight: 200)
-            .padding(.bottom, 10)
-            .padding(.trailing, 25)
-            .padding(.leading, 25)
         }
     }
 }

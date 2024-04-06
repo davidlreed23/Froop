@@ -32,6 +32,9 @@ struct FroopDetailsView: View {
     @ObservedObject var friendData: UserData = UserData()
     @ObservedObject var viewModel = DetailsGuestViewModel.shared
     
+    @ObservedObject var payManager = PayWallManager.shared
+    @ObservedObject var model: PaywallModel = PaywallModel(dictionary: [:])
+    
     @State var froopDropPin: FroopDropPin = FroopDropPin()
     
     @State var tasks: [FroopTask] = []
@@ -107,8 +110,11 @@ struct FroopDetailsView: View {
                         case .confirmed:
                             
                             if froopManager.selectedFroopHistory.host.froopUserID == Auth.auth().currentUser?.uid ?? "" {
+                            
                                 ScrollView {
                                     VStack (spacing: 0){
+                                        PremiumBannerDetailsView()
+                                            .frame(height: myData.premiumAccount ? 25 : 75)
                                         DetailsHostMessageView(selectedFroopHistory: $froopManager.selectedFroopHistory, messageEdit: $messageEdit)
                                         if $froopManager.selectedFroopHistory.froop.guestApproveList.count > 0 {
                                             withAnimation {
@@ -121,8 +127,6 @@ struct FroopDetailsView: View {
                                         DetailsMapView(selectedFroopHistory: $froopManager.selectedFroopHistory)
                                         DetailsTasksAndInformationView(taskOn: $taskOn, selectedFroopHistory: $froopManager.selectedFroopHistory)
                                         DetailsDeleteView(froopAdded: $froopAdded, selectedFroopHistory: $froopManager.selectedFroopHistory)
-                                        
-                                        
                                         Spacer()
                                     }
                                 }
@@ -212,12 +216,10 @@ struct FroopDetailsView: View {
                                 Rectangle()
                                     .foregroundColor(.clear)
                                     .border(Color(red: 50/255, green: 46/255, blue: 62/255), width: 0.25)
-                                    .opacity(0.5)
                                     .frame(width: 200, height: 50)
                                 Text("Close")
                                     .font(.system(size: 20))
                                     .foregroundColor(Color(red: 50/255, green: 46/255, blue: 62/255))
-                                    .opacity(0.5)
                                     .fontWeight(.thin)
                             }
                         }
@@ -399,6 +401,24 @@ struct FroopDetailsView: View {
                 }
             }
             
+            CustomPayWallView(
+                model: $payManager.model
+            )
+            .offset(y: payManager.showIAPView ? 0 : UIScreen.main.bounds.height)
+            .opacity(payManager.showIAPView ? 1 : 0)
+            .edgesIgnoringSafeArea(.all)
+            .onChange(of: payManager.showIAPView) { oldValue, newValue in
+                if newValue {
+                    Task {
+                        do {
+                            try await payManager.fetchPaywallData()
+                        } catch {
+                            print(error.localizedDescription)
+                            payManager.showDefaultView = true
+                        }
+                    }
+                }
+            }
             if froopManager.showVideoPlayer {
                 CustomVideoPlayerView(videoURLString: froopManager.selectedFroopHistory.froop.froopIntroVideo == "" ? froopManager.videoUrl : froopManager.selectedFroopHistory.froop.froopIntroVideo) {
                     froopManager.showVideoPlayer = false

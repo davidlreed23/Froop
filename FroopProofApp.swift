@@ -28,7 +28,7 @@ class AppDelegate: NSObject, ObservableObject, UIApplicationDelegate, UNUserNoti
     
     var window: UIWindow?
     
-    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) async -> Bool {
+    private func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) async -> Bool {
         
         NSSetUncaughtExceptionHandler { exception in
             print("Uncaught exception: \(exception)")

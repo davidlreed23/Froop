@@ -18,6 +18,7 @@
 		632AE8B62A8465630019C027 /* FroopLandingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 632AE8B52A8465630019C027 /* FroopLandingView.swift */; };
 		632AE8BA2A846A280019C027 /* ProfileHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 632AE8B92A846A280019C027 /* ProfileHeaderView.swift */; };
 		632AE8BC2A846A8C0019C027 /* CardsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 632AE8BB2A846A8C0019C027 /* CardsView.swift */; };
+		636B4D442BC092F600916CC2 /* InviteView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 636B4D432BC092F600916CC2 /* InviteView.swift */; };
 		636DCC4E2ACDCF1F00FA9F89 /* FroopSummaryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 636DCC4D2ACDCF1F00FA9F89 /* FroopSummaryView.swift */; };
 		636DCC5C2ACE1BD800FA9F89 /* FroopDetailsMediaView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 636DCC5B2ACE1BD800FA9F89 /* FroopDetailsMediaView.swift */; };
 		637A96412ABCCBF600667262 /* OnboardOne.swift in Sources */ = {isa = PBXBuildFile; fileRef = 637A96402ABCCBF600667262 /* OnboardOne.swift */; };
@@ -61,6 +62,7 @@
 		632AE8B52A8465630019C027 /* FroopLandingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FroopLandingView.swift; sourceTree = "<group>"; };
 		632AE8B92A846A280019C027 /* ProfileHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileHeaderView.swift; sourceTree = "<group>"; };
 		632AE8BB2A846A8C0019C027 /* CardsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardsView.swift; sourceTree = "<group>"; };
+		636B4D432BC092F600916CC2 /* InviteView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InviteView.swift; sourceTree = "<group>"; };
 		636DCC4D2ACDCF1F00FA9F89 /* FroopSummaryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FroopSummaryView.swift; sourceTree = "<group>"; };
 		636DCC5B2ACE1BD800FA9F89 /* FroopDetailsMediaView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FroopDetailsMediaView.swift; sourceTree = "<group>"; };
 		637A96402ABCCBF600667262 /* OnboardOne.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardOne.swift; sourceTree = "<group>"; };
@@ -132,6 +134,14 @@
 			path = FroopLandingPage;
 			sourceTree = "<group>";
 		};
+		636B4D422BC092E000916CC2 /* InviteView */ = {
+			isa = PBXGroup;
+			children = (
+				636B4D432BC092F600916CC2 /* InviteView.swift */,
+			);
+			path = InviteView;
+			sourceTree = "<group>";
+		};
 		636DCC4C2ACDCF0700FA9F89 /* FroopSummaryView */ = {
 			isa = PBXGroup;
 			children = (
@@ -190,6 +200,7 @@
 		638C32A62A364846008F46C0 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				636B4D422BC092E000916CC2 /* InviteView */,
 				63A46C182B5D7DE9002E4693 /* MessageLayouts */,
 				63CCED5C2B21275100995360 /* AnnotationSaveView */,
 				63A8FA562B169089008B10DC /* InfiniteScroll */,
@@ -372,6 +383,7 @@
 				63F759842A369C34002CC46B /* CustomToggleStyle.swift in Sources */,
 				632AE88D2A7D864C0019C027 /* DetailsAddFriendsView.swift in Sources */,
 				6389DED72ABAA49100E11CB5 /* GlobalMapView.swift in Sources */,
+				636B4D442BC092F600916CC2 /* InviteView.swift in Sources */,
 				63DFDB7A2B1A86D300919728 /* ScreenSizes.swift in Sources */,
 				632AE8B62A8465630019C027 /* FroopLandingView.swift in Sources */,
 				632AE8952A815E660019C027 /* UpdateVersion.swift in Sources */,
