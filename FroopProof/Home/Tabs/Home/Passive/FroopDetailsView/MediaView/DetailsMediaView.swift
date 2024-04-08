@@ -11,7 +11,7 @@ import Kingfisher
 struct DetailsMediaView: View {
     @Environment(\.colorScheme) var colorScheme
     @ObservedObject var froopManager = FroopManager.shared
-    @Binding var selectedFroopHistory: FroopHistory
+//    @Binding var selectedFroopHistory: FroopHistory
     
     var body: some View {
         VStack (spacing: 0){
@@ -97,7 +97,7 @@ struct DetailsMediaView: View {
                     } else {
                         ScrollView(.horizontal, showsIndicators: false) {
                             HStack (spacing: 5) {
-                                ForEach(froopManager.selectedFroopHistory.froop.froopThumbnailImages , id: \.self) { imageUrlString in
+                                ForEach(froopManager.selectedFroopHistory.froop.froopThumbnailImages, id: \.self) { imageUrlString in
                                     if let imageUrl = URL(string: imageUrlString) {
                                         KFImage(imageUrl)
                                             .resizable()

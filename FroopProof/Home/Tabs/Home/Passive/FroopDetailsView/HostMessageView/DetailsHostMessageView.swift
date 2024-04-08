@@ -117,8 +117,9 @@ struct DetailsHostMessageView: View {
                         }
                         
                         
-                        Text (selectedFroopHistory.froop.froopMessage)
+                        Text (froopManager.selectedFroopHistory.froop.froopIntroVideo == "" ? "You can choose either to add a Text Message OR a Video, but not Both.  The Video will supercede your Text message." : selectedFroopHistory.froop.froopMessage)
                             .font(.system(size: 16))
+                            .foregroundColor(Color(red: 50/255, green: 46/255, blue: 62/255).opacity(0.5))
                             .fontWeight(.light)
                             .padding(.top, 5)
                             .padding(.bottom, 5)
@@ -128,6 +129,7 @@ struct DetailsHostMessageView: View {
                     .padding(.trailing, 5)
                     .padding(.leading, 5)
                 }
+                .frame(maxHeight: 125)
                 .onTapGesture {
                     messageEdit = true
                 }

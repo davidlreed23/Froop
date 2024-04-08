@@ -47,6 +47,7 @@ struct RootView: View {
     @State var globalChat: Bool = true
     @State var openGlobalChat: Bool = false
     @State var updateView: Bool = false
+    var uid = Auth.auth().currentUser?.uid ?? ""
     var player: AVPlayer? {
         if let url = URL(string: froopManager.selectedFroopHistory.froop.froopIntroVideo) {
             return AVPlayer(url: url)

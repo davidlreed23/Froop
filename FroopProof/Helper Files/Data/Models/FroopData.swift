@@ -10,7 +10,7 @@ import Firebase
 import MapKit
 import UIKit
 import FirebaseFirestore
-import FirebaseFirestoreSwift
+ 
 import CoreLocation
 import Foundation
 
@@ -156,7 +156,7 @@ class FroopData: NSObject, ObservableObject, Decodable {
     var dictionary: [String: Any] {
         let geoPoint = convertToGeoPoint(coordinate: froopLocationCoordinate)
         return [
-            "froopId": id.description,
+            "froopId": self.froopId,
             "froopName": froopName,
             "froopType": froopType,
             "froopLocationid": froopLocationid,

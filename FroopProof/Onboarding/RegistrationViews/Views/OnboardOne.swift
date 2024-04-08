@@ -9,18 +9,25 @@ import SwiftUI
 import FirebaseAuth
 import FirebaseFirestore
 import Firebase
+import Kingfisher
 
 struct OnboardOne: View {
     @ObservedObject var myData = MyData.shared
+    @ObservedObject var accountSetupManager = AccountSetupManager.shared
     @ObservedObject var printControl = PrintControl.shared
     // @ObservedObject var froopDataListener = FroopDataListener.shared
     @Binding var selectedTab: OnboardingTab
-    
+    @State private var update = true
     @AppStorage("ProfileCompletionCurrentPage") var ProfileCompletionCurrentPage = 1
     var uid = Auth.auth().currentUser?.uid ?? ""
     
     var body: some View {
         ZStack (alignment: .center){
+            KFImage(URL(string: myData.profileImageUrl))
+                .resizable()
+                .scaledToFill()
+                .frame(width: 150, height: 150)
+                .clipShape(Circle())
             Rectangle()
                 .fill(Color(red: 50/255, green: 46/255, blue: 62/255))
                 .ignoresSafeArea()
@@ -64,12 +71,15 @@ struct OnboardOne: View {
         .ignoresSafeArea()
         .onAppear {
             MyData.shared.froopUserID = uid
-            fetchAndUpdateUserData()
+            if update {
+                fetchAndUpdateUserData()
+                update = false
+            }
         }
-        
     }
     
     func fetchAndUpdateUserData() {
+        myData.removeListener()
         guard let uid = Auth.auth().currentUser?.uid else {
             print("User is not logged in.")
             return
@@ -80,7 +90,7 @@ struct OnboardOne: View {
         
         userDocRef.getDocument { (document, error) in
             guard let document = document, document.exists else {
-                print("Document does not exist")
+                print("😭Document does not exist")
                 return
             }
             

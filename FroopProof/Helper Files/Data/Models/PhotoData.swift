@@ -13,7 +13,7 @@ import UIKit
 import FirebaseAuth
 import Firebase
 import FirebaseFirestore
-import FirebaseFirestoreSwift
+ 
 
 class PhotoData: ObservableObject, Decodable, Identifiable {
     

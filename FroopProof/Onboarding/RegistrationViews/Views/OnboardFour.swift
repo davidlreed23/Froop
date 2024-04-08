@@ -10,6 +10,7 @@ import SwiftUI
 
 struct OnboardFour: View {
     @ObservedObject var myData = MyData.shared
+    @ObservedObject var accountSetupManager = AccountSetupManager.shared
     @ObservedObject var locationManager = LocationManager.shared
     @State var address: String = ""
     @State var city: String = ""

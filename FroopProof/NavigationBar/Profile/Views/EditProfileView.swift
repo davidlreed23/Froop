@@ -14,7 +14,7 @@ import Firebase
 import FirebaseAuth
 import FirebaseStorage
 import FirebaseFirestore
-import FirebaseFirestoreSwift
+ 
 import CoreLocation
 import Kingfisher
 import PhotosUI

@@ -402,7 +402,7 @@ struct MediaGridView: View {
                     }
                 })
                 //                .buttonStyle(FroopButtonStyle())
-                .frame(width: 200, height: 30 )
+                .frame(width: 400, height: 30 )
                 .opacity(viewModel.selectedMedia.isEmpty || viewModel.isUploading ? 0.05 : 1)
                 .padding(.trailing, 15)
                 .padding(.top, 15)

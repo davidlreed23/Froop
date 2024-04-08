@@ -160,7 +160,7 @@ struct FroopDetailsView: View {
                         case .archived:
                             ScrollView {
                                 VStack (spacing: 0){
-                                    DetailsMediaView(selectedFroopHistory: $froopManager.selectedFroopHistory)
+                                    DetailsMediaView()
                                     DetailsGuestView(selectedFroopHistory: $froopManager.selectedFroopHistory, miniFriendDetailOpen: $miniFriendDetailOpen, miniFriend: $miniFriend)
                                     DetailsCalendarView(selectedFroopHistory: $froopManager.selectedFroopHistory)
                                     DetailsMapView(selectedFroopHistory: $froopManager.selectedFroopHistory)
@@ -178,7 +178,7 @@ struct FroopDetailsView: View {
                         case .memory:
                             ScrollView {
                                 VStack (spacing: 0) {
-                                    DetailsMediaView(selectedFroopHistory: $froopManager.selectedFroopHistory)
+                                    DetailsMediaView()
                                     DetailsGuestView(selectedFroopHistory: $froopManager.selectedFroopHistory, miniFriendDetailOpen: $miniFriendDetailOpen, miniFriend: $miniFriend)
                                     DetailsCalendarView(selectedFroopHistory: $froopManager.selectedFroopHistory)
                                     DetailsMapView(selectedFroopHistory: $froopManager.selectedFroopHistory)

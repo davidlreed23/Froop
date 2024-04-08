@@ -165,6 +165,7 @@ struct ActiveMapView: View {
                         await MapManager.shared.loadRouteDestination()
                     }
                     .onAppear {
+                        timerServices.shouldUpdateAnnotations = true
                         if let center = MapManager.shared.cameraPosition.region?.center {
                             MapManager.shared.centerLatitude = center.latitude
                             MapManager.shared.centerLongitude = center.longitude
@@ -345,6 +346,9 @@ struct ActiveMapView: View {
                                 .clipShape(Circle())
                         }
                     )
+                    .onDisappear {
+                        timerServices.shouldUpdateAnnotations = false
+                    }
                 }
             }
         }

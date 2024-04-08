@@ -17,7 +17,7 @@ class TimerServices: ObservableObject {
     var annotationTimer: Timer?
     var shouldCallAppStateTransition = true
     var shouldCallupdateUserLocationInFirestore = true
-    var shouldUpdateAnnotations = true
+    var shouldUpdateAnnotations = false
     var shouldUpdateFroopHistoryArray = true
     
     init() {

@@ -5,7 +5,7 @@ import FirebaseFirestore
 import SwiftUIBlurView
 
 struct FriendListView: View {
-    
+    @ObservedObject var froopManager = FroopManager.shared
     @ObservedObject var printControl = PrintControl.shared
     @ObservedObject var friendRequestManager = FriendRequestManager.shared
     var db = FirebaseServices.shared.db
@@ -39,6 +39,21 @@ struct FriendListView: View {
             } else {
                 // Optionally handle the case where the condition is not met
                 Text("You must be connected as Friends to see other people's friend lists.")
+            }
+        }
+        .onAppear {
+            froopManager.fetchFriendLists(uid: friendRequestManager.selectedFriend.froopUserID) { friendList in
+                froopManager.fetchUserDataFor(uids: friendList) { result in
+                    switch result {
+                        case .success(let retrievedFriends):
+                            // If the operation is successful, assign the retrieved friends to currentFriends
+                            friendRequestManager.currentFriends = retrievedFriends
+                        case .failure(let error):
+                            // If the operation fails, handle the error (e.g., show an error message)
+                            print("Error fetching user data: \(error.localizedDescription)")
+                            friendRequestManager.currentFriends = [] // Optionally reset or handle the UI accordingly
+                    }
+                }
             }
         }
     }

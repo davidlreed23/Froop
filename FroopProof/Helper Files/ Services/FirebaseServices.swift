@@ -17,7 +17,6 @@ import FirebaseAnalyticsSwift
 import FirebaseCrashlytics
 import FirebaseDatabaseSwift
 import FirebaseSharedSwift
-import FirebaseFirestoreSwift
 import UserNotifications
 import MapKit
 import CoreLocation

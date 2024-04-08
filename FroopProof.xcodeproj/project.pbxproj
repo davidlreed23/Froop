@@ -272,6 +272,7 @@
 		63DC2ACE29B3EA1400B739BD /* UserFriendListImagesData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63DC2ACD29B3EA1400B739BD /* UserFriendListImagesData.swift */; };
 		63DC2AD029B4344700B739BD /* DataController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63DC2ACF29B4344700B739BD /* DataController.swift */; };
 		63DC7F742BC0D9EC00424BC8 /* PremiumBannerDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63DC7F732BC0D9EC00424BC8 /* PremiumBannerDetailsView.swift */; };
+		63DC7F762BC3120D00424BC8 /* ProfileData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63DC7F752BC3120D00424BC8 /* ProfileData.swift */; };
 		63DF3CB32ADAF29500B4C1E6 /* Version.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63DF3CB22ADAF29500B4C1E6 /* Version.swift */; };
 		63E1AF5C2B99619300DEA8E1 /* PendingGuestView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63E1AF5B2B99619300DEA8E1 /* PendingGuestView.swift */; };
 		63E1AF6E2B9A6FF200DEA8E1 /* FroopMediaShareViewParent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63E1AF6D2B9A6FF200DEA8E1 /* FroopMediaShareViewParent.swift */; };
@@ -592,6 +593,7 @@
 		63DC2ACD29B3EA1400B739BD /* UserFriendListImagesData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserFriendListImagesData.swift; sourceTree = "<group>"; };
 		63DC2ACF29B4344700B739BD /* DataController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataController.swift; sourceTree = "<group>"; };
 		63DC7F732BC0D9EC00424BC8 /* PremiumBannerDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PremiumBannerDetailsView.swift; sourceTree = "<group>"; };
+		63DC7F752BC3120D00424BC8 /* ProfileData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileData.swift; sourceTree = "<group>"; };
 		63DF3CB22ADAF29500B4C1E6 /* Version.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Version.swift; sourceTree = "<group>"; };
 		63E1AF5B2B99619300DEA8E1 /* PendingGuestView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PendingGuestView.swift; sourceTree = "<group>"; };
 		63E1AF6D2B9A6FF200DEA8E1 /* FroopMediaShareViewParent.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FroopMediaShareViewParent.swift; sourceTree = "<group>"; };
@@ -1325,6 +1327,7 @@
 				63585C522B785FC300F88D01 /* FroopMediaData.swift */,
 				634EB2602B953614000A8B01 /* InviteData.swift */,
 				63CF52102BA4C01B00B3D104 /* FroopHistory.swift */,
+				63DC7F752BC3120D00424BC8 /* ProfileData.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -2205,6 +2208,7 @@
 				63DC7F742BC0D9EC00424BC8 /* PremiumBannerDetailsView.swift in Sources */,
 				636162A3297E33FA00DC068B /* KeyListener.swift in Sources */,
 				636DCC5E2ACE1FC700FA9F89 /* DetailsMediaView.swift in Sources */,
+				63DC7F762BC3120D00424BC8 /* ProfileData.swift in Sources */,
 				63140CB92B0AAC1C00979042 /* LoadingManager.swift in Sources */,
 				63A39533298884DF00EF6223 /* TimeModel.swift in Sources */,
 				636E62102AFB122900A0A3BC /* PhotoPicker.swift in Sources */,
@@ -2492,7 +2496,7 @@
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CODE_SIGN_ENTITLEMENTS = FroopProof/FroopProof.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 44;
+				CURRENT_PROJECT_VERSION = 46;
 				DEVELOPMENT_ASSET_PATHS = "\"FroopProof/Preview Content\"";
 				DEVELOPMENT_TEAM = BVM3V493PM;
 				ENABLE_PREVIEWS = YES;
@@ -2543,7 +2547,7 @@
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CODE_SIGN_ENTITLEMENTS = FroopProof/FroopProof.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 44;
+				CURRENT_PROJECT_VERSION = 46;
 				DEVELOPMENT_ASSET_PATHS = "\"FroopProof/Preview Content\"";
 				DEVELOPMENT_TEAM = BVM3V493PM;
 				ENABLE_PREVIEWS = YES;
@@ -2590,7 +2594,7 @@
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = FNS/FNS.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 44;
+				CURRENT_PROJECT_VERSION = 46;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = BVM3V493PM;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -2619,7 +2623,7 @@
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = FNS/FNS.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 44;
+				CURRENT_PROJECT_VERSION = 46;
 				DEVELOPMENT_TEAM = BVM3V493PM;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = FNS/Info.plist;

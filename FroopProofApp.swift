@@ -409,8 +409,6 @@ struct MyApp: App {
                         })
                         .onOpenURL { url in
                             print("Received URL: \(url)")
-                            // Here you can parse the URL and navigate accordingly within your app
-                            // For example:
                             handleIncomingURL(url)
                         }
                 } else {
@@ -422,14 +420,26 @@ struct MyApp: App {
         }
     }
     private func handleIncomingURL(_ url: URL) {
-        let pathComponents = url.pathComponents
-        if let inviteIndex = pathComponents.firstIndex(of: "invite"), inviteIndex + 1 < pathComponents.count {
-            let inviteUid = pathComponents[inviteIndex + 1]
-            print("🍎 Extracted UID: \(inviteUid)")
+        print("🍎 handleIncomingURL firing!")
+        print("🍎 Received URL: \(url)")
+
+        // Directly use url.path to get the UID, assuming the structure is consistent
+        let path = url.path
+        print("🍎 Full path: \(path)")
+
+        // Assuming the path always starts with "/", remove the first character
+        let trimmedPath = path.hasPrefix("/") ? String(path.dropFirst()) : path
+        print("🍎 Trimmed Path (UID): \(trimmedPath)")
+
+        // Proceed with handling using trimmedPath as the UID
+        if !trimmedPath.isEmpty {
             Task {
-                await inviteManager.handleInvitation(inviteUid: inviteUid)
-                // actions to update view here
+               await inviteManager.handleInvitation(inviteUid: trimmedPath)
             }
+            print("🍎 Extracted UID: \(trimmedPath)")
+            // Continue with handling the invitation using trimmedPath as the UID...
+        } else {
+            print("🍎 No UID found in URL")
         }
     }
 

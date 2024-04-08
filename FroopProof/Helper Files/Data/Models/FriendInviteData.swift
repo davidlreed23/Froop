@@ -6,7 +6,7 @@ import UIKit
 import FirebaseAuth
 import Firebase
 import FirebaseFirestore
-import FirebaseFirestoreSwift
+ 
 
 class FriendInviteData: ObservableObject, Decodable, Identifiable, Hashable {
     @ObservedObject var printControl = PrintControl.shared

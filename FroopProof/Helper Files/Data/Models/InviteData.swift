@@ -13,7 +13,7 @@ import UIKit
 import FirebaseAuth
 import Firebase
 import FirebaseFirestore
-import FirebaseFirestoreSwift
+ 
 
 class InviteData: ObservableObject, Decodable, Identifiable {
     var db = FirebaseServices.shared.db

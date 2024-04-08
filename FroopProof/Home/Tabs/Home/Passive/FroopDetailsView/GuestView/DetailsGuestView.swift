@@ -19,6 +19,7 @@ import PhotosUI
 struct DetailsGuestView: View {
     
     @Environment(\.colorScheme) var colorScheme
+    @ObservedObject var friendRequestManager = FriendRequestManager.shared
     @ObservedObject var appStateManager = AppStateManager.shared
     @ObservedObject var printControl = PrintControl.shared
     @ObservedObject var locationServices = LocationServices.shared
@@ -151,7 +152,7 @@ struct DetailsGuestView: View {
                                         .opacity(0.5)
                                 }
                                 .onTapGesture {
-                                    miniFriend = friend
+                                    friendRequestManager.selectedFriend = friend
                                     miniFriendDetailOpen = true
                                 }
                             }
@@ -180,7 +181,7 @@ struct DetailsGuestView: View {
                                         .opacity(0.5)
                                 }
                                 .onTapGesture {
-                                    miniFriend = friend
+                                    friendRequestManager.selectedFriend = friend
                                     miniFriendDetailOpen = true
                                 }
                             }
@@ -207,7 +208,7 @@ struct DetailsGuestView: View {
                                         .foregroundColor(Color(red: 50/255, green: 46/255, blue: 62/255))
                                 }
                                 .onTapGesture {
-                                    miniFriend = friend
+                                    friendRequestManager.selectedFriend = friend
                                     miniFriendDetailOpen = true
                                 }
                             }

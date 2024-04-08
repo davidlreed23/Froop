@@ -1,11 +1,10 @@
 //
-//  userData.swift
+//  ProfileData.swift
 //  FroopProof
 //
 //  Created by David Reed on 1/18/23.
 //
 import Foundation
- 
 import CoreLocation
 import Firebase
 import Combine
@@ -13,9 +12,11 @@ import SwiftUI
 import UIKit
 import FirebaseFirestore
 import MapKit
+import RevenueCat
 
-class UserData: ObservableObject, Identifiable, Hashable {
-    var db = FirebaseServices.shared.db
+final class ProfileData: ObservableObject {
+    var uid = Auth.auth().currentUser?.uid ?? ""
+    var db = Firestore.firestore()
     @Published var data = [String: Any]()
     let id: UUID = UUID()
     @Published var froopUserID: String = ""
@@ -30,14 +31,17 @@ class UserData: ObservableObject, Identifiable, Hashable {
     @Published var addressState: String = ""
     @Published var addressZip: String = ""
     @Published var addressCountry: String = ""
-    @Published var profileImageUrl: String = "https://firebasestorage.googleapis.com/v0/b/froop-proof.appspot.com/o/ProfilePic%2Fprofile.png?alt=media&token=c8b47715-371c-4b87-9b02-7b144fd7747d"
+    @Published var profileImageUrl: String = ""
     @Published var fcmToken: String = ""
+    @Published var OTPVerified: Bool = false
     @Published var premiumAccount: Bool = false
     @Published var professionalAccount: Bool = false
     @Published var professionalTemplates: [String] = []
+    @Published var myFriends: [UserData] = []
     @Published var creationDate: Date = Date()
     @Published var userDescription: String = ""
-    
+    @Published var myLocDerivedTitle: String? = nil
+    @Published var myLocDerivedSubtitle: String? = nil
     @Published var coordinate: CLLocationCoordinate2D = CLLocationCoordinate2D()
     var geoPoint: GeoPoint {
         get {
@@ -53,38 +57,8 @@ class UserData: ObservableObject, Identifiable, Hashable {
     
     @Published var badgeCount = 0
     
-    static func == (lhs: UserData, rhs: UserData) -> Bool {
-        return lhs.id == rhs.id
-    }
-    
-    
-    func hash(into hasher: inout Hasher) {
-        hasher.combine(froopUserID)
-        hasher.combine(id)
-        hasher.combine(firstName)
-        hasher.combine(lastName)
-        hasher.combine(phoneNumber)
-        hasher.combine(addressNumber)
-        hasher.combine(addressStreet)
-        hasher.combine(unitName)
-        hasher.combine(addressCity)
-        hasher.combine(addressState)
-        hasher.combine(addressZip)
-        hasher.combine(addressCountry)
-        hasher.combine(timeZone)
-        hasher.combine(profileImageUrl)
-        hasher.combine(fcmToken)
-        hasher.combine(badgeCount)
-        hasher.combine(geoPoint)
-        hasher.combine(premiumAccount)
-        hasher.combine(professionalAccount)
-        hasher.combine(professionalTemplates)
-        hasher.combine(creationDate)
-        hasher.combine(userDescription)
-    }
-    
     var dictionary: [String: Any] {
-        let geoPoint = FirebaseServices.shared.convertToGeoPoint(coordinate: coordinate)
+        let geoPoint = convertToGeoPoint(coordinate: coordinate)
         return [
             "froopUserID": froopUserID,
             "firstName": firstName,
@@ -102,9 +76,11 @@ class UserData: ObservableObject, Identifiable, Hashable {
             "fcmToken": fcmToken,
             "badgeCount" : badgeCount,
             "coordinate": geoPoint,
+            "OTPVerified" : OTPVerified,
             "premiumAccount": premiumAccount,
             "professionalAccount": professionalAccount,
             "professionalTemplates": professionalTemplates,
+            "myFriends": myFriends,
             "creationDate": creationDate,
             "userDescription": userDescription
         ]
@@ -112,56 +88,23 @@ class UserData: ObservableObject, Identifiable, Hashable {
     
     init?(dictionary: [String: Any]) {
         updateProperties(with: dictionary)
-        
         // Check if the required properties have been set
         guard !self.froopUserID.isEmpty else {
             return nil
         }
     }
-
-    private var cancellable: ListenerRegistration?
-
+        
     init() {
         guard !FirebaseServices.shared.uid.isEmpty else {
             PrintControl.shared.printErrorMessages("Error: no user is currently signed in.")
             return
         }
-        let uid = FirebaseServices.shared.uid
-
+        let uid = Auth.auth().currentUser?.uid ?? ""
         let docRef = db.collection("users").document(uid)
-        cancellable = docRef.addSnapshotListener { (document, error) in
-            if let document = document, let data = document.data() {
-                self.updateProperties(with: data)
-                self.fcmToken = data["fcmToken"] as? String ?? ""
-                if let geoPoint = data["coordinate"] as? GeoPoint {
-                    self.coordinate = FirebaseServices.shared.convertToCoordinate(geoPoint: geoPoint)
-                }
-                // Setup the listener after you have updated the user properties
-                self.setupListener()
-            }
-        }
     }
-
-    private func setupListener() {
-        let listenerKey = froopUserID
-        // Check if a listener already exists for this key
-        if let existingListener = ListenerStateService.shared.getListener(forKey: listenerKey) {
-            existingListener.remove()
-        }
-        
-        // Your new listener setup logic here, if needed
-
-        // Add the listener to the centralized service
-        // Note: If your listener logic remains the same, you don't need to set up a new listener again.
-        // Instead, you just ensure the old one (if any) is removed, and the new one (from init()) is tracked.
-        ListenerStateService.shared.addListener(cancellable!, forKey: listenerKey)
-    }
-   
     
-    
-    private func updateProperties(with data: [String: Any]) {
-       
-        PrintControl.shared.printUserData("-UserData: Function: updateProperties is firing!")
+    func updateProperties(with data: [String: Any]) {
+        PrintControl.shared.printUserData("-myData: Function: updateProperties is firing!")
         self.data = data
         self.froopUserID = data["froopUserID"] as? String ?? ""
         self.timeZone = data["timeZone"] as? String ?? TimeZone.current.identifier
@@ -184,9 +127,13 @@ class UserData: ObservableObject, Identifiable, Hashable {
         self.premiumAccount = data["premiumAccount"] as? Bool ?? false
         self.professionalAccount = data["professionalAccount"] as? Bool ?? false
         self.professionalTemplates = data["professionalTemplates"] as? [String] ?? []
+        self.OTPVerified = data["OTPVerified"] as? Bool ?? false
         self.creationDate = data["creationDate"] as? Date ?? Date()
         self.userDescription = data["userDescription"] as? String ?? ""
-        PrintControl.shared.printUserData("--------retrieving User Data")
+        PrintControl.shared.printMyData("--------retrieving User Data")
+    }
+    func convertToGeoPoint(coordinate: CLLocationCoordinate2D) -> GeoPoint {
+        return GeoPoint(latitude: coordinate.latitude, longitude: coordinate.longitude)
     }
 }
 

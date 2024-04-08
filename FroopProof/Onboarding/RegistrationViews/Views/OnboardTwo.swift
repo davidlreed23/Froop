@@ -20,6 +20,7 @@ enum ProfileNameFocus: Hashable {
 
 struct OnboardTwo: View {
     @ObservedObject var myData = MyData.shared
+    @ObservedObject var accountSetupManager = AccountSetupManager.shared
     @FocusState private var focusedField: ProfileNameFocus?
     @State var firstName: String = ""
     @State var lastName: String = ""
@@ -100,7 +101,7 @@ struct OnboardTwo: View {
                             .background(.white)
                             .border(.gray, width: 0.25)
                         
-                        Text(myData.firstName != "" ? "" : "Tap Here To Edit")
+                        Text(MyData.shared.firstName != "" ? "" : "Tap Here To Edit")
                             .font(.system(size: 30))
                             .foregroundColor(.gray)
                             .opacity(0.5)
@@ -137,7 +138,7 @@ struct OnboardTwo: View {
                             .background(.white)
                             .border(.gray, width: 0.25)
                         
-                        Text(myData.lastName != "" ? "" : "Tap Here To Edit")
+                        Text(MyData.shared.lastName != "" ? "" : "Tap Here To Edit")
                             .font(.system(size: 30))
                             .foregroundColor(.gray)
                             .opacity(0.5)

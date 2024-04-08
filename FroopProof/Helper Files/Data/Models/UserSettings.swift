@@ -9,7 +9,7 @@ import SwiftUI
 import UIKit
 import Firebase
 import FirebaseFirestore
-import FirebaseFirestoreSwift
+ 
 import EventKit
 import Photos
 import CoreLocation

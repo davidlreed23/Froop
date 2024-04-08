@@ -24,6 +24,7 @@ enum ActiveAlert {
 
 struct OnboardThree: View {
     @ObservedObject var myData = MyData.shared
+    @ObservedObject var accountSetupManager = AccountSetupManager.shared
     @FocusState private var focusedField: ProfileNameFocus?
     @State var phoneNumber: String = ""
     @State var OTPCode: String = ""

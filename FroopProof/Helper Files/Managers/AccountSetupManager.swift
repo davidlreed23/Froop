@@ -12,12 +12,48 @@ import FirebaseFirestore
 import SwiftUI
 
 class AccountSetupManager: ObservableObject { 
-    static let shared = AccountSetupManager()
+    static let shared = AccountSetupManager(profileSetup: ProfileData())
     @ObservedObject var myData = MyData.shared
-    
+    @Published var profileSetup: ProfileData = ProfileData()
+    private var update: Bool = true
     var db = FirebaseServices.shared.db
     var uid = Auth.auth().currentUser?.uid ?? ""
 
+    init(myData: MyData = MyData.shared, profileSetup: ProfileData, db: Firestore = FirebaseServices.shared.db, uid: String = Auth.auth().currentUser?.uid ?? "") {
+        self.myData = myData
+        self.profileSetup = profileSetup
+        self.db = db
+        self.uid = uid
+        updateProfileSetup()
+    }
+    
+    func updateProfileSetup() {
+        if update {
+            profileSetup.froopUserID = MyData.shared.froopUserID
+            profileSetup.firstName = MyData.shared.firstName
+            profileSetup.lastName = MyData.shared.lastName
+            profileSetup.profileImageUrl = MyData.shared.profileImageUrl
+            profileSetup.phoneNumber = MyData.shared.phoneNumber
+            profileSetup.OTPVerified = MyData.shared.OTPVerified
+            profileSetup.timeZone = MyData.shared.timeZone
+            profileSetup.addressZip = MyData.shared.addressZip
+            profileSetup.addressCity = MyData.shared.addressCity
+            profileSetup.addressState = MyData.shared.addressState
+            profileSetup.addressNumber = MyData.shared.addressNumber
+            profileSetup.addressStreet = MyData.shared.addressStreet
+            profileSetup.addressCountry = MyData.shared.addressCountry
+            profileSetup.myFriends = MyData.shared.myFriends
+            profileSetup.creationDate = MyData.shared.creationDate
+            profileSetup.userDescription = MyData.shared.userDescription
+            profileSetup.myLocDerivedTitle = MyData.shared.myLocDerivedTitle
+            profileSetup.myLocDerivedSubtitle = MyData.shared.myLocDerivedSubtitle
+            profileSetup.coordinate = MyData.shared.coordinate
+            profileSetup.myFriends = MyData.shared.myFriends
+            profileSetup.badgeCount = MyData.shared.badgeCount
+            update = false
+        }
+    }
+    
     func createUserAndCollections(uid: String, completion: @escaping (Error?) -> Void) {
         let userDocRef = db.collection("users").document(uid)
         

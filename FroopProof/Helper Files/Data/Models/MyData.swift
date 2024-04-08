@@ -5,7 +5,7 @@
 //  Created by David Reed on 1/18/23.
 //
 import Foundation
-import FirebaseFirestoreSwift
+ 
 import CoreLocation
 import Firebase
 import Combine
@@ -158,6 +158,19 @@ final class MyData: ObservableObject {
     func removeListener() {
         listener?.remove()
         listener = nil
+    }
+    
+    func setupListener() {
+        guard let uid = Auth.auth().currentUser?.uid, !uid.isEmpty else { return }
+
+        let docRef = db.collection("users").document(uid)
+
+        self.listener = docRef.addSnapshotListener { (document, error) in
+            guard let document = document, document.exists, let data = document.data() else {
+                return
+            }
+            self.updateProperties(with: data)
+        }
     }
     
     func updateProperties(with data: [String: Any]) {

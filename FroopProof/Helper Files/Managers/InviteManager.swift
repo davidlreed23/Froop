@@ -95,6 +95,7 @@ class InviteManager: ObservableObject {
     }
     
     func handleInvitation(inviteUid: String) async {
+        print("🍒 \(inviteUid)")
         guard let inviteData = await fetchInviteDataAndAddUser(inviteUid: inviteUid) else {
             print("Failed to fetch invite data")
             return

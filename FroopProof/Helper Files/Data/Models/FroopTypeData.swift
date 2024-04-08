@@ -2,7 +2,7 @@ import Combine
 import SwiftUI
 import MapKit
 import FirebaseFirestore
-import FirebaseFirestoreSwift
+ 
 import FirebaseAuth
 
 class FroopType: ObservableObject, Codable, Hashable, Equatable {

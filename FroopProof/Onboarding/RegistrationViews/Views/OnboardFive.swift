@@ -14,8 +14,10 @@ import FirebaseStorage
 import Kingfisher
 
 struct OnboardFive: View {
-    @ObservedObject var photoData = PhotoData()
     @ObservedObject var myData = MyData.shared
+    @ObservedObject var photoData = PhotoData()
+//    @ObservedObject var myData = MyData.shared
+    @ObservedObject var accountSetupManager = AccountSetupManager.shared
     @State var address: String = ""
     @State var city: String = ""
     @State var state: String = ""
@@ -200,6 +202,7 @@ struct OnboardFive: View {
                                 MyData.shared.profileImageUrl = url
                                 saveUserDataToFirestore()
                                 saveProfileAndPerformFirebaseOperations()
+                                MyData.shared.setupListener()
                             }
                         } else if myData.profileImageUrl.isEmpty {
                             // If no new image is selected and there isn't already a stored profile image URL, force the user to select an image.
@@ -209,6 +212,7 @@ struct OnboardFive: View {
                             // If there's no new image but a profile image URL already exists, just save user data.
                             saveUserDataToFirestore()
                             saveProfileAndPerformFirebaseOperations()
+                            MyData.shared.setupListener()
                         }
                     } label: {
                         ZStack {

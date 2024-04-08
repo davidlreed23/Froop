@@ -6,7 +6,7 @@
 //
 
 import Foundation
-import FirebaseFirestoreSwift
+ 
 import CoreLocation
 import Firebase
 import SwiftUI
