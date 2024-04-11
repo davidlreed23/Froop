@@ -148,14 +148,34 @@ struct CustomVideoPlayerView: View {
     @State private var player = AVPlayer() // Initialize an empty player
     @State private var playerItem: AVPlayerItem?
     @State private var statusObserver: AnyCancellable?
+    @State private var isLoading = true // Track the loading state
 
     var body: some View {
         ZStack {
             Rectangle()
+           
+            
             PlayerView(player: player) // Use the state player instance
                 .onAppear {
                     prepareToPlay()
                 }
+                .onDisappear {
+                    player.pause()
+                }
+            
+            if isLoading {
+                VStack {
+                    Text("Loading...")
+                        .foregroundColor(.white)
+                        .background(Color.black.opacity(0.7))
+                        .clipShape(RoundedRectangle(cornerRadius: 10))
+                    
+                    // Optionally, add an activity indicator if you're targeting iOS 14+
+                    ProgressView() // This requires iOS 14+
+                        .progressViewStyle(CircularProgressViewStyle(tint: .white))
+                }
+            }
+            
             VStack {
                 Spacer()
                 HStack {
@@ -168,8 +188,11 @@ struct CustomVideoPlayerView: View {
                         ZStack {
                             RoundedRectangle(cornerRadius: 10)
                                 .fill(.ultraThinMaterial)
-                                .frame(width: UIScreen.screenWidth * 0.4, height: UIScreen.screenHeight * 0.05)
-                                .border(Color(.white).opacity(0.3), width: 0.5)
+                                .frame(width: UIScreen.main.bounds.width * 0.4, height: UIScreen.main.bounds.height * 0.05)
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 10)
+                                        .stroke(Color.white.opacity(0.3), lineWidth: 0.5)
+                                )
                             
                             Text("Close")
                                 .font(.system(size: 18))
@@ -194,6 +217,7 @@ struct CustomVideoPlayerView: View {
             return
         }
         
+        isLoading = true // Start loading
         let asset = AVAsset(url: videoURL)
         playerItem = AVPlayerItem(asset: asset)
         
@@ -203,8 +227,10 @@ struct CustomVideoPlayerView: View {
             .sink { [self] status in
                 switch status {
                     case .readyToPlay:
+                        isLoading = false // Stop loading
                         self.player.play()
                     case .failed:
+                        isLoading = false // Update loading state in case of failure
                         print("Player item failed to load.")
                     default:
                         break
@@ -215,6 +241,7 @@ struct CustomVideoPlayerView: View {
         player.replaceCurrentItem(with: playerItem)
     }
 }
+
 
 
 

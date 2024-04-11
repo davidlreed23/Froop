@@ -118,6 +118,7 @@ struct FroopPassiveView: View {
         
         if froopManager.showVideoPlayer {
             CustomVideoPlayerView(videoURLString: froopManager.selectedFroopHistory.froop.froopIntroVideo == "" ? froopManager.videoUrl : froopManager.selectedFroopHistory.froop.froopIntroVideo) {
+                
                 froopManager.showVideoPlayer = false
             }
         }

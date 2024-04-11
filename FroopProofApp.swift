@@ -442,7 +442,6 @@ struct MyApp: App {
             print("🍎 No UID found in URL")
         }
     }
-
 }
 
 class StatusBarBasedController: UIViewController {

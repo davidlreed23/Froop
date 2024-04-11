@@ -18,7 +18,7 @@ import Kingfisher
 import MessageUI
 
 struct PlaceHolderFindFriendCard: View {
-    
+    @Environment(\.colorScheme) var colorScheme
     @ObservedObject var appStateManager = AppStateManager.shared
     @ObservedObject var printControl = PrintControl.shared
     @ObservedObject var locationServices = LocationServices.shared
@@ -28,19 +28,16 @@ struct PlaceHolderFindFriendCard: View {
     var body: some View {
         ZStack (alignment: .top){
             RoundedRectangle(cornerRadius: 10)
-                .frame(height: 280)
-                .foregroundColor(.white)
+                .frame(width: UIScreen.screenWidth * 0.9, height: 280)
+                .foregroundColor(colorScheme == .dark ? Color(red: 50/255, green: 46/255, blue: 62/255) : Color(.white))
                 .padding(.leading, 10)
                 .padding(.trailing, 10)
             Image(systemName: "person.crop.circle.fill")
                 .font(.system(size: 80))
                 .frame(width: 150, height: 150)
                 .padding(.leading, 10)
-                .foregroundColor(Color(red: 50/255, green: 46/255, blue: 62/255))
-                .opacity(0.6)
-            VStack (alignment: .leading) {
-            }
-            .padding(.leading, 30)
+                .foregroundColor(colorScheme == .dark ? Color(.white) : Color(red: 50/255, green: 46/255, blue: 62/255))
+                .opacity(0.85)
         }
         Spacer()
     }
