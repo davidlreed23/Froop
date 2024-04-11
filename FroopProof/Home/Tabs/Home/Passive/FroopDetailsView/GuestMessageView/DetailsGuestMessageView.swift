@@ -82,7 +82,7 @@ struct DetailsGuestMessageView: View {
                         KFImage(URL(string: froopManager.selectedFroopHistory.froop.froopIntroVideoThumbnail))
                             .resizable()
                             .aspectRatio(contentMode: .fill)
-                            .frame(width: UIScreen.screenWidth * 0.9, height: UIScreen.screenHeight / 2.75)
+                            .frame(width: UIScreen.screenWidth * 1, height: UIScreen.screenHeight / 2.75)
                             .clipped()
                             .ignoresSafeArea()
                         

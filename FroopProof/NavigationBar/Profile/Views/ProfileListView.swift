@@ -54,9 +54,8 @@ struct ProfileListView: View {
                     .font(.subheadline)
                     .frame(maxHeight: 600)
                     .background(.clear)
-                    
-                    
                 }
+                        
                 Spacer()
                 HStack {
                     Button {
@@ -80,7 +79,6 @@ struct ProfileListView: View {
                 }
                 Spacer()
             }
-         
         }
         .ignoresSafeArea()
         FroopBaseTView(showEditView: $showEditView)

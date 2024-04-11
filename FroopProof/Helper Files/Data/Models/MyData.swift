@@ -46,11 +46,6 @@ final class MyData: ObservableObject {
     @Published var myFriends: [UserData] = []
     @Published var creationDate: Date = Date()
     @Published var userDescription: String = ""
-    
-    @Published var myLocDerivedTitle: String? = nil
-    @Published var myLocDerivedSubtitle: String? = nil
-    
-    
     @Published var coordinate: CLLocationCoordinate2D = CLLocationCoordinate2D()
     var geoPoint: GeoPoint {
         get {
@@ -65,6 +60,9 @@ final class MyData: ObservableObject {
     }
     
     @Published var badgeCount = 0
+    @Published var myLocDerivedTitle: String? = nil
+    @Published var myLocDerivedSubtitle: String? = nil
+
     
     var dictionary: [String: Any] {
         let geoPoint = convertToGeoPoint(coordinate: coordinate)
@@ -91,7 +89,7 @@ final class MyData: ObservableObject {
             "professionalTemplates": professionalTemplates,
             "myFriends": myFriends,
             "creationDate": creationDate,
-            "userDescription": userDescription
+            "userDescription": userDescription,
             
         ]
     }

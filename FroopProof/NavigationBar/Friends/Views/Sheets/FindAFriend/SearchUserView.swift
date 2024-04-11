@@ -16,7 +16,7 @@ import Combine
 import ContactsUI
 
 struct SearchUserView: View {
-    
+    @Environment(\.colorScheme) var colorScheme
     @ObservedObject var appStateManager = AppStateManager.shared
     @ObservedObject var printControl = PrintControl.shared
     @ObservedObject var locationServices = LocationServices.shared
@@ -61,7 +61,7 @@ struct SearchUserView: View {
                 Text("Let's Find Your Friends")
                     .font(.system(size: 20))
                     .fontWeight(.light)
-                    .foregroundColor(Color(red: 50/255, green: 46/255, blue: 62/255))
+                    .foregroundColor(colorScheme == .dark ? Color(.white) : Color(red: 50/255, green: 46/255, blue: 62/255))
                     .opacity(revealed || noFriendFound ? 0.0 : 0.7)
                     .multilineTextAlignment(.leading)
                     .lineLimit(2)
@@ -119,10 +119,11 @@ struct SearchUserView: View {
                             Rectangle()
                                 .frame(width: 175, height: 40)
                                 .foregroundColor(.clear)
+                                .background(.ultraThinMaterial)
                                 .border(.gray, width: 0.25)
                             Text("Search")
                                 .font(.headline)
-                                .foregroundColor(Color(red: 50/255, green: 46/255, blue: 62/255))
+                                .foregroundColor(colorScheme == .dark ? Color(.white) : Color(red: 50/255, green: 46/255, blue: 62/255))
                                 .font(.system(size: 24))
                                 .fontWeight(.medium)
                                 .frame(width: 200, height: 40)
@@ -140,10 +141,11 @@ struct SearchUserView: View {
                             Rectangle()
                                 .frame(width: 175, height: 40)
                                 .foregroundColor(.clear)
+                                .background(.ultraThinMaterial)
                                 .border(.gray, width: 0.25)
                             Text("Open Contacts")
                                 .font(.headline)
-                                .foregroundColor(Color(red: 50/255, green: 46/255, blue: 62/255))
+                                .foregroundColor(colorScheme == .dark ? Color(.white) : Color(red: 50/255, green: 46/255, blue: 62/255))
                                 .font(.system(size: 24))
                                 .fontWeight(.medium)
                                 .frame(width: 200, height: 40)
@@ -151,28 +153,30 @@ struct SearchUserView: View {
                     }
                 }
                 .padding(.top, 25)
-                    .opacity(noFriendFound ? 0.0 : 1.0)
-                    .fullScreenCover(isPresented: $isContactPickerActive) {
-                        ContactPicker(selectedContact: $selectedContact)
-                            .environment(\.selectedContact, selectedContact)
-                            .onChange(of: selectedContact) { oldValue, newValue in
-                                if let contact = newValue?.contact {
-                                    if let phoneNumber = contact.phoneNumbers.first?.value.stringValue {
-                                        self.phoneNumber = phoneNumber
-                                        // Trigger your search action here with the selected phone number
-                                    }
-                                } else {
-                                    selectedContact = nil
+                .padding(.leading, 25)
+                .padding(.trailing, 25)
+                .opacity(noFriendFound ? 0.0 : 1.0)
+                .fullScreenCover(isPresented: $isContactPickerActive) {
+                    ContactPicker(selectedContact: $selectedContact)
+                        .environment(\.selectedContact, selectedContact)
+                        .onChange(of: selectedContact) { oldValue, newValue in
+                            if let contact = newValue?.contact {
+                                if let phoneNumber = contact.phoneNumbers.first?.value.stringValue {
+                                    self.phoneNumber = phoneNumber
+                                    // Trigger your search action here with the selected phone number
                                 }
+                            } else {
+                                selectedContact = nil
                             }
-                    }
-                    Spacer()
+                        }
                 }
+                Spacer()
+            }
             
             .opacity(revealed ? 0.0 : 1.0)
             .padding(.top, 40)
-        
-        
+            
+            
         TextFriendOutsideFroop(showTextMessageView: $showTextMessageView, noFriendFound: $noFriendFound, phoneNumber: $phoneNumber)
             .padding(.top, 75)
             .opacity(noFriendFound ? 1.0 : 0.0)

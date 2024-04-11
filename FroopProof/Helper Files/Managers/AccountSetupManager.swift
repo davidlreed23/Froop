@@ -18,6 +18,8 @@ class AccountSetupManager: ObservableObject {
     private var update: Bool = true
     var db = FirebaseServices.shared.db
     var uid = Auth.auth().currentUser?.uid ?? ""
+    @Published var key: UUID = UUID()
+
 
     init(myData: MyData = MyData.shared, profileSetup: ProfileData, db: Firestore = FirebaseServices.shared.db, uid: String = Auth.auth().currentUser?.uid ?? "") {
         self.myData = myData
@@ -25,6 +27,10 @@ class AccountSetupManager: ObservableObject {
         self.db = db
         self.uid = uid
         updateProfileSetup()
+    }
+    
+    func forceRefresh() {
+        self.key = UUID()
     }
     
     func updateProfileSetup() {
