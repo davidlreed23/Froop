@@ -10,6 +10,7 @@ import SwiftUI
 
 struct FroopMediaShareViewParent: View {
     @Environment(\.colorScheme) var colorScheme
+    @ObservedObject var appStateManager = AppStateManager.shared
     @ObservedObject var viewModel = MediaGridViewModel.shared
     @ObservedObject var photoViewController = PhotoViewController.shared
     @State private var selectedTab = 0
@@ -50,6 +51,7 @@ struct FroopMediaShareViewParent: View {
                 Spacer()
             }
         }
+        .opacity(appStateManager.currentFilteredFroopHistory[safe: appStateManager.aFHI]?.froop.froopId == nil ? 0.5 : 1)
         .padding(.top, 100)
 
     }

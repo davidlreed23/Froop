@@ -58,12 +58,11 @@ struct FroopSummaryView: View {
                         froopData.froopId = String(describing: UUID())
                     }
                     appStateManager.froopIsEditing = true
-                    changeView.froopHolder = froopData.toFroop()
+//                    changeView.froopHolder = froopData.toFroop()
                     fetchFriendsData(from: froopData.froopInvitedFriends) { fetchedFriends in
                         changeView.confirmedFriends = fetchedFriends
                         // Additional actions if needed
                     }
-                    
                 }
             
             
@@ -97,7 +96,7 @@ struct FroopSummaryView: View {
                 ScrollView (showsIndicators: false) {
                     
                     //MARK: Title
-                    if changeView.showTitle != 0 {
+                    if changeView.showTitle != 0  || froopData.froopType == 5009 {
                         FroopTitleSummaryView()
                     }
                     
@@ -107,7 +106,7 @@ struct FroopSummaryView: View {
                     }
                     
                     //MARK: MultipleGuests View
-                    if changeView.showGuests != 0 {
+                    if changeView.showGuests != 0 && froopData.froopType != 5009 {
                         FroopGuestsSummaryView()
                             .onTapGesture {
                                 changeTemplateInvites = true

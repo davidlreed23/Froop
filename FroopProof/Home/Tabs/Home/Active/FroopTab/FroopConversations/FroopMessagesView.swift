@@ -111,6 +111,7 @@ struct FroopMessagesView: View {
                 Spacer()
             }
         }
+        .opacity(appStateManager.currentFilteredFroopHistory[safe: appStateManager.aFHI]?.froop.froopId == nil ? 0 : 1)
         .padding(.top, 95)
         .onAppear {
             self.chatManager.loadConversationsForCurrentUser()

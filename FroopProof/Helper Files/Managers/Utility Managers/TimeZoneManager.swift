@@ -8,17 +8,23 @@
 import Foundation
 import CoreLocation
 import SwiftUI
+import Combine
 
 
 class TimeZoneManager: NSObject, ObservableObject, CLLocationManagerDelegate {
     static let shared = TimeZoneManager()
+    @ObservedObject var flightManager = FroopFlightDataManager.shared
     @Published var userAccountTimeZone: TimeZone?
     @Published var userLocationTimeZone: TimeZone?
     @Published var froopTimeZone: TimeZone?
     @Published var locationTimeZone: TimeZone?
+    @Published var departingTimeZone: TimeZoneResponse?
+    @Published var arrivingTimeZone: TimeZoneResponse?
     var currentTimeZone: TimeZone? {
         return TimeZone.current
     }
+    
+    private var geocoder = CLGeocoder()
     
     override init() {
         super.init()
@@ -54,10 +60,10 @@ class TimeZoneManager: NSObject, ObservableObject, CLLocationManagerDelegate {
         return formatter.string(from: date)
     }
     
-    func formatDate(for date: Date, in timeZoneIdentifier: String) -> String {
+    func formatDate(for date: Date, in timeZoneIdentifier: String?, formatType: String) -> String {
         let formatter = DateFormatter()
-        formatter.dateFormat = "EEEE, MMMM d, yyyy h:mm a"
-        if let timeZone = TimeZone(identifier: timeZoneIdentifier) {
+        formatter.dateFormat = formatType
+        if let timeZone = TimeZone(identifier: timeZoneIdentifier ?? "") {
             formatter.timeZone = timeZone
         }
         return formatter.string(from: date)
@@ -107,19 +113,94 @@ class TimeZoneManager: NSObject, ObservableObject, CLLocationManagerDelegate {
     
     //MARK: Required Functions below
     
-    
-    func fetchTimeZone(latitude: Double, longitude: Double, completion: @escaping (TimeZone?) -> Void) {
-        let location = CLLocation(latitude: latitude, longitude: longitude)
-        
-        CLGeocoder().reverseGeocodeLocation(location) { placemarks, error in
-            guard let placemark = placemarks?.first, let timeZone = placemark.timeZone else {
-                completion(nil)
-                return
+    func updateTimeZonesForFlight(departureLat: Double, departureLon: Double, arrivalLat: Double, arrivalLon: Double, apiKey: String) {
+        // Fetch departure time zone
+        fetchTimeZoneData(latitude: departureLat, longitude: departureLon, apiKey: apiKey) { [weak self] response, error in
+            DispatchQueue.main.async {
+                if let response = response {
+                    self?.departingTimeZone = response
+                    print("Departing Time Zone ID: \(response.timeZoneId)")
+                } else if let error = error {
+                    print("Error fetching departure time zone: \(error.localizedDescription)")
+                }
             }
-            completion(timeZone)
+        }
+
+        // Fetch arrival time zone
+        fetchTimeZoneData(latitude: arrivalLat, longitude: arrivalLon, apiKey: apiKey) { [weak self] response, error in
+            DispatchQueue.main.async {
+                if let response = response {
+                    self?.arrivingTimeZone = response
+                    print("Arriving Time Zone ID: \(response.timeZoneId)")
+                } else if let error = error {
+                    print("Error fetching arrival time zone: \(error.localizedDescription)")
+                }
+            }
         }
     }
     
+    func formatTime(from date: Date, timeZoneIdentifier: String) -> String {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "h:mm a"  // for example, 5:00 PM
+
+        // Convert the string identifier to a TimeZone object
+        if let timeZone = TimeZone(identifier: timeZoneIdentifier) {
+            dateFormatter.timeZone = timeZone
+        } else {
+            print("Invalid time zone identifier: \(timeZoneIdentifier)")
+            dateFormatter.timeZone = TimeZone.current  // Fallback to current time zone if identifier is invalid
+        }
+
+        return dateFormatter.string(from: date)
+    }
+    
+    func fetchTimeZoneData(latitude: Double, longitude: Double, apiKey: String, completion: @escaping (TimeZoneResponse?, Error?) -> Void) {
+        let timestamp = Date().timeIntervalSince1970
+        let urlString = "https://maps.googleapis.com/maps/api/timezone/json?location=\(latitude),\(longitude)&timestamp=\(timestamp)&key=\(apiKey)"
+        guard let url = URL(string: urlString) else {
+            completion(nil, NSError(domain: "", code: -1, userInfo: [NSLocalizedDescriptionKey: "Invalid URL"]))
+            return
+        }
+
+        let task = URLSession.shared.dataTask(with: url) { data, response, error in
+            if let error = error {
+                completion(nil, error)
+                return
+            }
+
+            guard let data = data else {
+                completion(nil, NSError(domain: "", code: -2, userInfo: [NSLocalizedDescriptionKey: "No data received"]))
+                return
+            }
+
+            do {
+                let decoder = JSONDecoder()
+                let timeZoneResponse = try decoder.decode(TimeZoneResponse.self, from: data)
+                completion(timeZoneResponse, nil)
+            } catch {
+                completion(nil, error)
+            }
+        }
+        task.resume()
+    }
+    
+    
+    func fetchTimeZone(latitude: Double, longitude: Double, completion: @escaping (TimeZone?) -> Void) {
+        print("Fetching timezone for lat: \(latitude), long: \(longitude)")
+        let location = CLLocation(latitude: latitude, longitude: longitude)
+        geocoder.reverseGeocodeLocation(location) { [weak self] placemarks, error in
+            DispatchQueue.main.async {
+                if let timeZone = placemarks?.first?.timeZone {
+                    print("Fetched timezone: \(timeZone.identifier) for lat: \(latitude), long: \(longitude)")
+                    completion(timeZone)
+                } else {
+                    print("Failed to fetch timezone: \(error?.localizedDescription ?? "Unknown error")")
+                    completion(nil)
+                }
+            }
+        }
+    }
+        
     func fetchTimeZoneData() {
         let latitude = MyData.shared.coordinate.latitude
         let longitude = MyData.shared.coordinate.longitude

@@ -6,7 +6,6 @@
 //
 
 import Foundation
- 
 import CoreLocation
 import Firebase
 import Combine
@@ -49,88 +48,24 @@ struct Froop: Identifiable, Hashable {
     var inviteUrl: String
     var videoSubscribed: Bool
     var guestApproveList: [String]
-    
+    var flightData: FlightDetail?
+
     init(dictionary: [String: Any]) {
-        // Extracting the froopTimeZone from the dictionary
         let froopTimeZone = String(describing: TimeZoneManager.shared.userLocationTimeZone)
-        
-        // Create a DateFormatter instance to handle the conversion
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZ"
         dateFormatter.timeZone = TimeZone(identifier: froopTimeZone) ?? TimeZone.current
         
-        guard let froopHost = dictionary["froopHost"] as? String,
-              let froopId = dictionary["froopId"] as? String
-        else {
-            self.froopId = ""
-            self.froopHost = ""
-            self.froopName = ""
-            self.froopType = 0
-            self.froopLocationid = 0
-            self.froopLocationtitle = ""
-            self.froopLocationsubtitle = ""
-            if let geoPoint = dictionary["froopLocationCoordinate"] as? GeoPoint {
-                self.froopLocationCoordinate = CLLocationCoordinate2D(latitude: geoPoint.latitude, longitude: geoPoint.longitude)
-            } else {
-                self.froopLocationCoordinate = CLLocationCoordinate2D(latitude: 0.0, longitude: 0.0)
-            }
-            self.froopDate = Date()
-            self.froopStartTime = Date()
-            self.froopCreationTime = Date()
-            self.froopDuration = 0
-            self.froopInvitedFriends = []
-            self.froopImages = []
-            self.froopDisplayImages = []
-            self.froopThumbnailImages = []
-            self.froopVideos = []
-            self.froopVideoThumbnails = []
-            self.froopIntroVideo = ""
-            self.froopIntroVideoThumbnail = ""
-            self.froopHostPic = ""
-            self.froopTimeZone = ""
-            self.froopEndTime = Date()
-            self.froopMessage = ""
-            self.froopList = []
-            self.template = false
-            self.hidden = []
-            self.inviteUrl = ""
-            self.videoSubscribed = false
-            self.guestApproveList = []
-            return
-        }
-        
-        if let froopDateTimestamp = dictionary["froopDate"] as? Timestamp {
-            self.froopDate = dateFormatter.date(from: dateFormatter.string(from: froopDateTimestamp.dateValue())) ?? Date()
-        } else {
-            self.froopDate = Date()
-        }
-        
-        if let froopStartTimeTimestamp = dictionary["froopStartTime"] as? Timestamp {
-            self.froopStartTime = dateFormatter.date(from: dateFormatter.string(from: froopStartTimeTimestamp.dateValue())) ?? Date()
-        } else {
-            self.froopStartTime = Date()
-        }
-        
-        if let froopEndTimeTimestamp = dictionary["froopEndTime"] as? Timestamp {
-            self.froopEndTime = dateFormatter.date(from: dateFormatter.string(from: froopEndTimeTimestamp.dateValue())) ?? Date()
-        } else {
-            self.froopEndTime = Date()
-        }
-        
-        self.froopId = froopId
-        self.froopHost = froopHost
+        self.froopId = dictionary["froopId"] as? String ?? ""
         self.froopName = dictionary["froopName"] as? String ?? ""
         self.froopType = dictionary["froopType"] as? Int ?? 0
         self.froopLocationid = dictionary["froopLocationid"] as? Int ?? 0
         self.froopLocationtitle = dictionary["froopLocationtitle"] as? String ?? ""
         self.froopLocationsubtitle = dictionary["froopLocationsubtitle"] as? String ?? ""
-        
-        if let geoPoint = dictionary["froopLocationCoordinate"] as? GeoPoint {
-            self.froopLocationCoordinate = CLLocationCoordinate2D(latitude: geoPoint.latitude, longitude: geoPoint.longitude)
-        } else {
-            self.froopLocationCoordinate = CLLocationCoordinate2D(latitude: 0.0, longitude: 0.0)
-        }
-        
+        self.froopLocationCoordinate = (dictionary["froopLocationCoordinate"] as? GeoPoint).map { CLLocationCoordinate2D(latitude: $0.latitude, longitude: $0.longitude) }
+        self.froopDate = (dictionary["froopDate"] as? Timestamp)?.dateValue() ?? Date()
+        self.froopStartTime = (dictionary["froopStartTime"] as? Timestamp)?.dateValue() ?? Date()
+        self.froopEndTime = (dictionary["froopEndTime"] as? Timestamp)?.dateValue() ?? Date()
         self.froopCreationTime = (dictionary["froopCreationTime"] as? Timestamp)?.dateValue() ?? Date()
         self.froopDuration = dictionary["froopDuration"] as? Int ?? 0
         self.froopInvitedFriends = dictionary["froopInvitedFriends"] as? [String] ?? []
@@ -141,6 +76,7 @@ struct Froop: Identifiable, Hashable {
         self.froopVideoThumbnails = dictionary["froopVideoThumbnails"] as? [String] ?? []
         self.froopIntroVideo = dictionary["froopIntroVideo"] as? String ?? ""
         self.froopIntroVideoThumbnail = dictionary["froopIntroVideoThumbnail"] as? String ?? ""
+        self.froopHost = dictionary["froopHost"] as? String ?? ""
         self.froopHostPic = dictionary["froopHostPic"] as? String ?? ""
         self.froopTimeZone = dictionary["froopTimeZone"] as? String ?? ""
         self.froopMessage = dictionary["froopMessage"] as? String ?? ""
@@ -150,6 +86,8 @@ struct Froop: Identifiable, Hashable {
         self.inviteUrl = dictionary["inviteUrl"] as? String ?? ""
         self.videoSubscribed = dictionary["videoSubscribed"] as? Bool ?? false
         self.guestApproveList = dictionary["guestApproveList"] as? [String] ?? []
+        self.flightData = (dictionary["flightData"] as? [String: Any]).flatMap(FlightDetail.init(dictionary:))
+        return
         
     }
     
@@ -183,7 +121,8 @@ struct Froop: Identifiable, Hashable {
         hidden: [String],
         inviteUrl: String,
         videoSubscribed: Bool,
-        guestApproveList: [String]
+        guestApproveList: [String],
+        flightData: FlightDetail?
     ) {
         self.froopId = froopId
         self.froopName = froopName
@@ -215,6 +154,7 @@ struct Froop: Identifiable, Hashable {
         self.inviteUrl = inviteUrl
         self.videoSubscribed = videoSubscribed
         self.guestApproveList = guestApproveList
+        self.flightData = flightData
     }
     
     static func emptyFroop() -> Froop {
@@ -249,7 +189,8 @@ struct Froop: Identifiable, Hashable {
             hidden: [],
             inviteUrl: "",
             videoSubscribed: false,
-            guestApproveList: []
+            guestApproveList: [],
+            flightData: nil
         )
     }
 }

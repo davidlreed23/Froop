@@ -80,7 +80,6 @@ struct FroopArchivedCardView: View {
         }
     }
     let visibleFriendsLimit = 8
-    let dateForm = DateForm()
     
     init(openFroop: Binding<Bool>, froopHostAndFriends: FroopHistory, invitedFriends: [UserData]) {
         self._openFroop = openFroop
@@ -134,7 +133,6 @@ struct FroopArchivedCardView: View {
                                 // Update the previous state after processing the changes
                                 previousAppState = newValue
                             }
-                        
                     }
                 }
                 Spacer()

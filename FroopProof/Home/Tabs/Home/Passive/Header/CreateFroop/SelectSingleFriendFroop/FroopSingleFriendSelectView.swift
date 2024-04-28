@@ -116,7 +116,7 @@ struct FroopSingleFriendSelectView: View {
                         }
                     }
                 }) {
-                    Text(changeView.singleUserData.froopUserID == "" ? "Confirm Friend" : "Select Later")
+                    Text(changeView.singleUserData.froopUserID != "" ? "Confirm Friend" : "Select Later")
                         .font(.headline)
                         .foregroundColor(Color(red: 50/255, green: 46/255, blue: 62/255))
                         .font(.system(size: 24))

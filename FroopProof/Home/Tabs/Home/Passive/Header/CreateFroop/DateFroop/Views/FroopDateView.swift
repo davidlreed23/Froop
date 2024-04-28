@@ -49,11 +49,8 @@ struct FroopDateView: View {
             //MARK:  DATE SELECTION
 
             DatePickViewCopy(transClock: $transClock, datePicked: $datePicked, froopData: froopData)
-                .padding(.bottom, 20)
-//                .offset(y: -30)
             //MARK: START / END TIME SELECTION
             TimePickView(transClock: $transClock, datePicked: $datePicked, duraVis: $duraVis, froopData: froopData, changeView: changeView)
-//                .offset(y: -30)
         }
         .onChange(of: datePicked) { newValue, _ in
             if newValue {
@@ -62,9 +59,6 @@ struct FroopDateView: View {
                 }
             }
         }
-
-        .frame(minWidth: 0,maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)
-        .ignoresSafeArea()
     }
     
     func currentDateInTimeZone(timeZoneIdentifier: String) -> Date {

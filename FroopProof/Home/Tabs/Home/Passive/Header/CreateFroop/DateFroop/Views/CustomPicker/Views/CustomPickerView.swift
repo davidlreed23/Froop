@@ -312,7 +312,6 @@ struct ClockView: View {
     
     var body: some View {
         ZStack {
-          
             HStack {
                 Text("START TIME")
                     .frame(width: 110)
@@ -361,7 +360,6 @@ struct ClockView: View {
                 }
             }
             .padding(.trailing, UIScreen.screenWidth * 0.1)
-            
             
             HStack(spacing: 0) {
                 HStack(spacing: 0) {
@@ -482,9 +480,7 @@ struct ClockView: View {
             .shadow(color: Color.white.opacity(0.7), radius: 7, x: -4, y: -4)
             .padding(.leading, UIScreen.screenWidth * 0.05)
             .padding(.trailing, UIScreen.screenWidth * 0.17)
-
             .frame(maxWidth: UIScreen.screenWidth - 40)
-
         }
     }
     

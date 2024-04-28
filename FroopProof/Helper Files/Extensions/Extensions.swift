@@ -886,13 +886,6 @@ extension FroopHistory {
 
 
 
-
-
-extension LocationManager {
-    
-}
-
-
 extension Message: Equatable {
     
     func hash(into hasher: inout Hasher) {

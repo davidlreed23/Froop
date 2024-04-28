@@ -20,6 +20,8 @@ struct LogStatus: View {
     var body: some View {
         if Auth.auth().currentUser != nil && logStatus {
             RootView(friendData: UserData(), photoData: PhotoData(), appDelegate: AppDelegate(), confirmedFroopsList: ConfirmedFroopsList())
+                .ignoresSafeArea(.keyboard)
+
         } else {
             Login()
                 .onAppear {
@@ -30,6 +32,7 @@ struct LogStatus: View {
                     logStatus = false // reset logStatus every time this view appears
                     try? Auth.auth().signOut() // sign the user out from Firebase Auth
                 }
+                .ignoresSafeArea(.keyboard)
         }
     }
 }

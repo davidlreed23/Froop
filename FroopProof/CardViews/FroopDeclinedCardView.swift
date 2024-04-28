@@ -72,7 +72,7 @@ struct FroopDeclinedCardView: View {
 
     
     let visibleFriendsLimit = 8
-    let dateForm = DateForm()
+
     
     init(openFroop: Binding<Bool>, froopHostAndFriends: FroopHistory, invitedFriends: [UserData]) {
         self._openFroop = openFroop
@@ -182,7 +182,7 @@ struct FroopDeclinedCardView: View {
                     }
                     .padding(.trailing, 30)
                     .onTapGesture {
-                        if appStateManager.appState == .active && ((appStateManager.currentFilteredFroopHistory.contains(where: { $0.froop.froopId == froopHostAndFriends.froop.froopId })) != nil) {
+                        if appStateManager.appState == .active && appStateManager.currentFilteredFroopHistory.contains(where: { $0.froop.froopId == froopHostAndFriends.froop.froopId }) {
                             locationServices.selectedTab = .froop
                             appStateManager.findFroopById(froopId: froopHostAndFriends.froop.froopId) { found in
                                 if found {
@@ -198,8 +198,6 @@ struct FroopDeclinedCardView: View {
                             PrintControl.shared.printLists("ImageURL:  \(froopHostAndFriends.froop.froopHostPic)")
                         }
                     }
-                    
-                    
                 }
                 .frame(height: 50)
                 .padding(.top, 10)
@@ -263,10 +261,11 @@ struct FroopDeclinedCardView: View {
 
         }
     }
-    
+        
     func printFroop () {
         print(froopHostAndFriends.froop)
     }
+    
     func formatTime(creationTime: Date) -> String {
         let formatter = DateComponentsFormatter()
         formatter.allowedUnits = [.minute, .hour, .day]

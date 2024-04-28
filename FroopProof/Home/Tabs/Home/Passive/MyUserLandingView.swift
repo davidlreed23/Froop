@@ -29,7 +29,7 @@ struct MyUserPublicView: View {
                         VStack(spacing: 5) {
                             MyProfileHeaderView(size: size, safeArea: safeArea, showNotificationSheet: $showNotificationSheet)
                                 .zIndex(1000)
-                                .ignoresSafeArea()
+                                .ignoresSafeArea(.all)
                             MyFroopsView(friendDetailOpen: $friendDetailOpen)
                                 .transition(.opacity)
                         }

@@ -10,16 +10,13 @@ import Firebase
 import MapKit
 import UIKit
 import FirebaseFirestore
- 
 import CoreLocation
 import Foundation
 
 class FroopData: NSObject, ObservableObject, Decodable {
     static var shared = FroopData()
     @ObservedObject var printControl = PrintControl.shared
-    @ObservedObject var froopDataController = FroopDataController.shared
-    // @ObservedObject var froopDataListener = FroopDataListener.shared
-    
+    @ObservedObject var froopDataController = FroopDataController.shared    
     var db = FirebaseServices.shared.db
     let uid = FirebaseServices.shared.uid
     @Published var timeZoneManager = TimeZoneManager()
@@ -69,7 +66,7 @@ class FroopData: NSObject, ObservableObject, Decodable {
     @Published var inviteUrl: String = ""
     @Published var videoSubscribed: Bool = false
     @Published var guestApproveList: [String] = []
-    
+    @Published var flightData: FlightDetail?
     
     
     
@@ -275,6 +272,15 @@ class FroopData: NSObject, ObservableObject, Decodable {
                 }
             }
         }
+        
+        if let flightDetail = flightData {
+            let flightDetailDict = flightDetail.toDictionary()
+            // Assuming you have a subcollection for flight details
+            let flightDetailRef = myFroopDocRef.collection("flightDetails").document()
+            try await flightDetailRef.setData(flightDetailDict)
+            print("Flight details saved successfully.")
+        }
+        
         return newFroopId
     }
     
@@ -464,39 +470,8 @@ extension FroopData {
         }
     }
     
-    func toFroop() -> Froop {
-        return Froop(
-            froopId: self.froopId,
-            froopName: self.froopName,
-            froopType: self.froopType,
-            froopLocationid: self.froopLocationid,
-            froopLocationtitle: self.froopLocationtitle,
-            froopLocationsubtitle: self.froopLocationsubtitle,
-            froopLocationCoordinate: self.froopLocationCoordinate,
-            froopDate: self.froopDate,
-            froopStartTime: self.froopStartTime,
-            froopCreationTime: self.froopCreationTime,
-            froopDuration: self.froopDuration,
-            froopInvitedFriends: self.froopInvitedFriends,
-            froopImages: self.froopImages,
-            froopDisplayImages: self.froopDisplayImages,
-            froopThumbnailImages: self.froopThumbnailImages,
-            froopVideos: self.froopVideos,
-            froopVideoThumbnails: self.froopVideoThumbnails,
-            froopIntroVideo: self.froopIntroVideo,
-            froopIntroVideoThumbnail: self.froopIntroVideoThumbnail,
-            froopHost: self.froopHost,
-            froopHostPic: self.froopHostPic,
-            froopTimeZone: self.froopTimeZone,
-            froopEndTime: self.froopEndTime,
-            froopMessage: self.froopMessage,
-            froopList: self.froopList,
-            template: self.template, 
-            hidden: self.hidden,
-            inviteUrl: self.inviteUrl,
-            videoSubscribed: self.videoSubscribed,
-            guestApproveList: self.guestApproveList
-        )
+    static func empty() -> Froop {
+        return Froop(dictionary: [:])
     }
     
     func resetData(newFroopType: Int? = nil) {
@@ -536,6 +511,7 @@ extension FroopData {
         inviteUrl = ""
         videoSubscribed = false
         guestApproveList = []
+        flightData = nil
         // Add more fields to reset as needed
     }
 }

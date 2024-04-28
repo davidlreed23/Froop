@@ -47,6 +47,27 @@ struct FroopTabView: View {
     @State private var currentTab: FroopTab = .info
     @State private var thisFroopType: String = ""
     @State private var currentIndex: Int = 0
+    
+    @State var instanceFroop: FroopHistory = FroopHistory(
+        froop: Froop(dictionary: [:]),
+        host: UserData(),
+        invitedFriends: [],
+        confirmedFriends: [],
+        declinedFriends: [],
+        pendingFriends: [],
+        images: [],
+        videos: [],
+        froopGroupConversationAndMessages: ConversationAndMessages(conversation: Conversation(), messages: [], participants: []), froopMediaData: FroopMediaData(
+            froopImages: [],
+            froopDisplayImages: [],
+            froopThumbnailImages: [],
+            froopIntroVideo: "",
+            froopIntroVideoThumbnail: "",
+            froopVideos: [],
+            froopVideoThumbnails: []
+        )
+    )
+    
     @Binding var globalChat: Bool
     let uid = FirebaseServices.shared.uid
     
@@ -132,73 +153,75 @@ struct FroopTabView: View {
                         case .media:
                             FroopMediaShareViewParent()
                         case .selection:
-                            ZStack {
+                                
                                 ZStack {
-                                    ScrollView {
-                                        VStack {
-                                            VStack(alignment: .leading, spacing: 5) {
-                                                ForEach(Array(appStateManager.currentFilteredFroopHistory.enumerated() ), id: \.element) { index, froopHistory in
-                                                    MyMinCardsViewActive(froopHostAndFriends: froopHistory, thisFroopType: thisFroopType)
-                                                        .onTapGesture {
-                                                            appStateManager.aFHI = index // Reset the aFHI to this card's index
-                                                            print(appStateManager.aFHI)
-                                                            LocationServices.shared.selectedFroopTab = .map
-                                                            
-//                                                            DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-//                                                                FroopManager.shared.createFroopHistoryArray() { froopHistory in
-//                                                                    DispatchQueue.main.async {
-//                                                                        FroopManager.shared.froopHistory = froopHistory
-//                                                                        PrintControl.shared.printData("FroopHistory collection updated. Total count: \(FroopManager.shared.froopHistory.count)")
-//                                                                    }
-//                                                                }
-//                                                            }
-                                                        }
-                                                }
-                                            }
-                                            Spacer()
-                                        }
-                                        .padding(.top, 10)
-                                        .padding(.bottom, 75)
-                                    }
-                                }
-                                .padding(.top, 100)
-
-                                VStack {
                                     ZStack {
-                                        Rectangle()
-                                            .foregroundColor(Color(red: 50/255, green: 46/255, blue: 62/255))
-                                            .opacity(1)
-                                            .frame(height: 100)
-                                        
-                                        RoundedRectangle(cornerRadius: 10, style: .continuous)
-                                            .frame(width: 275, height: 40)
-                                            .foregroundColor(.clear) // Use `.background` if you want to fill color
-                                            .overlay(
-                                                RoundedRectangle(cornerRadius: 25, style: .continuous)
-                                                    .stroke(Color.white, lineWidth: 0.25)
-                                            )
-                                        
-                                        HStack {
-                                            Spacer()
-                                            Text("Open 'My Froops View'")
-                                                .font(.system(size: 24))
-                                                .fontWeight(.light)
-                                                .foregroundColor(.white)
+                                        ScrollView {
+                                            VStack {
+                                                VStack(alignment: .leading, spacing: 5) {
+                                                    ForEach(Array(appStateManager.currentFilteredFroopHistory.enumerated() ), id: \.element) { index, froopHistory in
+                                                        MyMinCardsViewActive(froopHostAndFriends: froopHistory, thisFroopType: thisFroopType)
+                                                            .onTapGesture {
+                                                                appStateManager.aFHI = index // Reset the aFHI to this card's index
+                                                                print(appStateManager.aFHI)
+                                                                LocationServices.shared.selectedFroopTab = .map
+                                                                
+                                                                //                                                            DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                                                                //                                                                FroopManager.shared.createFroopHistoryArray() { froopHistory in
+                                                                //                                                                    DispatchQueue.main.async {
+                                                                //                                                                        FroopManager.shared.froopHistory = froopHistory
+                                                                //                                                                        PrintControl.shared.printData("FroopHistory collection updated. Total count: \(FroopManager.shared.froopHistory.count)")
+                                                                //                                                                    }
+                                                                //                                                                }
+                                                                //                                                            }
+                                                            }
+                                                    }
+                                                }
+                                                Spacer()
+                                            }
+                                            .padding(.top, 10)
+                                            .padding(.bottom, 75)
+                                        }
+                                    }
+                                    .padding(.top, 100)
+                                    
+                                    VStack {
+                                        ZStack {
+                                            Rectangle()
+                                                .foregroundColor(Color(red: 50/255, green: 46/255, blue: 62/255))
+                                                .opacity(1)
+                                                .frame(height: 100)
+                                                .offset(y: -5)
+                                            
+                                            RoundedRectangle(cornerRadius: 10, style: .continuous)
+                                                .frame(width: 275, height: 40)
+                                                .foregroundColor(.clear) // Use `.background` if you want to fill color
+                                                .overlay(
+                                                    RoundedRectangle(cornerRadius: 25, style: .continuous)
+                                                        .stroke(Color.white, lineWidth: 0.25)
+                                                )
+                                            
+                                            HStack {
+                                                Spacer()
+                                                Text("Open 'My Froops View'")
+                                                    .font(.system(size: 24))
+                                                    .fontWeight(.light)
+                                                    .foregroundColor(.white)
+                                                Spacer()
+                                            }
                                             Spacer()
                                         }
                                         Spacer()
                                     }
-                                    Spacer()
+                                    .onTapGesture {
+                                        print("tapped 'Open My Froops View'")
+                                        appStateManager.appStateToggle = false
+                                        LocationServices.shared.selectedFroopTab = .map
+                                        print(appStateManager.appStateToggle)
+                                    }
                                 }
-                                .onTapGesture {
-                                    print("tapped 'Open My Froops View'")
-                                    appStateManager.appStateToggle = false
-                                    LocationServices.shared.selectedFroopTab = .map
-                                    print(appStateManager.appStateToggle)
-                                }
-                            }
-                            .padding(.top, 95)
-
+                                .padding(.top, 95)
+                            
                     }
                     
                     VStack {
@@ -226,10 +249,14 @@ struct FroopTabView: View {
                         .animation(.easeInOut(duration: 0.3), value: appStateManager.isFroopTabUp)
                         .animation(.easeInOut(duration: 0.3), value: MapManager.shared.tabUp)
                     }
+                    
+                    FroopPassiveView(instanceFroop: instanceFroop, globalChat: $globalChat)
+                        .opacity(appStateManager.appState == .passive || !appStateManager.appStateToggle ? 1.0 : 0.0)
                 }
                 .frame(width: UIScreen.screenWidth, height: UIScreen.screenHeight)
             }
         }
+
     }
     
     

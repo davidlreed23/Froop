@@ -43,7 +43,7 @@ struct UserDetailView: View {
                 
             }
         }
-        
+
         .fullScreenCover(isPresented: $froopManager.froopDetailOpen) {
             
         } content: {

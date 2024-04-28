@@ -53,58 +53,62 @@ struct TimePickView: View {
     
     var body: some View {
         ZStack(alignment: .topLeading) {
-            
-            
-            
-            VStack {
-                Spacer()
-                Rectangle()
-                    .frame(height: transClock ? UIScreen.screenHeight * 0.15 : 1, alignment: .bottom)
-                    .foregroundColor(colorScheme == .dark ? Color(red: 50/255, green: 46/255, blue: 62/255) : Color(red: 50/255, green: 46/255, blue: 62/255))
-                    .opacity(0.8)
-            }
-            .ignoresSafeArea()
-            
+
             VStack{
                 ZStack {
                     Rectangle()
                         .foregroundColor(.white)
-                        .padding(.top, 160)
+                        .padding(.top, 125)
                     VStack {
                         ClockView(froopData: froopData)
-                            .padding(.bottom, 90)
+                            .padding(.bottom, 100)
                         DurationView(froopData: froopData)
                     }
-                    .padding(.top, 150)
+//                    .padding(.top, 80)
                 }
                 Spacer()
                 //MARK: Button
                 
-                Button {
-                    if froopData.froopDuration == 0 {
-                        showAlert = true
-                        alertMessage = "A Duration must be set for your Froop."
-                    } else {
-                        scrollTrig.updateDateFromIndices()
-                        if appStateManager.froopIsEditing {
-                            changeView.pageNumber = changeView.showSummary
-                        } else {
-                            changeView.pageNumber += 1
-                        }
-                    }
-                    
-                } label: {
-                    Text("Confirm!")
-                        .font(.system(size: 28, weight: .thin))
-                        .foregroundColor(colorScheme == .dark ? .white : .white)
-                        .multilineTextAlignment(.center)
-                        .frame(width: 250, height: 45)
-                        .border(Color.gray, width: 1)
-                        .padding(.bottom, UIScreen.screenHeight * 0.08)
-                }
+               
                 
             }
             .opacity(transClock ? 1 : 0)
+            
+            VStack {
+                Spacer()
+                ZStack {
+                    Rectangle()
+                        .fill(transClock ? Color(red: 20/255, green: 18/255, blue: 24/255)
+                              : Color(red: 50/255, green: 46/255, blue: 62/255))
+                        .opacity(1)
+                        .frame(height: transClock ? UIScreen.screenHeight * 0.15 : 1, alignment: .bottom)
+                    
+                    Button {
+                        if froopData.froopDuration == 0 {
+                            showAlert = true
+                            alertMessage = "A Duration must be set for your Froop."
+                        } else {
+                            scrollTrig.updateDateFromIndices()
+                            if appStateManager.froopIsEditing {
+                                changeView.pageNumber = changeView.showSummary
+                            } else {
+                                changeView.pageNumber += 1
+                            }
+                        }
+                        
+                    } label: {
+                        Text("Confirm!")
+                            .font(.system(size: 28, weight: .thin))
+                            .foregroundColor(colorScheme == .dark ? .white : .white)
+                            .multilineTextAlignment(.center)
+                            .frame(width: 250, height: 45)
+                            .border(Color.gray, width: 1)
+                            .padding(.bottom, UIScreen.screenHeight * 0.025)
+                    }
+                }
+            }
+            .opacity(transClock ? 1 : 0)
+            .ignoresSafeArea()
         }
         .alert(isPresented: $showAlert) {
             Alert(title: Text("Duration Alert"), message: Text(alertMessage), dismissButton: .default(Text("OK")))
@@ -163,25 +167,5 @@ struct TimePickView: View {
             froopData.froopDuration = totalSeconds
         }
     }
-    
-    func calculateOffset(for screenSize: ScreenSizeCategory) -> CGFloat {
-        switch screenSize {
-            case .size430x932:
-                return -0 // This size works
-            case .size428x926:
-                return -0 // This size works
-            case .size414x896:
-                return -35 // This size works
-            case .size393x852:
-                return -35 // Replace with the appropriate value for this screen size
-            case .size390x844:
-                return -35 // Replace with the appropriate value for this screen size
-            case .size375x812:
-                return -35 // Replace with the appropriate value for this screen size
-            default:
-                return 0
-        }
-    }
-    
 }
 

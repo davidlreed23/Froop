@@ -52,11 +52,13 @@ struct ActiveOrPassiveView: View {
         ZStack {
             ZStack{
                 ActiveMapView(froopHistory: instanceFroop, globalChat: $globalChat)
-                FroopPassiveView(instanceFroop: instanceFroop, globalChat: $globalChat)
-                    .opacity(appStateManager.appState == .passive || !appStateManager.appStateToggle ? 1.0 : 0.0)
-                
+
+//                FroopPassiveView(instanceFroop: instanceFroop, globalChat: $globalChat)
+//                    .opacity(appStateManager.appState == .passive || !appStateManager.appStateToggle ? 1.0 : 0.0)
             }
+            .background(.clear)
         }
+        
         .onAppear {
             FroopDataController.shared.loadFroopLists(forUserWithUID: MyData.shared.froopUserID) {
                 FroopDataListener.shared.myConfirmedList = FroopDataController.shared.myConfirmedList

@@ -42,6 +42,8 @@
 	</array>
 	<key>NSUserActivityTypes</key>
 	<array>
+		<string>GetFlightInformationIntentIntent</string>
+		<string>INGetFlightStatusIntentIntent</string>
 		<string>INSendMessageIntent</string>
 		<string>INStartCallIntent</string>
 	</array>

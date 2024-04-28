@@ -25,6 +25,9 @@ struct FroopInfoView: View {
     @ObservedObject var froopManager = FroopManager.shared
     @ObservedObject var myData = MyData.shared
     @ObservedObject var friendData: UserData = UserData()
+    @State private var selectedUser: UserData?
+    @State private var showMap: Bool = false
+    
     @State var instanceFroop: FroopHistory = FroopHistory(
         froop: Froop(dictionary: [:]),
         host: UserData(),
@@ -56,7 +59,8 @@ struct FroopInfoView: View {
     @State var selectedFroopUUID: String = ""
     var timestamp: Date = Date()
     @Binding var globalChat: Bool
-
+    
+    
     
     let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
     
@@ -66,7 +70,6 @@ struct FroopInfoView: View {
     }
     
     var body: some View {
-        
         ZStack {
             FTVBackGroundComponent()
             Rectangle()
@@ -76,247 +79,261 @@ struct FroopInfoView: View {
             
             ZStack {
                 ScrollView(showsIndicators: false) {
-                    VStack (spacing: 0){
-                        //MARK: Header
-                        ZStack {
-                            Rectangle()
-                                .foregroundColor(.clear)
-                                .frame(height: 200)
-                                .background(Color.white.opacity(0.8))
-                                .cornerRadius(0)
-                                .padding(.leading, 0)
-                                .padding(.trailing, 0)
-                                .ignoresSafeArea()
- 
-                            VStack {
-                                HStack {
-                                    switch AppStateManager.shared.currentStage {
-                                        case .starting:
-                                            Text("Froop Starts in: \(timeZoneManager.formatDuration2(durationInMinutes: (appStateManager.currentFilteredFroopHistory[safe: appStateManager.aFHI]?.froop.froopStartTime.timeIntervalSince(now) ?? 0.0 ) / 60))")
-//                                            Text("Froop Starts in:")
-                                                .font(.system(size: 16))
-                                                .fontWeight(.medium)
-                                                .multilineTextAlignment(.leading)
-                                                .foregroundColor(colorScheme == .dark ? Color(red: 249/255, green: 0/255, blue: 95/255) : Color(red: 249/255, green: 0/255, blue: 95/255))
-                                        case .running:
-                                            ZStack {
-                                                Text("Froop In Progress")
+                    ZStack {
+                        VStack (spacing: 0){
+                            //MARK: Header
+                            ZStack {
+                                Rectangle()
+                                    .foregroundColor(.clear)
+                                    .frame(height: 200)
+                                    .background(Color.white.opacity(0.8))
+                                    .cornerRadius(0)
+                                    .padding(.leading, 0)
+                                    .padding(.trailing, 0)
+                                    .ignoresSafeArea()
+                                
+                                VStack {
+                                    HStack {
+                                        switch AppStateManager.shared.currentStage {
+                                            case .starting:
+                                                Text("Froop Starts in: \(timeZoneManager.formatDuration2(durationInMinutes: (appStateManager.currentFilteredFroopHistory[safe: appStateManager.aFHI]?.froop.froopStartTime.timeIntervalSince(now) ?? 0.0 ) / 60))")
+                                                //                                            Text("Froop Starts in:")
+                                                    .font(.system(size: 16))
+                                                    .fontWeight(.medium)
+                                                    .multilineTextAlignment(.leading)
+                                                    .foregroundColor(colorScheme == .dark ? Color(red: 249/255, green: 0/255, blue: 95/255) : Color(red: 249/255, green: 0/255, blue: 95/255))
+                                            case .running:
+                                                ZStack {
+                                                    Text("Froop In Progress")
+                                                        .font(.system(size: 16))
+                                                        .fontWeight(.medium)
+                                                        .foregroundColor(colorScheme == .dark ? Color(red: 249/255, green: 0/255, blue: 95/255) : Color(red: 249/255, green: 0/255, blue: 95/255))
+                                                        .multilineTextAlignment(.leading)
+                                                    
+                                                    Image(systemName: "circle.fill")
+                                                        .foregroundColor(Color(red: 249/255, green: 0/255, blue: 95/255))
+                                                        .modifier(ParticleEffect(pcount: 2))
+                                                        .frame(width: 2, height: 2)
+                                                        .offset(x: -75)
+                                                    
+                                                    Image(systemName: "circle.fill")
+                                                        .foregroundColor(Color(red: 249/255, green: 0/255, blue: 95/255))
+                                                        .modifier(ParticleEffect(pcount: 5))
+                                                        .frame(width: 2, height: 2)
+                                                        .offset(x: 75)
+                                                    
+                                                }
+                                            case .ending:
+                                                Text("Froop Archive in: \(timeZoneManager.formatDuration2(durationInMinutes: ((appStateManager.currentFilteredFroopHistory[safe: appStateManager.aFHI]?.froop.froopEndTime.timeIntervalSince(now) ?? 0.0 ))))")
                                                     .font(.system(size: 16))
                                                     .fontWeight(.medium)
                                                     .foregroundColor(colorScheme == .dark ? Color(red: 249/255, green: 0/255, blue: 95/255) : Color(red: 249/255, green: 0/255, blue: 95/255))
                                                     .multilineTextAlignment(.leading)
-                                                
-                                                Image(systemName: "circle.fill")
-                                                    .foregroundColor(Color(red: 249/255, green: 0/255, blue: 95/255))
-                                                    .modifier(ParticleEffect(pcount: 2))
-                                                    .frame(width: 2, height: 2)
-                                                    .offset(x: -75)
-                                                
-                                                Image(systemName: "circle.fill")
-                                                    .foregroundColor(Color(red: 249/255, green: 0/255, blue: 95/255))
-                                                    .modifier(ParticleEffect(pcount: 5))
-                                                    .frame(width: 2, height: 2)
-                                                    .offset(x: 75)
-                                                
-                                            }
-                                        case .ending:
-                                            Text("Froop Archive in: \(timeZoneManager.formatDuration2(durationInMinutes: ((appStateManager.currentFilteredFroopHistory[safe: appStateManager.aFHI]?.froop.froopEndTime.timeIntervalSince(now) ?? 0.0 ))))")
-                                                .font(.system(size: 16))
-                                                .fontWeight(.medium)
-                                                .foregroundColor(colorScheme == .dark ? Color(red: 249/255, green: 0/255, blue: 95/255) : Color(red: 249/255, green: 0/255, blue: 95/255))
-                                                .multilineTextAlignment(.leading)
-                                        case .none:
-                                            Text("No Froops Scheduled")
-                                                .font(.system(size: 16))
-                                                .fontWeight(.medium)
-                                                .foregroundColor(colorScheme == .dark ? Color(red: 249/255, green: 0/255, blue: 95/255) : Color(red: 249/255, green: 0/255, blue: 95/255))
-                                                .multilineTextAlignment(.leading)
+                                            case .none:
+                                                Text("No Froops Scheduled")
+                                                    .font(.system(size: 16))
+                                                    .fontWeight(.medium)
+                                                    .foregroundColor(colorScheme == .dark ? Color(red: 249/255, green: 0/255, blue: 95/255) : Color(red: 249/255, green: 0/255, blue: 95/255))
+                                                    .multilineTextAlignment(.leading)
+                                        }
                                     }
-                                }
-                                
-                                .padding(.leading, 20)
-                                .padding(.trailing, 20)
-                                .padding(.top, 15)
-                                
-                                HStack (alignment: .top){
-                                    ZStack {
-                                        Circle()
-                                            .frame(width: 100, height: 100, alignment: .leading)
-                                        KFImage(URL(string: appStateManager.currentFilteredFroopHistory[safe: appStateManager.aFHI]?.host.profileImageUrl ?? "" ))
-                                            .placeholder {
-                                                ProgressView()
+                                    
+                                    .padding(.leading, 20)
+                                    .padding(.trailing, 20)
+                                    .padding(.top, 15)
+                                    
+                                    HStack (alignment: .top){
+                                        ZStack {
+                                            Circle()
+                                                .frame(width: 100, height: 100, alignment: .leading)
+                                            KFImage(URL(string: appStateManager.currentFilteredFroopHistory[safe: appStateManager.aFHI]?.host.profileImageUrl ?? "" ))
+                                                .placeholder {
+                                                    ProgressView()
+                                                }
+                                                .resizable()
+                                                .scaledToFill()
+                                                .frame(width: 100, height: 100, alignment: .leading)
+                                                .clipShape(Circle())
+                                                .onTapGesture {
+                                                    froopManager.comeFrom = true
+                                                    locationServices.selectedTab = .froop
+                                                    froopManager.froopDetailOpen = true
+                                                    //                                                froopManager.selectedFroopHistory = appStateManager.inProgressFroop
+                                                    froopManager.selectedFroopUUID = appStateManager.currentFilteredFroopHistory[safe: appStateManager.aFHI]?.froop.froopId
+                                                }
+                                            
+                                        }
+                                        .padding(.leading, 25)
+                                        VStack (alignment: .leading){
+                                            
+                                            Text(appStateManager.currentFilteredFroopHistory[safe: appStateManager.aFHI]?.froop.froopName ?? "" )
+                                                .font(.system(size: 22))
+                                                .fontWeight(.medium)
+                                                .foregroundColor(Color(red: 50/255, green: 46/255, blue: 62/255))
+                                                .multilineTextAlignment(.leading)
+                                                .padding(.top)
+                                            HStack {
+                                                Text("Hosted by:")
+                                                    .font(.system(size:14))
+                                                    .fontWeight(.light)
+                                                    .foregroundColor(Color(red: 50/255, green: 46/255, blue: 62/255))
+                                                    .multilineTextAlignment(.leading)
+                                                Text(appStateManager.currentFilteredFroopHistory[safe: appStateManager.aFHI]?.host.firstName ?? "" )
+                                                    .font(.system(size: 14))
+                                                    .fontWeight(.light)
+                                                    .foregroundColor(Color(red: 50/255, green: 46/255, blue: 62/255))
+                                                    .multilineTextAlignment(.leading)
+                                                Text(appStateManager.currentFilteredFroopHistory[safe: appStateManager.aFHI]?.host.lastName ?? "" )
+                                                    .font(.system(size: 14))
+                                                    .fontWeight(.light)
+                                                    .foregroundColor(Color(red: 50/255, green: 46/255, blue: 62/255))
+                                                    .multilineTextAlignment(.leading)
+                                                    .padding(.leading, -5)
                                             }
-                                            .resizable()
-                                            .scaledToFill()
-                                            .frame(width: 100, height: 100, alignment: .leading)
-                                            .clipShape(Circle())
-                                            .onTapGesture {
-                                                froopManager.comeFrom = true
-                                                locationServices.selectedTab = .froop
-                                                froopManager.froopDetailOpen = true
-                                                //                                                froopManager.selectedFroopHistory = appStateManager.inProgressFroop
-                                                froopManager.selectedFroopUUID = appStateManager.currentFilteredFroopHistory[safe: appStateManager.aFHI]?.froop.froopId
-                                            }
-                                        
-                                    }
-                                    .padding(.leading, 25)
-                                    VStack (alignment: .leading){
-                                        
-                                        Text(appStateManager.currentFilteredFroopHistory[safe: appStateManager.aFHI]?.froop.froopName ?? "" )
-                                            .font(.system(size: 22))
-                                            .fontWeight(.medium)
-                                            .foregroundColor(Color(red: 50/255, green: 46/255, blue: 62/255))
-                                            .multilineTextAlignment(.leading)
-                                            .padding(.top)
-                                        HStack {
-                                            Text("Hosted by:")
+                                            
+                                            
+                                            Text("Start: \(formatDate(for: appStateManager.currentFilteredFroopHistory[safe: appStateManager.aFHI]?.froop.froopStartTime ?? Date(), in: (String(describing: TimeZoneManager.shared.userLocationTimeZone))))")
+                                            
+                                            //                                        Text("Start: \(formatDate(for: appStateManager.currentFilteredFroopHistory[safe: appStateManager.aFHI]?.froop.froopStartTime ?? Date() ))")
                                                 .font(.system(size:14))
                                                 .fontWeight(.light)
                                                 .foregroundColor(Color(red: 50/255, green: 46/255, blue: 62/255))
                                                 .multilineTextAlignment(.leading)
-                                            Text(appStateManager.currentFilteredFroopHistory[safe: appStateManager.aFHI]?.host.firstName ?? "" )
-                                                .font(.system(size: 14))
+                                                .padding(.top, 0)
+                                            Text("End: \(formatDate(for: appStateManager.currentFilteredFroopHistory[safe: appStateManager.aFHI]?.froop.froopEndTime ?? Date(), in: (String(describing: TimeZoneManager.shared.userLocationTimeZone))))")
+                                                .font(.system(size:14))
                                                 .fontWeight(.light)
                                                 .foregroundColor(Color(red: 50/255, green: 46/255, blue: 62/255))
+                                                .opacity(1)
                                                 .multilineTextAlignment(.leading)
-                                            Text(appStateManager.currentFilteredFroopHistory[safe: appStateManager.aFHI]?.host.lastName ?? "" )
-                                                .font(.system(size: 14))
-                                                .fontWeight(.light)
-                                                .foregroundColor(Color(red: 50/255, green: 46/255, blue: 62/255))
-                                                .multilineTextAlignment(.leading)
-                                                .padding(.leading, -5)
+                                                .padding(.top, 5)
+                                            
                                         }
-                                        
-                                        
-                                        Text("Start: \(formatDate(for: appStateManager.currentFilteredFroopHistory[safe: appStateManager.aFHI]?.froop.froopStartTime ?? Date(), in: (String(describing: TimeZoneManager.shared.userLocationTimeZone))))")
-                                        
-//                                        Text("Start: \(formatDate(for: appStateManager.currentFilteredFroopHistory[safe: appStateManager.aFHI]?.froop.froopStartTime ?? Date() ))")
-                                            .font(.system(size:14))
-                                            .fontWeight(.light)
-                                            .foregroundColor(Color(red: 50/255, green: 46/255, blue: 62/255))
-                                            .multilineTextAlignment(.leading)
-                                            .padding(.top, 0)
-                                        Text("End: \(formatDate(for: appStateManager.currentFilteredFroopHistory[safe: appStateManager.aFHI]?.froop.froopEndTime ?? Date(), in: (String(describing: TimeZoneManager.shared.userLocationTimeZone))))")
-                                            .font(.system(size:14))
-                                            .fontWeight(.light)
-                                            .foregroundColor(Color(red: 50/255, green: 46/255, blue: 62/255))
-                                            .opacity(0.5)
-                                            .multilineTextAlignment(.leading)
-                                            .padding(.top, 5)
-                                        
+                                        .padding(.top, 5)
+                                        .padding(.leading, 20)
+                                        Spacer()
                                     }
                                     .padding(.top, 5)
-                                    .padding(.leading, 20)
                                     Spacer()
                                 }
-                                .padding(.top, 5)
-                                Spacer()
                             }
-                        }
-                        .ignoresSafeArea()
-                        
-                        //MARK: Location
-                        ZStack {
-                            Rectangle()
-                                .frame(height: 75)
-                                .foregroundColor(Color.white.opacity(0.8))
-                            VStack {
-                                HStack (alignment: .center) {
-                                    Image(systemName: "mappin.and.ellipse")
-                                        .font(.system(size: 24))
-                                        .foregroundColor(colorScheme == .dark ? Color(red: 249/255, green: 0/255, blue: 98/255 ) : Color(red: 249/255, green: 0/255, blue: 98/255 ))
-                                        .padding(.trailing, 15)
-                                    
-                                    VStack (alignment: .leading){
-                                        Text(appStateManager.currentFilteredFroopHistory[safe: appStateManager.aFHI]?.froop.froopLocationtitle ?? "" )
-                                            .foregroundColor(Color(red: 50/255, green: 46/255, blue: 62/255))
-                                            .opacity(0.7)
-                                            .font(.system(size: 16))
-                                            .fontWeight(.semibold)
-                                        Text(appStateManager.currentFilteredFroopHistory[safe: appStateManager.aFHI]?.froop.froopLocationsubtitle ?? "" )
-                                            .foregroundColor(Color(red: 50/255, green: 46/255, blue: 62/255))
-                                            .opacity(0.7)
-                                            .font(.system(size: 12))
-                                            .lineLimit(2)
+                            .ignoresSafeArea()
+                            
+                            //MARK: Location
+                            ZStack {
+                                Rectangle()
+                                    .frame(height: 75)
+                                    .foregroundColor(Color.white.opacity(1))
+                                VStack {
+                                    HStack (alignment: .center) {
+                                        Image(systemName: "mappin.and.ellipse")
+                                            .font(.system(size: 24))
+                                            .foregroundColor(colorScheme == .dark ? Color(red: 249/255, green: 0/255, blue: 98/255 ) : Color(red: 249/255, green: 0/255, blue: 98/255 ))
+                                            .padding(.trailing, 15)
                                         
-                                    }
-                                    
-                                    Spacer()
-                                    
-                                    Button () {
-                                        LocationServices.shared.selectedFroopTab = .map
-                                    } label: {
-                                        ZStack {
+                                        VStack (alignment: .leading){
+                                            Text(appStateManager.currentFilteredFroopHistory[safe: appStateManager.aFHI]?.froop.froopLocationtitle ?? "" )
+                                                .foregroundColor(Color(red: 50/255, green: 46/255, blue: 62/255))
+                                                .opacity(1)
+                                                .font(.system(size: 16))
+                                                .fontWeight(.semibold)
+                                            Text(appStateManager.currentFilteredFroopHistory[safe: appStateManager.aFHI]?.froop.froopLocationsubtitle ?? "" )
+                                                .foregroundColor(Color(red: 50/255, green: 46/255, blue: 62/255))
+                                                .opacity(1)
+                                                .font(.system(size: 12))
+                                                .lineLimit(2)
                                             
-                                            Image("mapImage")
-                                                .resizable()
-                                                .scaledToFill()
-                                                .frame(maxWidth: 75, maxHeight: 75)
-                                            Rectangle()
-                                                .frame(width: 75, height: 75)
-                                                .foregroundColor(colorScheme == .dark ? Color(red: 255/255 ,green: 255/255,blue: 255/255) : Color(red: 255/255 ,green: 255/255,blue: 255/255))
-                                                .opacity(0.4)
-                                            
-                                            VStack  {
-                                                Text("Open")
-                                                    .foregroundColor(colorScheme == .dark ? Color(red: 50/255, green: 46/255, blue: 62/255) : Color(red: 50/255, green: 46/255, blue: 62/255))
-                                                    .font(.system(size: 16))
-                                                Text("Map")
-                                                    .foregroundColor(colorScheme == .dark ? Color(red: 50/255, green: 46/255, blue: 62/255) : Color(red: 50/255, green: 46/255, blue: 62/255))
-                                                    .font(.system(size: 16))
+                                        }
+                                        
+                                        Spacer()
+                                        
+                                        Button () {
+                                            LocationServices.shared.selectedFroopTab = .map
+                                        } label: {
+                                            ZStack {
+                                                
+                                                Image("mapImage")
+                                                    .resizable()
+                                                    .scaledToFill()
+                                                    .frame(maxWidth: 75, maxHeight: 75)
+                                                Rectangle()
+                                                    .frame(width: 75, height: 75)
+                                                    .foregroundColor(colorScheme == .dark ? Color(red: 255/255 ,green: 255/255,blue: 255/255) : Color(red: 255/255 ,green: 255/255,blue: 255/255))
+                                                    .opacity(0.25)
+                                                
+                                                VStack  {
+                                                    Text("Open")
+                                                        .foregroundColor(colorScheme == .dark ? Color(red: 50/255, green: 46/255, blue: 62/255) : Color(red: 50/255, green: 46/255, blue: 62/255))
+                                                        .font(.system(size: 16))
+                                                    Text("Map")
+                                                        .foregroundColor(colorScheme == .dark ? Color(red: 50/255, green: 46/255, blue: 62/255) : Color(red: 50/255, green: 46/255, blue: 62/255))
+                                                        .font(.system(size: 16))
+                                                }
+                                                .font(.system(size: 12))
                                             }
-                                            .font(.system(size: 12))
                                         }
                                     }
+                                    .ignoresSafeArea()
+                                    .padding(.leading, 25)
                                 }
-                                .ignoresSafeArea()
-                                .padding(.leading, 25)
                             }
-                        }
-                        .border(.gray, width: 0.25)
-                        .onTapGesture {
-                            LocationServices.shared.selectedFroopTab = .map
-                        }
-                        
-                        //MARK: Attending Friends
-                        ZStack {
-                            VStack(spacing: 1) {
-                                // First, safely access the FroopHistory item
-                                if let froopHistoryItem = appStateManager.currentFilteredFroopHistory[safe: appStateManager.aFHI] {
-                                    // Now that you have a safe FroopHistory item, you can access its `confirmedFriends.indices`
-                                    ForEach(froopHistoryItem.confirmedFriends.indices, id: \.self) { index in
-                                        AttendingUserCard(
-                                            friend: $appStateManager.currentFilteredFroopHistory[appStateManager.aFHI].confirmedFriends[index],
-                                            globalChat: $globalChat
+                            .border(.gray, width: 0.25)
+                            .onTapGesture {
+                                LocationServices.shared.selectedFroopTab = .map
+                            }
+                            
+                            //MARK: Attending Friends
+                            ZStack {
+                                VStack(spacing: 1) {
+                                    // First, safely access the FroopHistory item
+                                    if let froopHistoryItem = appStateManager.currentFilteredFroopHistory[safe: appStateManager.aFHI] {
+                                        // Now that you have a safe FroopHistory item, you can access its `confirmedFriends.indices`
+                                        ForEach(froopHistoryItem.confirmedFriends.indices, id: \.self) { index in
+                                            
+                                            AttendingUserCard(
+                                                friend: $appStateManager.currentFilteredFroopHistory[appStateManager.aFHI].confirmedFriends[index],
+                                                globalChat: $globalChat
+                                            )
+                                            .shadow(color: Color.black.opacity(0.2), radius: 7, x: 7, y: 7)
+                                            .shadow(color: Color.white.opacity(0.7), radius: 7, x: -4, y: -4)
+                                        }
+                                        
+                                        ActiveFroopFriendInviteView(
+                                            instanceFroop: instanceFroop,
+                                            invitedFriends: Binding.constant(froopHistoryItem.confirmedFriends)
                                         )
-                                        .shadow(color: Color.black.opacity(0.2), radius: 7, x: 7, y: 7)
-                                        .shadow(color: Color.white.opacity(0.7), radius: 7, x: -4, y: -4)
+                                        .padding()
+                                    } else {
+                                        // Handle the case where the FroopHistory item at aFHI doesn't exist
+                                        EmptyView()
                                     }
-
-                                    ActiveFroopFriendInviteView(
-                                        instanceFroop: instanceFroop,
-                                        invitedFriends: Binding.constant(froopHistoryItem.confirmedFriends)
-                                    )
-                                    .padding()
-                                } else {
-                                    // Handle the case where the FroopHistory item at aFHI doesn't exist
-                                    EmptyView()
                                 }
+                                .padding(.leading, 5)
+                                .padding(.trailing, 5)
                             }
-                            .padding(.leading, 5)
-                            .padding(.trailing, 5)
+                            .padding(.top, 5)
                         }
-                        .padding(.top, 5)
+                        VStack {
+                            HStack {
+                                Spacer()
+                                Text("Cancel")
+                                    .foregroundColor(Color(red: 50/255, green: 46/255, blue: 62/255))
+                                    .font(.system(size: 14))
+                                    .fontWeight(.light)
+                                    .padding()
+                            }
+                            Spacer()
+                        }
                     }
                 }
             }
         }
         .padding(.top, 95)
-        .id(appStateManager.currentFilteredFroopHistory[safe: appStateManager.aFHI]?.froop.froopId )
+        .id(appStateManager.currentFilteredFroopHistory[safe: appStateManager.aFHI]?.froop.froopId)
         .onReceive(timer) { _ in
             now = Date()
         }
-        
+        .opacity(appStateManager.currentFilteredFroopHistory[safe: appStateManager.aFHI]?.froop.froopId == nil ? 0.5 : 1)
         .blurredSheet(.init(.ultraThinMaterial), show: $froopManager.addFriendsOpen) {
         } content: {
             ZStack {
@@ -357,6 +374,8 @@ struct FroopInfoView: View {
             }
             .presentationDetents([.large])
         }
+        
+        
     }
     
     func formatDate(for date: Date, in timeZoneIdentifier: String) -> String {
@@ -370,7 +389,7 @@ struct FroopInfoView: View {
     
     func formatDate(for date: Date) -> String {
         let localDate = TimeZoneManager.shared.convertDateToLocalTime(for: date)
-
+        
         let formatter = DateFormatter()
         formatter.dateFormat = "EEE, MMM d, h:mm a"
         return formatter.string(from: localDate)
@@ -394,7 +413,7 @@ struct FroopInfoView: View {
                 print("froopEndTime successfully updated!")
             }
         }
-//        self.appStateManager.setupListener() { _ in }
+        //        self.appStateManager.setupListener() { _ in }
     }
 }
 

@@ -312,7 +312,7 @@ struct ClockView: View {
         ZStack {
             Rectangle()
                 .frame(height: 130)
-                .foregroundColor(Color.offWhite)
+//                .foregroundColor(Color.offWhite)
                 .shadow(color: Color.black.opacity(0.2), radius: 7, x: 7, y: 7)
                 .shadow(color: Color.white.opacity(0.7), radius: 7, x: -4, y: -4)
             HStack {
@@ -328,7 +328,7 @@ struct ClockView: View {
        
             Rectangle()
                 .frame(height: 110)
-                .foregroundColor(Color.offWhite)
+//                .foregroundColor(Color.offWhite)
                 .shadow(color: Color.black.opacity(0.2), radius: 7, x: 7, y: 7)
                 .shadow(color: Color.white.opacity(0.7), radius: 7, x: -4, y: -4)
             
@@ -576,7 +576,7 @@ struct DurationView: View {
         ZStack {
             Rectangle()
                 .frame(height: 180)
-                .foregroundColor(Color.offWhite)
+//                .foregroundColor(Color.offWhite)
                 .shadow(color: Color.black.opacity(0.2), radius: 7, x: 7, y: 7)
                 .shadow(color: Color.white.opacity(0.7), radius: 7, x: -4, y: -4)
             HStack {
@@ -613,7 +613,7 @@ struct DurationView: View {
 
             Rectangle()
                 .frame(height: 110)
-                .foregroundColor(Color.offWhite)
+//                .foregroundColor(Color.offWhite)
                 .shadow(color: Color.black.opacity(0.2), radius: 7, x: 7, y: 7)
                 .shadow(color: Color.white.opacity(0.7), radius: 7, x: -4, y: -4)
             

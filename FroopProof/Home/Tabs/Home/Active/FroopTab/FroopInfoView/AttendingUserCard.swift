@@ -18,7 +18,7 @@ struct AttendingUserCard: View {
     @ObservedObject var locationServices = LocationServices.shared
     @ObservedObject var friendRequestManager = FriendRequestManager.shared
     // @ObservedObject var froopDataListener = FroopDataListener.shared
- 
+    @ObservedObject var annotationManager = AnnotationManager.shared
     
     @State var guestFirstName: String = ""
     @State var guestLastName: String = ""
@@ -29,6 +29,8 @@ struct AttendingUserCard: View {
     @State var friendDetailOpen: Bool = false
     @Binding var friend: UserData
     @Binding var globalChat: Bool
+
+
     
     var body: some View {
         ZStack {
@@ -95,11 +97,16 @@ struct AttendingUserCard: View {
                         .foregroundColor(Color(red: 50/255, green: 46/255, blue: 62/255))
                         .opacity(0.5)
                         
-                    Image(systemName: "car.rear.road.lane.dashed")
-                        .foregroundColor(.white)
-                        .font(.system(size: 24))
-                        .fontWeight(.semibold)
-                        .clipShape(RoundedRectangle(cornerRadius: 5))
+                    Button(action: {
+                        LocationServices.shared.selectedFroopTab = .map
+                        annotationManager.zoomToGuestLocation(friend.coordinate)
+                    }) {
+                        Image(systemName: "car.rear.road.lane.dashed")
+                            .foregroundColor(.white)
+                            .font(.system(size: 24))
+                            .fontWeight(.semibold)
+                            .clipShape(RoundedRectangle(cornerRadius: 5))
+                    }
                 }
                 .padding(.trailing, 10)
                 .background(Color.clear)

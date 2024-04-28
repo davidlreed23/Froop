@@ -260,6 +260,10 @@
 		63CE0BC22AF972AD00E3720F /* MapManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63CE0BC12AF972AD00E3720F /* MapManager.swift */; };
 		63CF52112BA4C01B00B3D104 /* FroopHistory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63CF52102BA4C01B00B3D104 /* FroopHistory.swift */; };
 		63D0B4872B97945E00AFF1D5 /* InviteManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63D0B4862B97945E00AFF1D5 /* InviteManager.swift */; };
+		63D186082BC9F6BC0004178B /* FroopFlightDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63D186072BC9F6BC0004178B /* FroopFlightDataManager.swift */; };
+		63D1860A2BC9F8010004178B /* FroopFlightDataModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63D186092BC9F8010004178B /* FroopFlightDataModel.swift */; };
+		63D1860C2BC9F9F80004178B /* FroopFlightsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63D1860B2BC9F9F80004178B /* FroopFlightsView.swift */; };
+		63D1860E2BCA106A0004178B /* AirportCodeData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63D1860D2BCA106A0004178B /* AirportCodeData.swift */; };
 		63D5BEE92A298760001AC297 /* MyData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63D5BEE82A298760001AC297 /* MyData.swift */; };
 		63D8F82F2B633E38005A6FB1 /* SDWebImageSwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = 63D8F82E2B633E38005A6FB1 /* SDWebImageSwiftUI */; };
 		63D8F8322B634995005A6FB1 /* PaywallView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63D8F8312B634995005A6FB1 /* PaywallView.swift */; };
@@ -269,13 +273,14 @@
 		63D8F83A2B659A7E005A6FB1 /* Pacifico-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 63D8F8392B659A7E005A6FB1 /* Pacifico-Regular.ttf */; };
 		63DC2AC929B2D30B00B739BD /* TimeTextFieldView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63DC2AC829B2D30B00B739BD /* TimeTextFieldView.swift */; };
 		63DC2ACB29B2D99600B739BD /* FroopMapBackgroundView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63DC2ACA29B2D99600B739BD /* FroopMapBackgroundView.swift */; };
-		63DC2ACE29B3EA1400B739BD /* UserFriendListImagesData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63DC2ACD29B3EA1400B739BD /* UserFriendListImagesData.swift */; };
 		63DC2AD029B4344700B739BD /* DataController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63DC2ACF29B4344700B739BD /* DataController.swift */; };
 		63DC7F742BC0D9EC00424BC8 /* PremiumBannerDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63DC7F732BC0D9EC00424BC8 /* PremiumBannerDetailsView.swift */; };
 		63DC7F762BC3120D00424BC8 /* ProfileData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63DC7F752BC3120D00424BC8 /* ProfileData.swift */; };
+		63DE30802BDC9FA700740A3A /* GoogleTimeZoneAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63DE307F2BDC9FA700740A3A /* GoogleTimeZoneAPI.swift */; };
 		63DF3CB32ADAF29500B4C1E6 /* Version.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63DF3CB22ADAF29500B4C1E6 /* Version.swift */; };
 		63E1AF5C2B99619300DEA8E1 /* PendingGuestView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63E1AF5B2B99619300DEA8E1 /* PendingGuestView.swift */; };
 		63E1AF6E2B9A6FF200DEA8E1 /* FroopMediaShareViewParent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63E1AF6D2B9A6FF200DEA8E1 /* FroopMediaShareViewParent.swift */; };
+		63E39D4E2BCB239F00BBAF14 /* DatePickerComponentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63E39D4D2BCB239F00BBAF14 /* DatePickerComponentView.swift */; };
 		63E5CDDE2B47915700899F28 /* VideoPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63E5CDDD2B47915700899F28 /* VideoPickerView.swift */; };
 		63E68E7A2B574908005162F8 /* FroopGroupChatCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63E68E792B574908005162F8 /* FroopGroupChatCardView.swift */; };
 		63E68E7C2B574D06005162F8 /* FroopGroupChatView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63E68E7B2B574D06005162F8 /* FroopGroupChatView.swift */; };
@@ -582,6 +587,13 @@
 		63CE0BC12AF972AD00E3720F /* MapManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapManager.swift; sourceTree = "<group>"; };
 		63CF52102BA4C01B00B3D104 /* FroopHistory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FroopHistory.swift; sourceTree = "<group>"; };
 		63D0B4862B97945E00AFF1D5 /* InviteManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InviteManager.swift; sourceTree = "<group>"; };
+		63D185D52BC8B2F10004178B /* Intents.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Intents.framework; path = System/Library/Frameworks/Intents.framework; sourceTree = SDKROOT; };
+		63D185E02BC8B2F10004178B /* IntentsUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IntentsUI.framework; path = System/Library/Frameworks/IntentsUI.framework; sourceTree = SDKROOT; };
+		63D185FD2BC8D23B0004178B /* AppIntents.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppIntents.framework; path = System/Library/Frameworks/AppIntents.framework; sourceTree = SDKROOT; };
+		63D186072BC9F6BC0004178B /* FroopFlightDataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FroopFlightDataManager.swift; sourceTree = "<group>"; };
+		63D186092BC9F8010004178B /* FroopFlightDataModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FroopFlightDataModel.swift; sourceTree = "<group>"; };
+		63D1860B2BC9F9F80004178B /* FroopFlightsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FroopFlightsView.swift; sourceTree = "<group>"; };
+		63D1860D2BCA106A0004178B /* AirportCodeData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirportCodeData.swift; sourceTree = "<group>"; };
 		63D5BEE82A298760001AC297 /* MyData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyData.swift; sourceTree = "<group>"; };
 		63D8F8312B634995005A6FB1 /* PaywallView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaywallView.swift; sourceTree = "<group>"; };
 		63D8F8332B6359ED005A6FB1 /* CustomPayWallView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomPayWallView.swift; sourceTree = "<group>"; };
@@ -590,13 +602,14 @@
 		63D8F8392B659A7E005A6FB1 /* Pacifico-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Pacifico-Regular.ttf"; sourceTree = "<group>"; };
 		63DC2AC829B2D30B00B739BD /* TimeTextFieldView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeTextFieldView.swift; sourceTree = "<group>"; };
 		63DC2ACA29B2D99600B739BD /* FroopMapBackgroundView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FroopMapBackgroundView.swift; sourceTree = "<group>"; };
-		63DC2ACD29B3EA1400B739BD /* UserFriendListImagesData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserFriendListImagesData.swift; sourceTree = "<group>"; };
 		63DC2ACF29B4344700B739BD /* DataController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataController.swift; sourceTree = "<group>"; };
 		63DC7F732BC0D9EC00424BC8 /* PremiumBannerDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PremiumBannerDetailsView.swift; sourceTree = "<group>"; };
 		63DC7F752BC3120D00424BC8 /* ProfileData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileData.swift; sourceTree = "<group>"; };
+		63DE307F2BDC9FA700740A3A /* GoogleTimeZoneAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoogleTimeZoneAPI.swift; sourceTree = "<group>"; };
 		63DF3CB22ADAF29500B4C1E6 /* Version.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Version.swift; sourceTree = "<group>"; };
 		63E1AF5B2B99619300DEA8E1 /* PendingGuestView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PendingGuestView.swift; sourceTree = "<group>"; };
 		63E1AF6D2B9A6FF200DEA8E1 /* FroopMediaShareViewParent.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FroopMediaShareViewParent.swift; sourceTree = "<group>"; };
+		63E39D4D2BCB239F00BBAF14 /* DatePickerComponentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatePickerComponentView.swift; sourceTree = "<group>"; };
 		63E5CDDD2B47915700899F28 /* VideoPickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoPickerView.swift; sourceTree = "<group>"; };
 		63E68E792B574908005162F8 /* FroopGroupChatCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FroopGroupChatCardView.swift; sourceTree = "<group>"; };
 		63E68E7B2B574D06005162F8 /* FroopGroupChatView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FroopGroupChatView.swift; sourceTree = "<group>"; };
@@ -878,25 +891,8 @@
 		633CCA052A0982F500F94093 /* Managers */ = {
 			isa = PBXGroup;
 			children = (
-				6300F9452B66D8A6005DDD53 /* AccountSetupManager.swift */,
-				6304C03F29CFED6B00041661 /* FroopDataController.swift */,
-				63DC2ACF29B4344700B739BD /* DataController.swift */,
-				634D596D29799E150052BF16 /* LocationManager.swift */,
-				63B0CBFF2997FF30000E5687 /* FriendRequestManager.swift */,
-				63A3D59F29EE1F060087FD5A /* AppStateManager.swift */,
-				63FDEF7F29F0DC6900A5D048 /* MediaManager.swift */,
-				634E023E29BE4277009C97DA /* NotificationManager.swift */,
-				634D593929798B110052BF16 /* FroopTypeStore.swift */,
-				6351807E2A2D32980054637B /* FroopManager.swift */,
-				638C32882A34F9C1008F46C0 /* AlertManager.swift */,
-				63CE0BC12AF972AD00E3720F /* MapManager.swift */,
-				63140CB82B0AAC1C00979042 /* LoadingManager.swift */,
-				63BAA29429C7AB0D00B3D9B8 /* TimeZoneManager.swift */,
-				63871BEC2B615F5700AF747C /* UserSubscriptionManager.swift */,
-				639EC3D62B83E692008A346C /* AnnotationManager.swift */,
-				63D0B4862B97945E00AFF1D5 /* InviteManager.swift */,
-				63E68E9E2B587BD0005162F8 /* GlobalChatNotificationsManager.swift */,
-				63E68E9B2B587B60005162F8 /* FroopGroupChatNotificationsManager.swift */,
+				63D186062BC9F62D0004178B /* Utility Managers */,
+				63D186052BC9F5F50004178B /* Froop Managers */,
 			);
 			path = Managers;
 			sourceTree = "<group>";
@@ -1057,6 +1053,7 @@
 				634D5947297994510052BF16 /* LocateFroop */,
 				634D59482979945B0052BF16 /* DateFroop */,
 				634D59452979943A0052BF16 /* NameFroop */,
+				63D185C92BC876040004178B /* FroopFlights */,
 				634D5949297994640052BF16 /* SummaryFroop */,
 				6349BBB22BAB4BD2001EAAD0 /* SelectSingleFriendFroop */,
 			);
@@ -1187,6 +1184,9 @@
 		634D8F1229AF584B0059083D /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				63D185FD2BC8D23B0004178B /* AppIntents.framework */,
+				63D185D52BC8B2F10004178B /* Intents.framework */,
+				63D185E02BC8B2F10004178B /* IntentsUI.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -1212,6 +1212,7 @@
 				63A3952D2988840100EF6223 /* CustomPicker */,
 				63DC2AC829B2D30B00B739BD /* TimeTextFieldView.swift */,
 				6390118D2B1D161A00181919 /* DatePickViewCopy.swift */,
+				63E39D4D2BCB239F00BBAF14 /* DatePickerComponentView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -1301,33 +1302,11 @@
 		63A3D59E29EE133F0087FD5A /* Models */ = {
 			isa = PBXGroup;
 			children = (
-				63616298297C3F1D00DC068B /* Constants.swift */,
-				63FDEF6B29EFD8B600A5D048 /* MediaData.swift */,
-				63D5BEE82A298760001AC297 /* MyData.swift */,
-				6311DD502979033B009063AC /* UserData.swift */,
-				634D5922297987850052BF16 /* FroopData.swift */,
-				634D591C297986920052BF16 /* Froop.swift */,
-				634D593B29798B550052BF16 /* FroopTypeData.swift */,
-				634D593D29798BA80052BF16 /* FroopTypeList.swift */,
-				63B0CBCF29902851000E5687 /* PhotoData.swift */,
-				63F18E9D29D4F55F00345EB7 /* IdentifiableFriendData.swift */,
-				63B0CC11299A1931000E5687 /* FriendData.swift */,
-				634D8F0A29AEBD220059083D /* FriendListData.swift */,
-				63B0CC0B2999FAC9000E5687 /* FriendInviteData.swift */,
-				634D8F0E29AEC80E0059083D /* FriendRequest.swift */,
-				63DC2ACD29B3EA1400B739BD /* UserFriendListImagesData.swift */,
-				6337362129E936BD00CC4A17 /* DateForm.swift */,
-				6337361F29E9365700CC4A17 /* DateDisplay.swift */,
-				632EE60729F98A94004A0034 /* GuestLocation.swift */,
-				631448992A171F6F009EBAD2 /* FeedbackDataModel.swift */,
-				632297BF2A67649900E4912D /* FroopDropPin.swift */,
-				635333462A70504500183BE9 /* Message.swift */,
-				635333482A70740B00183BE9 /* Conversation.swift */,
-				632AE8852A7C0CEF0019C027 /* UserSettings.swift */,
-				63585C522B785FC300F88D01 /* FroopMediaData.swift */,
-				634EB2602B953614000A8B01 /* InviteData.swift */,
-				63CF52102BA4C01B00B3D104 /* FroopHistory.swift */,
-				63DC7F752BC3120D00424BC8 /* ProfileData.swift */,
+				63D186042BC9F58E0004178B /* Communication Models */,
+				63D186032BC9F5730004178B /* Friending Models */,
+				63D186022BC9F5330004178B /* Utility Models */,
+				63D186012BC9F4C40004178B /* Froop Models */,
+				63D186002BC9F4910004178B /* User Data Models */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -1539,6 +1518,112 @@
 				633E971C2A6C723800A19C36 /* Chat */,
 			);
 			path = Features;
+			sourceTree = "<group>";
+		};
+		63D185C92BC876040004178B /* FroopFlights */ = {
+			isa = PBXGroup;
+			children = (
+				63D1860B2BC9F9F80004178B /* FroopFlightsView.swift */,
+			);
+			path = FroopFlights;
+			sourceTree = "<group>";
+		};
+		63D186002BC9F4910004178B /* User Data Models */ = {
+			isa = PBXGroup;
+			children = (
+				63D5BEE82A298760001AC297 /* MyData.swift */,
+				6311DD502979033B009063AC /* UserData.swift */,
+				63B0CC11299A1931000E5687 /* FriendData.swift */,
+				63DC7F752BC3120D00424BC8 /* ProfileData.swift */,
+				632AE8852A7C0CEF0019C027 /* UserSettings.swift */,
+				63F18E9D29D4F55F00345EB7 /* IdentifiableFriendData.swift */,
+			);
+			path = "User Data Models";
+			sourceTree = "<group>";
+		};
+		63D186012BC9F4C40004178B /* Froop Models */ = {
+			isa = PBXGroup;
+			children = (
+				634D5922297987850052BF16 /* FroopData.swift */,
+				634D591C297986920052BF16 /* Froop.swift */,
+				634D593B29798B550052BF16 /* FroopTypeData.swift */,
+				634D593D29798BA80052BF16 /* FroopTypeList.swift */,
+				632297BF2A67649900E4912D /* FroopDropPin.swift */,
+				63585C522B785FC300F88D01 /* FroopMediaData.swift */,
+				63CF52102BA4C01B00B3D104 /* FroopHistory.swift */,
+				632EE60729F98A94004A0034 /* GuestLocation.swift */,
+				63D186092BC9F8010004178B /* FroopFlightDataModel.swift */,
+			);
+			path = "Froop Models";
+			sourceTree = "<group>";
+		};
+		63D186022BC9F5330004178B /* Utility Models */ = {
+			isa = PBXGroup;
+			children = (
+				63FDEF6B29EFD8B600A5D048 /* MediaData.swift */,
+				63B0CBCF29902851000E5687 /* PhotoData.swift */,
+				63616298297C3F1D00DC068B /* Constants.swift */,
+				6337362129E936BD00CC4A17 /* DateForm.swift */,
+				6337361F29E9365700CC4A17 /* DateDisplay.swift */,
+				631448992A171F6F009EBAD2 /* FeedbackDataModel.swift */,
+				63D1860D2BCA106A0004178B /* AirportCodeData.swift */,
+				63DE307F2BDC9FA700740A3A /* GoogleTimeZoneAPI.swift */,
+			);
+			path = "Utility Models";
+			sourceTree = "<group>";
+		};
+		63D186032BC9F5730004178B /* Friending Models */ = {
+			isa = PBXGroup;
+			children = (
+				634D8F0A29AEBD220059083D /* FriendListData.swift */,
+				63B0CC0B2999FAC9000E5687 /* FriendInviteData.swift */,
+				634D8F0E29AEC80E0059083D /* FriendRequest.swift */,
+				634EB2602B953614000A8B01 /* InviteData.swift */,
+			);
+			path = "Friending Models";
+			sourceTree = "<group>";
+		};
+		63D186042BC9F58E0004178B /* Communication Models */ = {
+			isa = PBXGroup;
+			children = (
+				635333462A70504500183BE9 /* Message.swift */,
+				635333482A70740B00183BE9 /* Conversation.swift */,
+			);
+			path = "Communication Models";
+			sourceTree = "<group>";
+		};
+		63D186052BC9F5F50004178B /* Froop Managers */ = {
+			isa = PBXGroup;
+			children = (
+				6304C03F29CFED6B00041661 /* FroopDataController.swift */,
+				63A3D59F29EE1F060087FD5A /* AppStateManager.swift */,
+				6351807E2A2D32980054637B /* FroopManager.swift */,
+				634D593929798B110052BF16 /* FroopTypeStore.swift */,
+				63DC2ACF29B4344700B739BD /* DataController.swift */,
+				639EC3D62B83E692008A346C /* AnnotationManager.swift */,
+				63E68E9B2B587B60005162F8 /* FroopGroupChatNotificationsManager.swift */,
+				63D186072BC9F6BC0004178B /* FroopFlightDataManager.swift */,
+			);
+			path = "Froop Managers";
+			sourceTree = "<group>";
+		};
+		63D186062BC9F62D0004178B /* Utility Managers */ = {
+			isa = PBXGroup;
+			children = (
+				6300F9452B66D8A6005DDD53 /* AccountSetupManager.swift */,
+				634D596D29799E150052BF16 /* LocationManager.swift */,
+				63B0CBFF2997FF30000E5687 /* FriendRequestManager.swift */,
+				63FDEF7F29F0DC6900A5D048 /* MediaManager.swift */,
+				634E023E29BE4277009C97DA /* NotificationManager.swift */,
+				638C32882A34F9C1008F46C0 /* AlertManager.swift */,
+				63BAA29429C7AB0D00B3D9B8 /* TimeZoneManager.swift */,
+				63D0B4862B97945E00AFF1D5 /* InviteManager.swift */,
+				63E68E9E2B587BD0005162F8 /* GlobalChatNotificationsManager.swift */,
+				63140CB82B0AAC1C00979042 /* LoadingManager.swift */,
+				63CE0BC12AF972AD00E3720F /* MapManager.swift */,
+				63871BEC2B615F5700AF747C /* UserSubscriptionManager.swift */,
+			);
+			path = "Utility Managers";
 			sourceTree = "<group>";
 		};
 		63D5BEE32A27C4E7001AC297 /* MapAndLocation */ = {
@@ -1966,7 +2051,7 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
-				LastSwiftUpdateCheck = 1420;
+				LastSwiftUpdateCheck = 1500;
 				LastUpgradeCheck = 1500;
 				TargetAttributes = {
 					6311DD0D2978DECB009063AC = {
@@ -2152,11 +2237,11 @@
 				6344E2F9298D7DE40019B8BC /* PhotoPicker_alt.swift in Sources */,
 				63CB195E2A43753A007106F6 /* DetailsDeleteView.swift in Sources */,
 				63871BEB2B60E3BA00AF747C /* CreatedPassivePinDetailsView.swift in Sources */,
-				63DC2ACE29B3EA1400B739BD /* UserFriendListImagesData.swift in Sources */,
 				63871BED2B615F5700AF747C /* UserSubscriptionManager.swift in Sources */,
 				632AE8BE2A84A0AA0019C027 /* FroopLandingView.swift in Sources */,
 				636DCC512ACE14F900FA9F89 /* ArchivedMediaShareView.swift in Sources */,
 				636DCC582ACE156100FA9F89 /* ArchivedLibraryView.swift in Sources */,
+				63D1860A2BC9F8010004178B /* FroopFlightDataModel.swift in Sources */,
 				63B0CBDA2991C78F000E5687 /* HostProfilePhotoView.swift in Sources */,
 				63EFFB7229DBB9840069958A /* OTPCodeTextField.swift in Sources */,
 				63A3952F2988841600EF6223 /* CustomPickerView.swift in Sources */,
@@ -2165,6 +2250,7 @@
 				636EF2AE29B9974B007AA589 /* AddFriendCardView.swift in Sources */,
 				6377B3962A2FF3F800FB173C /* ActiveMapViewRepresentable.swift in Sources */,
 				632297C02A67649900E4912D /* FroopDropPin.swift in Sources */,
+				63E39D4E2BCB239F00BBAF14 /* DatePickerComponentView.swift in Sources */,
 				634054F52A903BB40013CB9E /* MyProfileHeaderView.swift in Sources */,
 				63E68E962B587751005162F8 /* SimpleConversation.swift in Sources */,
 				6337361C29E8BD3700CC4A17 /* DurationEnterView.swift in Sources */,
@@ -2234,6 +2320,7 @@
 				63CC3AC42A46C6F30026B29A /* FlightInfoView.swift in Sources */,
 				6311DD5D29790D47009063AC /* PCCompletionTitleView.swift in Sources */,
 				637A963E2ABCB85500667262 /* OnboardFive.swift in Sources */,
+				63D186082BC9F6BC0004178B /* FroopFlightDataManager.swift in Sources */,
 				63CB19642A43D374007106F6 /* DetailsAddFriendsView.swift in Sources */,
 				6375AF7929A1413D0035B4FD /* friendStoreAccept.swift in Sources */,
 				63CB19572A424016007106F6 /* DetailsCalendarView.swift in Sources */,
@@ -2284,6 +2371,7 @@
 				63D0B4872B97945E00AFF1D5 /* InviteManager.swift in Sources */,
 				633CCA132A0990AC00F94093 /* FroopMessagesView.swift in Sources */,
 				63B0CBD029902851000E5687 /* PhotoData.swift in Sources */,
+				63DE30802BDC9FA700740A3A /* GoogleTimeZoneAPI.swift in Sources */,
 				634E023F29BE4277009C97DA /* NotificationManager.swift in Sources */,
 				63140CBB2B0ADF6000979042 /* FroopChatCardView.swift in Sources */,
 				6382DA8429FD796C00B33B48 /* AlertListenerManager.swift in Sources */,
@@ -2295,6 +2383,8 @@
 				6349BBB62BAB6CAF001EAAD0 /* SelectFriendProfileView.swift in Sources */,
 				63CE0BC22AF972AD00E3720F /* MapManager.swift in Sources */,
 				63B0CBDE2991C8E0000E5687 /* FroopCardView.swift in Sources */,
+				63D1860E2BCA106A0004178B /* AirportCodeData.swift in Sources */,
+				63D1860C2BC9F9F80004178B /* FroopFlightsView.swift in Sources */,
 				634D8EF929A7D1440059083D /* SearchUserView.swift in Sources */,
 				63F5A03129825CF800BAF4C5 /* DatePickView.swift in Sources */,
 				633E5BE72AF0A11800D6B5E8 /* ActiveMapView.swift in Sources */,
@@ -2496,7 +2586,7 @@
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CODE_SIGN_ENTITLEMENTS = FroopProof/FroopProof.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 46;
+				CURRENT_PROJECT_VERSION = 47;
 				DEVELOPMENT_ASSET_PATHS = "\"FroopProof/Preview Content\"";
 				DEVELOPMENT_TEAM = BVM3V493PM;
 				ENABLE_PREVIEWS = YES;
@@ -2514,6 +2604,7 @@
 				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "Please provide permission to store images in your photo library.";
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "Froop would like to share your photo's with your friends.";
 				INFOPLIST_KEY_NSPrincipalClass = "FroopProof.AppDelegate\n\nFroopProof.AppDelegate).\n\n.AppDelegate";
+				INFOPLIST_KEY_NSSiriUsageDescription = "Froop needs to use Siri to access real time information on things like Flights and Reservations";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -2524,7 +2615,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0.2;
+				MARKETING_VERSION = 1.0.3;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = com.agencytheory.froopproof;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -2547,7 +2638,7 @@
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CODE_SIGN_ENTITLEMENTS = FroopProof/FroopProof.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 46;
+				CURRENT_PROJECT_VERSION = 47;
 				DEVELOPMENT_ASSET_PATHS = "\"FroopProof/Preview Content\"";
 				DEVELOPMENT_TEAM = BVM3V493PM;
 				ENABLE_PREVIEWS = YES;
@@ -2566,6 +2657,7 @@
 				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "Please provide permission to store images in your photo library.";
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "Froop would like to share your photo's with your friends.";
 				INFOPLIST_KEY_NSPrincipalClass = "FroopProof.AppDelegate\n\nFroopProof.AppDelegate).\n\n.AppDelegate";
+				INFOPLIST_KEY_NSSiriUsageDescription = "Froop needs to use Siri to access real time information on things like Flights and Reservations";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -2576,7 +2668,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0.2;
+				MARKETING_VERSION = 1.0.3;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = com.agencytheory.froopproof;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -2594,7 +2686,7 @@
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = FNS/FNS.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 46;
+				CURRENT_PROJECT_VERSION = 47;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = BVM3V493PM;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -2608,10 +2700,13 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				MARKETING_VERSION = 1.0.2;
+				MARKETING_VERSION = 1.0.3;
 				PRODUCT_BUNDLE_IDENTIFIER = com.agencytheory.froopproof.FNS;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -2623,7 +2718,7 @@
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = FNS/FNS.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 46;
+				CURRENT_PROJECT_VERSION = 47;
 				DEVELOPMENT_TEAM = BVM3V493PM;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = FNS/Info.plist;
@@ -2636,10 +2731,13 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				MARKETING_VERSION = 1.0.2;
+				MARKETING_VERSION = 1.0.3;
 				PRODUCT_BUNDLE_IDENTIFIER = com.agencytheory.froopproof.FNS;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";

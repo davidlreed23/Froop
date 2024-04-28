@@ -9,15 +9,8 @@ import UIKit
 import SwiftUI
 
 class ViewController: UIViewController, UITextFieldDelegate {
-    
-    
-    
     @ObservedObject var printControl = PrintControl.shared
-   
     // @ObservedObject var froopDataListener = FroopDataListener.shared
-   
- 
-    
     let textField = UITextField()
 
     override func viewDidLoad() {

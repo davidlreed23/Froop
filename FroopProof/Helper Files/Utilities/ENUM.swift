@@ -10,6 +10,18 @@ import UIKit
 import SwiftUI
 import PhotosUI
 
+enum TextFieldFocus {
+    case none
+    case enumFlightCarrier
+    case enumFlightNum
+}
+
+enum FieldFocus: Hashable {
+    case airlineCode
+    case flightNumber
+    case airport
+//    case flightModifier
+}
 
 enum Tab: String, CaseIterable {
     case make

@@ -44,6 +44,18 @@ class AnnotationManager: ObservableObject {
         }
     }
     
+    func zoomToGuestLocation(_ coordinate: CLLocationCoordinate2D) {
+        print("ZOOM TO LOCATION FIRING!")
+        print(String(describing: coordinate))
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+            let newRegion = MKCoordinateRegion(center: coordinate, latitudinalMeters: 500, longitudinalMeters: 500)
+            withAnimation {
+                self.mapManager.cameraPosition = .region(newRegion)
+            }
+        }
+    }
+    
     func manuallyUpdateAnnotations() {
         let updatedGuests = guestAnnotations.map { guest -> UserData in
             if let updatedGuest = AppStateManager.shared.currentFilteredFroopHistory.first?.confirmedFriends.first(where: { $0.froopUserID == guest.froopUserID }) {

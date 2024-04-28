@@ -43,8 +43,8 @@ struct ActiveMapView: View {
     private var shouldShowAnnotations: Bool {
         mapManager.tapLatitudeDelta < 0.008
     }
-
-
+    
+    
     /// Route Properties
     @State private var routeDisplaying: Bool = false
     @State private var route: MKRoute?
@@ -63,8 +63,9 @@ struct ActiveMapView: View {
     /// OTHER PROPERTIES
     @Namespace private var locationSpace
     @Binding var globalChat: Bool
+//    @Binding var selectedUser: UserData?
     @State private var rerun = UUID()
-        
+    
     init(froopHistory: FroopHistory, globalChat: Binding <Bool>) {
         UITabBar.appearance().isHidden = true
         self.froopHistory = FroopHistory(
@@ -91,269 +92,268 @@ struct ActiveMapView: View {
     
     var body: some View {
         
-        NavigationStack{
-            if appStateManager.aFHI >= 0 && appStateManager.aFHI < appStateManager.currentFilteredFroopHistory.count {
-                
-                MapReader { reader in
-                    Map(position: $mapManager.cameraPosition, interactionModes: isMapDraggable ? .all : [], selection: $mapSelection) {
-                        
-                        if let route {
-                            MapPolyline(route.polyline)
-                                .stroke(Color(red: 255/255, green: 49/255, blue: 97/255), lineWidth: 5)
-                        }
-                        
-                        if MapManager.shared.newPinCreation {
-                            Annotation("by: \(MyData.shared.firstName) \(MyData.shared.lastName)", coordinate: MapManager.shared.froopDropPin.coordinate) {
-                                NewFroopPin(froopDropPin: MapManager.shared.froopDropPin)
-                            }
-                        }
-                        if shouldShowAnnotations {
-                            ForEach(MapManager.shared.froopPins, id: \.id) { pin in
-                                Annotation("", coordinate: pin.coordinate) {
-                                    CreatedFroopPin(froopDropPin: pin)
-                                }
-                                .tag(pin.id)
-                            }
-                        }
-                        
-                        ForEach(annotationManager.guestAnnotations, id: \.froopUserID) { participant in
-                            Annotation(participant.firstName, coordinate: participant.coordinate) {
-                                ActiveGuestAnnotation(guest: participant, globalChat: $globalChat)
-                                    .id(participant.froopUserID)
-                            }
-                        }
-
-
-                        // MARK: Froop Annotation
-                        Marker(appStateManager.currentFilteredFroopHistory[appStateManager.aFHI].froop.froopLocationtitle, coordinate: appStateManager.currentFilteredFroopHistory[appStateManager.aFHI].froop.froopLocationCoordinate ?? CLLocationCoordinate2D())
-                            .tint(Color(red: 249/255, green: 0/255, blue: 98/255))
-                            .tag(appStateManager.currentFilteredFroopHistory[appStateManager.aFHI].froop.froopId)
+        if appStateManager.aFHI >= 0 && appStateManager.aFHI < appStateManager.currentFilteredFroopHistory.count {
+            
+            MapReader { reader in
+                Map(position: $mapManager.cameraPosition, interactionModes: isMapDraggable ? .all : [], selection: $mapSelection) {
+                    
+                    if let route {
+                        MapPolyline(route.polyline)
+                            .stroke(Color(red: 255/255, green: 49/255, blue: 97/255), lineWidth: 5)
                     }
-                    .frame(width: UIScreen.screenWidth, height: UIScreen.screenHeight)
-                    .onChange(of: mapSelection) { oldValue, newValue in
-                        if let selectedId = newValue, selectedId != selectedMarkerId {
-                            selectedMarkerId = selectedId
-                            if let selectedPin = MapManager.shared.froopPins.first(where: { $0.id.uuidString == selectedId }) {
-                                annotationManager.zoomToLocation(selectedPin.coordinate)
-                            }
+                    
+                    if MapManager.shared.newPinCreation {
+                        Annotation("by: \(MyData.shared.firstName) \(MyData.shared.lastName)", coordinate: MapManager.shared.froopDropPin.coordinate) {
+                            NewFroopPin(froopDropPin: MapManager.shared.froopDropPin)
                         }
                     }
-                    .mapStyle(.standard(elevation: .automatic))
-                    .onMapCameraChange { mapCameraUpdateContext in
-                        mapManager.tapLatitude = mapCameraUpdateContext.camera.centerCoordinate.latitude
-                        mapManager.tapLongitude = mapCameraUpdateContext.camera.centerCoordinate.longitude
-                        mapManager.tapLatitudeDelta = mapCameraUpdateContext.region.span.latitudeDelta
-                        mapManager.tapLongitudeDelta = mapCameraUpdateContext.region.span.longitudeDelta
-                        print("\(mapCameraUpdateContext.camera.centerCoordinate)")
-                        print("\(mapCameraUpdateContext.region)")
-                    }
-                    .onTapGesture(perform: { screenCoord in
-                        annotationManager.trackingUser = false
-                        if MapManager.shared.newPinCreation {
-                            let pinLocation = reader.convert(screenCoord, from: .local)
-                            tapLatitude = pinLocation?.latitude ?? 0.0
-                            tapLongitude = pinLocation?.longitude ?? 0.0
-                            MapManager.shared.froopDropPin.coordinate = pinLocation ?? CLLocationCoordinate2D()
-                            print(pinLocation as Any)
-                        }
-                    })
-                    .onChange(of: equatableCenter) {
-                        MapManager.shared.centerLatitude = equatableCenter.coordinate.latitude
-                        MapManager.shared.centerLongitude = equatableCenter.coordinate.longitude
-                    }
-                    .task {
-                        await MapManager.shared.loadRouteDestination()
-                    }
-                    .onAppear {
-                        timerServices.shouldUpdateAnnotations = true
-                        if let center = MapManager.shared.cameraPosition.region?.center {
-                            MapManager.shared.centerLatitude = center.latitude
-                            MapManager.shared.centerLongitude = center.longitude
-                        }
-                        MapManager.shared.startListeningForFroopPins()
-                        
-                        let froopLocation = appStateManager.currentFilteredFroopHistory[appStateManager.aFHI].froop.froopLocationCoordinate ?? CLLocationCoordinate2D()
-                        let myLocation = MyData.shared.coordinate // Directly accessing the property
-                        
-                        let midpoint = MapManager.shared.midpointBetween(coordinate1: froopLocation, coordinate2: myLocation)
-                        let span = MapManager.shared.spanToInclude(coordinate1: froopLocation, coordinate2: myLocation)
-                        let region = MKCoordinateRegion(center: midpoint, span: span)
-                        withAnimation(.easeInOut(duration: 1.0)) {
-                            MapManager.shared.cameraPosition = .region(region)
-                        }
-                        
-                        Task {
-                            await locationManager.startLiveLocationUpdates()
-                        }
-                        timerServices.startAnnotationTimer()
-                        mapSelection = appStateManager.currentFilteredFroopHistory[appStateManager.aFHI].froop.froopId
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-                            // Ensure user location is available before fetching the route
-                            if locationManager.userLocation != nil {
-                                fetchRoute()
-                            } else {
-                                PrintControl.shared.printMap("💥User location is nil, cannot fetch route")
+                    if shouldShowAnnotations {
+                        ForEach(MapManager.shared.froopPins, id: \.id) { pin in
+                            Annotation("", coordinate: pin.coordinate) {
+                                CreatedFroopPin(froopDropPin: pin)
                             }
+                            .tag(pin.id)
                         }
-                        PrintControl.shared.printMap("🔥 Map On Appear Firing")
                     }
-                    .overlay {
-                        HStack {
-                            VStack {
-                                ZStack {
-                                    Image(systemName: "circle.fill")
-                                        .font(.system(size: 34))
-                                        .foregroundColor(.white)
-                                        .background(.ultraThinMaterial)
-                                        .clipShape(.rect(cornerRadius: 5))
-                                    
-                                    Image(systemName: "location.circle.fill")
-                                        .font(.system(size: 34))
-                                        .foregroundColor(Color(red: 249/255, green: 0/255, blue: 98/255))
-                                    
-                                }
-                                .padding(.bottom, 5)
-                                .onTapGesture {
-                                    // Safely unwrap the current center of the camera position
-                                    if let currentCenter = mapManager.cameraPosition.region?.center {
-                                        mapManager.centerLatitude = currentCenter.latitude
-                                        mapManager.centerLongitude = currentCenter.longitude
-                                    }
-                                    
-                                    // Safely unwrap the froop location and use a default coordinate if nil
-                                    let froopLocation = appStateManager.currentFilteredFroopHistory[appStateManager.aFHI].froop.froopLocationCoordinate ?? CLLocationCoordinate2D()
-                                    let myLocation = MyData.shared.coordinate // Assuming this is always valid
-                                    
-                                    // Calculate midpoint and span
-                                    let midpoint = mapManager.midpointBetween(coordinate1: froopLocation, coordinate2: myLocation)
-                                    let span = mapManager.spanToInclude(coordinate1: froopLocation, coordinate2: myLocation)
-                                    
-                                    // Create a new region and update the camera position
-                                    let region = MKCoordinateRegion(center: midpoint, span: span)
-                                    withAnimation(.easeInOut(duration: 1.0)) {
-                                        mapManager.cameraPosition = .region(region)
-                                    }
-                                }
-                                
-                                ZStack {
-                                    Image(systemName: "circle.fill")
-                                        .font(.system(size: 34))
-                                        .foregroundColor(.white)
-                                        .background(.ultraThinMaterial)
-                                        .clipShape(.rect(cornerRadius: 5))
-                                    
-                                    Image(systemName: "f.circle.fill")
-                                        .font(.system(size: 34))
-                                        .foregroundColor(Color(red: 249/255, green: 0/255, blue: 98/255))
-                                    
-                                }
-                                .padding(.bottom, 5)
-                                .onTapGesture {
-                                    annotationManager.trackingUser = false
-                                    // Safely unwrap the current center of the camera position
-                                    withAnimation(.easeInOut(duration: 1.0)) {
-                                        // Calculate the offset to move the center upwards
-                                        let froopLoc = appStateManager.currentFilteredFroopHistory[appStateManager.aFHI].froop.froopLocationCoordinate ?? CLLocationCoordinate2D()
-                                        // Adjust the center point upwards
-                                        let adjustedCenter = CLLocationCoordinate2D(
-                                            latitude: froopLoc.latitude,
-                                            longitude: froopLoc.longitude
-                                        )
-                                        
-                                        // Create a new region with the adjusted center
-                                        
-                                        let adjustedRegion = MKCoordinateRegion(
-                                            center: adjustedCenter,
-                                            latitudinalMeters: 250,
-                                            longitudinalMeters: 250
-                                        )
-                                        
-                                        MapManager.shared.cameraPosition = .region(adjustedRegion)
-                                    }
-                                }
-                                
-                                ZStack {
-                                    Image(systemName: "circle.fill")
-                                        .font(.system(size: 34))
-                                        .foregroundColor(Color(red: 249/255, green: 0/255, blue: 98/255))
-                                        .background(Material.ultraThinMaterial)
-                                        .clipShape(.rect(cornerRadius: 5))
-                                    
-                                    Image(systemName: "person.and.arrow.left.and.arrow.right")
-                                        .font(.system(size: 20))
-                                        .foregroundColor(.white)
-                                    
-                                }
-                                .padding(.bottom, 5)
-                                .onTapGesture {
-                                    withAnimation {
-                                        cycleThroughGuestsAndHost()
-                                        annotationManager.trackingUser = true
-                                    }
-                                }
-                                if mapManager.froopPins.count > 0 {
-                                    ZStack {
-                                        Image(systemName: "circle.fill")
-                                            .font(.system(size: 34))
-                                            .foregroundColor(.white)
-                                            .background(.ultraThinMaterial)
-                                            .clipShape(.rect(cornerRadius: 5))
-                                        
-                                        Image(systemName: "mappin.circle.fill")
-                                            .font(.system(size: 34))
-                                            .foregroundColor(Color(red: 249/255, green: 0/255, blue: 98/255))
-                                        
-                                        Image(systemName: "arrow.left.and.line.vertical.and.arrow.right")
-                                            .font(.system(size: 20))
-                                            .foregroundColor(.white)
-                                    }
-                                    .onTapGesture {
-                                        annotationManager.trackingUser = false
-                                        cycleThroughPins()
-                                    }
-                                }
-                                //                                Text(String(describing: mapManager.tapLatitudeDelta))
-                                Spacer()
-                            }
-                            Spacer()
+                    
+                    ForEach(annotationManager.guestAnnotations, id: \.froopUserID) { participant in
+                        Annotation(participant.firstName, coordinate: participant.coordinate) {
+                            ActiveGuestAnnotation(guest: participant, globalChat: $globalChat)
+                                .id(participant.froopUserID)
                         }
-                        .padding(.top, 115)
-                        .padding(.leading, 10)
                     }
-                    .navigationTitle("\(appStateManager.currentFilteredFroopHistory[appStateManager.aFHI].froop.froopName)")
-                    .navigationBarTitleDisplayMode(.inline)
-                    .toolbarBackground(.visible, for: .navigationBar)
-                    .toolbarBackground(.ultraThinMaterial, for: .navigationBar)
-                    .navigationBarItems(
-                        leading: Button(action: onAddPinButtonTapped) {
-                            HStack(spacing: 15) {
-                                Image(systemName: "mappin.and.ellipse")
-                                    .font(.system(size: 18))
-                                    .fontWeight(.regular)
-                                    .foregroundColor(Color(red: 249/255, green: 0/255, blue: 98/255))
-                                    .offset(x: 7)
-                                Text("ADD PIN")
-                                    .fontWeight(.semibold)
-                                    .font(.system(size: 14))
-                                    .foregroundColor(Color(red: 249/255, green: 0/255, blue: 98/255))
-                            }
-                        },
-                        trailing: Button(action: onWazeButtonTapped) {
-                            Image("wazeLogoRound")
-                                .resizable()
-                                .scaledToFill()
-                                .frame(width: 35, height: 35)
-                                .clipShape(Circle())
+                    
+                    
+                    // MARK: Froop Annotation
+                    Marker(appStateManager.currentFilteredFroopHistory[appStateManager.aFHI].froop.froopLocationtitle, coordinate: appStateManager.currentFilteredFroopHistory[appStateManager.aFHI].froop.froopLocationCoordinate ?? CLLocationCoordinate2D())
+                        .tint(Color(red: 249/255, green: 0/255, blue: 98/255))
+                        .tag(appStateManager.currentFilteredFroopHistory[appStateManager.aFHI].froop.froopId)
+                }
+                .frame(width: UIScreen.screenWidth, height: UIScreen.screenHeight)
+                .opacity(appStateManager.currentFilteredFroopHistory[safe: appStateManager.aFHI]?.froop.froopId == nil ? 0.5 : 1)
+                .onChange(of: mapSelection) { oldValue, newValue in
+                    if let selectedId = newValue, selectedId != selectedMarkerId {
+                        selectedMarkerId = selectedId
+                        if let selectedPin = MapManager.shared.froopPins.first(where: { $0.id.uuidString == selectedId }) {
+                            annotationManager.zoomToLocation(selectedPin.coordinate)
                         }
-                    )
-                    .onDisappear {
-                        timerServices.shouldUpdateAnnotations = false
                     }
                 }
+                .mapStyle(.standard(elevation: .automatic))
+                .onMapCameraChange { mapCameraUpdateContext in
+                    mapManager.tapLatitude = mapCameraUpdateContext.camera.centerCoordinate.latitude
+                    mapManager.tapLongitude = mapCameraUpdateContext.camera.centerCoordinate.longitude
+                    mapManager.tapLatitudeDelta = mapCameraUpdateContext.region.span.latitudeDelta
+                    mapManager.tapLongitudeDelta = mapCameraUpdateContext.region.span.longitudeDelta
+                    print("\(mapCameraUpdateContext.camera.centerCoordinate)")
+                    print("\(mapCameraUpdateContext.region)")
+                }
+                .onTapGesture(perform: { screenCoord in
+                    annotationManager.trackingUser = false
+                    if MapManager.shared.newPinCreation {
+                        let pinLocation = reader.convert(screenCoord, from: .local)
+                        tapLatitude = pinLocation?.latitude ?? 0.0
+                        tapLongitude = pinLocation?.longitude ?? 0.0
+                        MapManager.shared.froopDropPin.coordinate = pinLocation ?? CLLocationCoordinate2D()
+                        print(pinLocation as Any)
+                    }
+                })
+                .onChange(of: equatableCenter) {
+                    MapManager.shared.centerLatitude = equatableCenter.coordinate.latitude
+                    MapManager.shared.centerLongitude = equatableCenter.coordinate.longitude
+                }
+                .task {
+                    await MapManager.shared.loadRouteDestination()
+                }
+                .onAppear {
+                    timerServices.shouldUpdateAnnotations = true
+                    if let center = MapManager.shared.cameraPosition.region?.center {
+                        MapManager.shared.centerLatitude = center.latitude
+                        MapManager.shared.centerLongitude = center.longitude
+                    }
+                    MapManager.shared.startListeningForFroopPins()
+                    
+                    let froopLocation = appStateManager.currentFilteredFroopHistory[appStateManager.aFHI].froop.froopLocationCoordinate ?? CLLocationCoordinate2D()
+                    let myLocation = MyData.shared.coordinate // Directly accessing the property
+                    
+                    let midpoint = MapManager.shared.midpointBetween(coordinate1: froopLocation, coordinate2: myLocation)
+                    let span = MapManager.shared.spanToInclude(coordinate1: froopLocation, coordinate2: myLocation)
+                    let region = MKCoordinateRegion(center: midpoint, span: span)
+                    withAnimation(.easeInOut(duration: 1.0)) {
+                        MapManager.shared.cameraPosition = .region(region)
+                    }
+                    
+                    Task {
+                        await locationManager.startLiveLocationUpdates()
+                    }
+                    timerServices.startAnnotationTimer()
+                    mapSelection = appStateManager.currentFilteredFroopHistory[appStateManager.aFHI].froop.froopId
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                        // Ensure user location is available before fetching the route
+                        if locationManager.userLocation != nil {
+                            fetchRoute()
+                        } else {
+                            PrintControl.shared.printMap("💥User location is nil, cannot fetch route")
+                        }
+                    }
+                    PrintControl.shared.printMap("🔥 Map On Appear Firing")
+                }
+                .overlay {
+                    HStack {
+                        VStack {
+                            ZStack {
+                                Image(systemName: "circle.fill")
+                                    .font(.system(size: 34))
+                                    .foregroundColor(.white)
+                                    .background(.ultraThinMaterial)
+                                    .clipShape(.rect(cornerRadius: 5))
+                                
+                                Image(systemName: "location.circle.fill")
+                                    .font(.system(size: 34))
+                                    .foregroundColor(Color(red: 249/255, green: 0/255, blue: 98/255))
+                                
+                            }
+                            .padding(.bottom, 5)
+                            .onTapGesture {
+                                // Safely unwrap the current center of the camera position
+                                if let currentCenter = mapManager.cameraPosition.region?.center {
+                                    mapManager.centerLatitude = currentCenter.latitude
+                                    mapManager.centerLongitude = currentCenter.longitude
+                                }
+                                
+                                // Safely unwrap the froop location and use a default coordinate if nil
+                                let froopLocation = appStateManager.currentFilteredFroopHistory[appStateManager.aFHI].froop.froopLocationCoordinate ?? CLLocationCoordinate2D()
+                                let myLocation = MyData.shared.coordinate // Assuming this is always valid
+                                
+                                // Calculate midpoint and span
+                                let midpoint = mapManager.midpointBetween(coordinate1: froopLocation, coordinate2: myLocation)
+                                let span = mapManager.spanToInclude(coordinate1: froopLocation, coordinate2: myLocation)
+                                
+                                // Create a new region and update the camera position
+                                let region = MKCoordinateRegion(center: midpoint, span: span)
+                                withAnimation(.easeInOut(duration: 1.0)) {
+                                    mapManager.cameraPosition = .region(region)
+                                }
+                            }
+                            
+                            ZStack {
+                                Image(systemName: "circle.fill")
+                                    .font(.system(size: 34))
+                                    .foregroundColor(.white)
+                                    .background(.ultraThinMaterial)
+                                    .clipShape(.rect(cornerRadius: 5))
+                                
+                                Image(systemName: "f.circle.fill")
+                                    .font(.system(size: 34))
+                                    .foregroundColor(Color(red: 249/255, green: 0/255, blue: 98/255))
+                                
+                            }
+                            .padding(.bottom, 5)
+                            .onTapGesture {
+                                annotationManager.trackingUser = false
+                                // Safely unwrap the current center of the camera position
+                                withAnimation(.easeInOut(duration: 1.0)) {
+                                    // Calculate the offset to move the center upwards
+                                    let froopLoc = appStateManager.currentFilteredFroopHistory[appStateManager.aFHI].froop.froopLocationCoordinate ?? CLLocationCoordinate2D()
+                                    // Adjust the center point upwards
+                                    let adjustedCenter = CLLocationCoordinate2D(
+                                        latitude: froopLoc.latitude,
+                                        longitude: froopLoc.longitude
+                                    )
+                                    
+                                    // Create a new region with the adjusted center
+                                    
+                                    let adjustedRegion = MKCoordinateRegion(
+                                        center: adjustedCenter,
+                                        latitudinalMeters: 250,
+                                        longitudinalMeters: 250
+                                    )
+                                    
+                                    MapManager.shared.cameraPosition = .region(adjustedRegion)
+                                }
+                            }
+                            
+                            ZStack {
+                                Image(systemName: "circle.fill")
+                                    .font(.system(size: 34))
+                                    .foregroundColor(Color(red: 249/255, green: 0/255, blue: 98/255))
+                                    .background(Material.ultraThinMaterial)
+                                    .clipShape(.rect(cornerRadius: 5))
+                                
+                                Image(systemName: "person.and.arrow.left.and.arrow.right")
+                                    .font(.system(size: 20))
+                                    .foregroundColor(.white)
+                                
+                            }
+                            .padding(.bottom, 5)
+                            .onTapGesture {
+                                withAnimation {
+                                    cycleThroughGuestsAndHost()
+                                    annotationManager.trackingUser = true
+                                }
+                            }
+                            if mapManager.froopPins.count > 0 {
+                                ZStack {
+                                    Image(systemName: "circle.fill")
+                                        .font(.system(size: 34))
+                                        .foregroundColor(.white)
+                                        .background(.ultraThinMaterial)
+                                        .clipShape(.rect(cornerRadius: 5))
+                                    
+                                    Image(systemName: "mappin.circle.fill")
+                                        .font(.system(size: 34))
+                                        .foregroundColor(Color(red: 249/255, green: 0/255, blue: 98/255))
+                                    
+                                    Image(systemName: "arrow.left.and.line.vertical.and.arrow.right")
+                                        .font(.system(size: 20))
+                                        .foregroundColor(.white)
+                                }
+                                .onTapGesture {
+                                    annotationManager.trackingUser = false
+                                    cycleThroughPins()
+                                }
+                            }
+                            //                                Text(String(describing: mapManager.tapLatitudeDelta))
+                            Spacer()
+                        }
+                        Spacer()
+                    }
+                    .padding(.top, 115)
+                    .padding(.leading, 10)
+                }
+                .navigationTitle("\(appStateManager.currentFilteredFroopHistory[appStateManager.aFHI].froop.froopName)")
+                .navigationBarTitleDisplayMode(.inline)
+                .toolbarBackground(.visible, for: .navigationBar)
+                .toolbarBackground(.ultraThinMaterial, for: .navigationBar)
+                .navigationBarItems(
+                    leading: Button(action: onAddPinButtonTapped) {
+                        HStack(spacing: 15) {
+                            Image(systemName: "mappin.and.ellipse")
+                                .font(.system(size: 18))
+                                .fontWeight(.regular)
+                                .foregroundColor(Color(red: 249/255, green: 0/255, blue: 98/255))
+                                .offset(x: 7)
+                            Text("ADD PIN")
+                                .fontWeight(.semibold)
+                                .font(.system(size: 14))
+                                .foregroundColor(Color(red: 249/255, green: 0/255, blue: 98/255))
+                        }
+                    },
+                    trailing: Button(action: onWazeButtonTapped) {
+                        Image("wazeLogoRound")
+                            .resizable()
+                            .scaledToFill()
+                            .frame(width: 35, height: 35)
+                            .clipShape(Circle())
+                    }
+                )
+                .onDisappear {
+                    timerServices.shouldUpdateAnnotations = false
+                }
             }
-        }
-        .onAppear {
-            annotationManager.updateAnnotations(with: appStateManager.currentFilteredFroopHistory[safe: appStateManager.aFHI]?.confirmedFriends ?? [])
+            .onAppear {
+                annotationManager.updateAnnotations(with: appStateManager.currentFilteredFroopHistory[safe: appStateManager.aFHI]?.confirmedFriends ?? [])
+            }
         }
     }
     
@@ -374,7 +374,7 @@ struct ActiveMapView: View {
             appStateManager.appStateToggle = true
         }
     }
-
+    
     func onWazeButtonTapped() {
         MapManager.shared.openWaze()
     }
@@ -394,7 +394,7 @@ struct ActiveMapView: View {
         let pin = MapManager.shared.froopPins[annotationManager.currentPinIndex]
         focusOnPin(pin)
     }
-
+    
     func cycleThroughGuestsAndHost() {
         annotationManager.cycleToNextGuest()
         guard !annotationManager.guestAnnotations.isEmpty else { return }
@@ -403,7 +403,7 @@ struct ActiveMapView: View {
         let nextGuest = annotationManager.guestAnnotations[annotationManager.currentGuestIndex]
         annotationManager.zoomToLocation(nextGuest.coordinate)
     }
-
+    
     func createNewDropPin() {
         if let currentLocation = appStateManager.currentFilteredFroopHistory[safe: appStateManager.aFHI]?.froop.froopLocationCoordinate {
             // Calculate the new latitude 100 meters to the north

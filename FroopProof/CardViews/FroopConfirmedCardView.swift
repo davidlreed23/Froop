@@ -97,7 +97,6 @@ struct FroopConfirmedCardView: View {
     }
     
     let visibleFriendsLimit = 8
-    let dateForm = DateForm()
     
     init(openFroop: Binding<Bool>, froopHostAndFriends: FroopHistory, invitedFriends: [UserData]) {
         self._openFroop = openFroop

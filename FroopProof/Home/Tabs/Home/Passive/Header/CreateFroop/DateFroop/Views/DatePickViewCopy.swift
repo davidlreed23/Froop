@@ -19,152 +19,142 @@ struct DatePickViewCopy: View {
     @Binding var transClock: Bool
     @Binding var datePicked: Bool
     @ObservedObject var froopData = FroopData.shared
-//    @State var selectedDate = Date()
+    @State var selectedDate = Date()
     @State private var isTouched = false
     @State private var shrink: CGFloat = 0
 
     let dateFormatter = DateFormatter()
+    
     var dateString: String {
         dateFormatter.dateFormat = "MMMM yyyy"
         return dateFormatter.string(from: self.froopData.froopStartTime)
     }
+    
     var selectedDateString: String {
         dateFormatter.dateFormat = "MMMM dd, yyyy"
         return dateFormatter.string(from: self.froopData.froopStartTime)
     }
     
-    
     var body: some View {
-        ZStack {
+        ZStack(alignment: .center) {
+            
+            DatePickerComponentView(transClock: $transClock, datePicked: $datePicked)
+                .padding(.leading, UIScreen.screenWidth * 0.20)
+                .opacity(transClock ? 0 : 1)
+            
+            //MARK:  Custom Bar Navigation for DatePicker
+            
             VStack {
-                ZStack(alignment: .top) {
-                    Rectangle()
-                        .fill(Color(red: 50/255, green: 46/255, blue: 62/255))
-                        .opacity(0.8)
-                        .frame(width: UIScreen.screenWidth, height: transClock ? UIScreen.screenHeight * 0.075 : UIScreen.screenHeight * 0.43)
-                        .transition(.move(edge: .bottom))
-                        .onTapGesture {
-//                            shrink = shrink + 10
+                Rectangle()
+                    .fill(transClock ? Color(red: 20/255, green: 18/255, blue: 24/255)
+                          : Color(red: 50/255, green: 46/255, blue: 62/255))
+                    .opacity(1)
+                    .frame(width: UIScreen.screenWidth, height: UIScreen.screenHeight * 0.5)
+                    .frame(width: UIScreen.screenWidth, height: transClock ? UIScreen.screenHeight * 0.08 : UIScreen.screenHeight * 0.5)
+                    .transition(.move(edge: .bottom))
+                    .onTapGesture {
+                        withAnimation(Animation.easeInOut(duration: 0.5).repeatForever(autoreverses: true)) {
                             datePicked = true
                         }
-                        .offset(y: -25)
-                        .ignoresSafeArea()
-                    VStack (spacing: 0){
-                        Text(datePicked ? selectedDateString : "When is it happening?")
-                            .font(.system(size: 32, weight: .thin))
-                            .foregroundColor(.white)
-                            .frame(maxWidth: UIScreen.screenWidth - 30)
-                            .multilineTextAlignment(.center)
-                            .padding(.top, UIScreen.screenHeight * 0.14)
-                        
-                        if datePicked {
-                            Text("Confirm Date?")
-                                .font(.system(size: 28, weight: .thin))
-                                .foregroundColor(.white)
-                                .multilineTextAlignment(.center)
-                                .frame(width: 225, height: 45)
-                                .border(Color.gray, width: 1)
-                                .padding(.top)
-                                .onTapGesture {
-                                    withAnimation(.spring()) {
-                                        transClock = true
-                                    }
-                                }
-                        }
-                        
                     }
-                    .opacity(transClock ? 0 : 1)
-                    .animation(Animation.easeInOut(duration: 0.4), value: datePicked)
-                    
-                }
                 Spacer()
             }
-            .padding(.top, 115)
-            VStack (spacing: 0) {
-
-                
-                //MARK:  Custom Bar Navigation for DatePicker
-                VStack {
-                    ZStack {
-                        Rectangle()
-                            .fill(Color(red: 50/255, green: 46/255, blue: 62/255))
-                            .opacity(1)
-                            .frame(height: 75)
+            
+            VStack {
+                VStack (spacing: 0) {
+                    Spacer()
+                    Text(datePicked ? selectedDateString : "When is it happening?")
+                        .font(.system(size: 32, weight: .thin))
+                        .foregroundColor(.white)
+                        .multilineTextAlignment(.center)
+                    if datePicked {
+                        Text("Confirm Date?")
+                            .font(.system(size: 28, weight: .thin))
+                            .foregroundColor(.white)
+                            .multilineTextAlignment(.center)
+                            .frame(width: 225, height: 45)
+                            .border(Color.gray, width: 1)
+                            .padding(.top)
+                            .onTapGesture {
+                                withAnimation(.spring()) {
+                                    if froopData.froopType != 5009 {
+                                        transClock = true
+                                    } else {
+                                        withAnimation {
+                                            changeView.pageNumber = 3
+                                        }
+                                    }
+                                }
+                            }
+                    }
+                    Spacer()
+                }
+                .offset(y: datePicked ? 20 : 0)
+                .frame(width: UIScreen.screenWidth - 30, height: UIScreen.screenHeight * 0.5)
+                .opacity(transClock ? 0 : 1)
+                .animation(Animation.easeInOut(duration: 0.4), value: datePicked)
+                Spacer()
+            }
+        
+            VStack {
+                if !transClock {
+                    Spacer()
+                }
+                ZStack {
+                    Rectangle()
+                        .fill(Color(red: 20/255, green: 18/255, blue: 24/255))
+                        .opacity(1)
+                        .frame(height: 85)
+                    
+                    HStack {
                         
-                        HStack {
+                        Spacer()
+                        
+                        ZStack{
                             
-                            Spacer()
-                            
-                            ZStack{
-                                
-                                Text(dateString)
+                            Text(dateString)
+                                .font(.title2)
+                                .fontWeight(.light)
+                                .opacity(transClock ? 0 : 1)
+                                .foregroundColor(.white)
+                                .font(.system(size: 16, weight: .semibold))
+                                .multilineTextAlignment(.center)
+                            VStack (spacing: 0){
+                                Text(selectedDateString)
                                     .font(.title2)
                                     .fontWeight(.light)
-                                    .opacity(transClock ? 0 : 1)
+                                    .opacity(transClock ? 1 : 0)
                                     .foregroundColor(.white)
                                     .font(.system(size: 16, weight: .semibold))
                                     .multilineTextAlignment(.center)
-                                VStack (spacing: 0){
-                                    Text(selectedDateString)
-                                        .font(.title2)
-                                        .fontWeight(.light)
-                                        .opacity(transClock ? 1 : 0)
-                                        .foregroundColor(.white)
-                                        .font(.system(size: 16, weight: .semibold))
-                                        .multilineTextAlignment(.center)
-                                    Image(systemName: "chevron.down")
-                                        .padding(.top, 1)
-                                        .foregroundColor(.gray)
-                                        .opacity(transClock ? 1 : 0)
-                                }
-                                .padding(.top, 0)
-                                Rectangle()
-                                    .fill(Color(red: 50/255, green: 46/255, blue: 62/255))
-                                    .opacity(0.001)
-                                    .frame(width: 200, height: 75)
-                                    .onTapGesture {
-                                        withAnimation(.spring()) {
-                                            transClock = false
-                                        }
+                                Image(systemName: "chevron.down")
+                                    .padding(.top, 5)
+                                    .foregroundColor(Color(red: 91/255, green: 92/255, blue: 93/255))
+                                    .opacity(transClock ? 1 : 0)
+                            }
+                            .padding(.top, 0)
+                            Rectangle()
+                                .fill(Color(red: 50/255, green: 46/255, blue: 62/255))
+                                .opacity(0.001)
+                                .frame(width: 200, height: transClock ? 150 : 75)
+                                .onTapGesture {
+                                    withAnimation(.spring()) {
+                                        transClock = false
                                     }
-                            }
-                            
-                            Spacer()
-                            
+                                }
                         }
+                        
+                        Spacer()
+                        
                     }
                 }
-                .offset(y: transClock ? UIScreen.screenHeight * -0.36 : UIScreen.screenHeight * 0)
-                .padding(.top, UIScreen.screenHeight * 0.35)
-                .padding(.bottom, 5)
-                
-                VStack {
-                    DatePicker(
-                        "Froop Date",
-                        selection: Binding(
-                            get: { froopData.froopStartTime },
-                            set: { newValue in
-                                let calendar = Calendar.current
-                                let dateComponents = calendar.dateComponents([.year, .month, .day], from: newValue)
-                                let newDate = calendar.date(from: dateComponents)!
-                                froopData.froopStartTime = newDate
-                            }
-                        ),
-                        displayedComponents: .date)
-                    .environment(\.timeZone, TimeZone.current)
-                    .datePickerStyle(GraphicalDatePickerStyle())
-                    .opacity(transClock ? 0 : 1)
-                    .onAppear {
-                        shrink = UIScreen.screenWidth - 90
-                    }
-                }
-                .frame(maxWidth: UIScreen.screenWidth - 30)
-                .padding(.top, 5)
-
+                .offset(y: !transClock ? -25 : 0)
+                .padding(.top, 85)
                 Spacer()
-
             }
-            .offset(y: 100)
+//            .offset(y: transClock ? -UIScreen.screenHeight * 0.3 : 0)
+          
+
             TouchCaptureView {
                 if !isTouched {
                     isTouched = true
@@ -174,7 +164,7 @@ struct DatePickViewCopy: View {
             .background(Color.clear)
             .opacity(isTouched ? 0.0 : 1.0)
         }
- 
+        .ignoresSafeArea()
     }
     
     func moveToPreviousMonth() {
@@ -192,7 +182,6 @@ struct DatePickViewCopy: View {
         let nextMonth = Calendar.current.date(byAdding: .month, value: 1, to: froopData.froopStartTime)
         froopData.froopStartTime = nextMonth ?? froopData.froopStartTime
     }
-    
 }
 
 

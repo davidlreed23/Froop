@@ -191,8 +191,8 @@ struct MyProfileHeaderView: View {
                             
                             ZStack {
                                 Picker("", selection: $appStateManager.selectedTabTwo) {
-                                    Text("Froop Media").tag(0)
-                                    Text("Manage Froops").tag(1)
+                                    Text("Home").tag(0)
+                                    Text("Froops").tag(1)
                                 }
                                 .pickerStyle(SegmentedPickerStyle())
                                 .padding(.leading, 10 /*+ (75 * progress)*/)

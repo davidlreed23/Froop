@@ -418,6 +418,7 @@ struct MyApp: App {
                 Text("Authenticating...")
             }
         }
+
     }
     private func handleIncomingURL(_ url: URL) {
         print("🍎 handleIncomingURL firing!")

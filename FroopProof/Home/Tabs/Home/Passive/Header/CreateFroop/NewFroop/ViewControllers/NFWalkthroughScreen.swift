@@ -86,7 +86,6 @@ class ChangeView: ObservableObject {
                     showLocation = newPosition + 1
                 case 3:
                     showDate = newPosition + 1
-                    showDuration = newPosition + 1
                 case 4:
                     showTitle = newPosition + 1
                 case 5:
@@ -137,7 +136,7 @@ class ChangeView: ObservableObject {
             case 6:
                 return AnyView(FroopSingleFriendSelectView(froopData: froopData, timestamp: Date()).environmentObject(locationViewModel))
             case 7:
-                return AnyView(EmptyView().environmentObject(locationViewModel))
+                return AnyView(FroopFlightsView(froopData: froopData).environmentObject(locationViewModel))
             case 8:
                 return AnyView(EmptyView().environmentObject(locationViewModel))
             case 9:

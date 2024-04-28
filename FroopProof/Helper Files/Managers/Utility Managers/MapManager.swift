@@ -528,3 +528,11 @@ struct EquatableRegion: Equatable {
         lhs.region.span.longitudeDelta == rhs.region.span.longitudeDelta
     }
 }
+
+
+extension MapManager {
+    func zoomToLocation(_ coordinate: CLLocationCoordinate2D) {
+        let region = MKCoordinateRegion(center: coordinate, latitudinalMeters: 500, longitudinalMeters: 500)
+        self.cameraPosition = .region(region)
+    }
+}

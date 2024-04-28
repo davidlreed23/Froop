@@ -9,7 +9,6 @@ import SwiftUI
 import iPhoneNumberField
 import Firebase
 import FirebaseFirestore
- 
 import Foundation
 import UIKit
 
@@ -19,6 +18,7 @@ struct FroopTypeView: View {
     @ObservedObject var appStateManager = AppStateManager.shared
     @ObservedObject var printControl = PrintControl.shared
     @ObservedObject var locationServices = LocationServices.shared
+    @ObservedObject var flightManager = FroopFlightDataManager.shared
     // @ObservedObject var froopDataListener = FroopDataListener.shared
     @State private var mapState = MapViewState.noInput
     @ObservedObject var changeView = ChangeView.shared
@@ -30,14 +30,38 @@ struct FroopTypeView: View {
     @Binding var searchText: String
     @State var selectedFroopType: FroopType?
     @State var selectedTopic: String? = nil
+    var genericFroopType: Array = [1,2,3,4,5,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
     let db = FirebaseServices.shared.db
     
     var body: some View {
         ZStack {
             Color.offWhite
-//            Rectangle()
-//                .foregroundColor(Color.offWhite)
-//                .frame(width: UIScreen.screenWidth, height: UIScreen.screenHeight)
+            VStack {
+                Spacer()
+                HStack {
+                    Image(systemName: "circle.fill")
+                        .foregroundColor(Color(red: 50/255, green: 46/255, blue: 62/255))
+                        .font(.system(size: 18))
+                    Text("Froop Types with Black Icons are Generic")
+                        .foregroundColor(Color(red: 50/255, green: 46/255, blue: 62/255))
+                        .font(.system(size: 14))
+                        .fontWeight(.semibold)
+                    Spacer()
+
+                }
+                HStack {
+                    Image(systemName: "circle.fill")
+                        .foregroundColor(Color(red: 249/255, green: 0/255, blue: 98/255))
+                        .font(.system(size: 18))
+                    Text("Froop Types with Pink Icons have Custom Rules")
+                        .foregroundColor(Color(red: 50/255, green: 46/255, blue: 62/255))
+                        .font(.system(size: 14))
+                        .fontWeight(.semibold)
+                    Spacer()
+                }
+            }
+            .padding(.bottom, 50)
+            .padding(.leading, 25)
             
             VStack {
                 ScrollView (showsIndicators: false) {
@@ -70,7 +94,7 @@ struct FroopTypeView: View {
                                             .resizable()
                                             .aspectRatio(contentMode: .fit)
                                             .frame(maxWidth: 100, maxHeight: 100)
-                                            .foregroundColor(Color(red: 50/255, green: 46/255, blue: 62/255))
+                                            .foregroundColor(froopType.viewPositions == genericFroopType ? Color(red: 50/255, green: 46/255, blue: 62/255) : Color(red: 249/255, green: 0/255, blue: 98/255))
                                             .padding(.top, 20)
                                             .padding(.trailing, 20)
                                             .padding(.leading, 20)
@@ -93,10 +117,13 @@ struct FroopTypeView: View {
                                     .ignoresSafeArea()
                                     .onTapGesture {
                                         froopData.froopType = froopType.id
+                                        if froopType.id == 5009 {
+                                            flightManager.isAirportPickup = true
+                                        }
                                         print("🚼froopData.froopType \(froopData.froopType) / \(froopType.id)")
                                         changeView.froopTypeData = froopType
                                         
-                                        if changeView.froopTypeData?.viewPositions[1] == 0 {
+                                        if changeView.froopTypeData?.viewPositions[1] == 0 && froopData.froopType != 5009 {
                                             changeView.addressAtMyLocation = true
                                         } else {
                                             changeView.addressAtMyLocation = false

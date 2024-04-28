@@ -40,7 +40,7 @@ struct DatePickView: View {
                     Rectangle()
                         .fill(Color(red: 50/255, green: 46/255, blue: 62/255))
                         .opacity(1)
-                        .frame(width: 450, height: transClock ? UIScreen.screenHeight * 0.075 : UIScreen.screenHeight * 0.45)
+                        .frame(width: UIScreen.screenWidth, height: transClock ? UIScreen.screenHeight * 0.075 : UIScreen.screenHeight * 0.45)
                         .transition(.move(edge: .bottom))
                         .offset(y: transClock ? -25 : -25)
                         .ignoresSafeArea()
@@ -51,7 +51,7 @@ struct DatePickView: View {
                             .foregroundColor(.primary)
                             .frame(maxWidth: UIScreen.screenWidth - 30)
                             .multilineTextAlignment(.center)
-                            .padding(.top, UIScreen.screenHeight * 0.25)
+                            .padding(.top, UIScreen.screenHeight * 0.2)
                         
                         if datePicked {
                             Text("Confirm Date?")
@@ -72,7 +72,6 @@ struct DatePickView: View {
                     .animation(Animation.easeInOut(duration: 0.4), value: datePicked)
                 }
                 
-                
                 //MARK:  Custom Bar Navigation for DatePicker
                 ZStack(alignment: .center){
                     Rectangle()
@@ -82,7 +81,6 @@ struct DatePickView: View {
                     HStack {
                         Spacer()
                         ZStack{
-                            
                             Text(dateString)
                                 .font(.title2)
                                 .fontWeight(.light)
@@ -117,46 +115,48 @@ struct DatePickView: View {
                         Spacer()
                     }
                 }
-                .frame(minWidth: 0,maxWidth: .infinity, minHeight: 0, maxHeight: 75)
+                .frame(width: UIScreen.screenWidth, height: 75)
                 
-                .offset(y: transClock ? calculateOffset(for: dataController.screenSize) : 0)
+                .offset(y: transClock ? calculateOffset(for: dataController.screenSize) : -25)
                 
-                
-                ZStack (alignment: .top) {
-                    
-                    DatePicker(
-                        "Froop Date",
-                        selection: Binding(
-                            get: { froopData.froopStartTime },
-                            set: { newValue in
-                                let calendar = Calendar.current
-                                let dateComponents = calendar.dateComponents([.year, .month, .day], from: newValue)
-                                let newDate = calendar.date(from: dateComponents)!
-                                froopData.froopStartTime = newDate
-                            }
-                        ),
-                        //                        in: Date()...,
-                        displayedComponents: .date)
-                    .environment(\.timeZone, TimeZone.current)
-                    .datePickerStyle(GraphicalDatePickerStyle())
-                    
-                }
-                .opacity(transClock ? 0 : 1)
             }
+           
             
-            .frame(minWidth: 0,maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)
             TouchCaptureView {
                 if !isTouched {
                     isTouched = true
                     datePicked = true
                 }
             }
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
             .background(Color.clear)
             .opacity(isTouched ? 0.0 : 1.0)
         }
-        .frame(minWidth: 0,maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)
         .offset(y: 0)
+//        VStack {
+//            Spacer()
+//            ZStack (alignment: .top) {
+//                
+//                DatePicker(
+//                    "Froop Date",
+//                    selection: Binding(
+//                        get: { froopData.froopStartTime },
+//                        set: { newValue in
+//                            let calendar = Calendar.current
+//                            let dateComponents = calendar.dateComponents([.year, .month, .day], from: newValue)
+//                            let newDate = calendar.date(from: dateComponents)!
+//                            froopData.froopStartTime = newDate
+//                        }
+//                        
+//                    ),
+//                    displayedComponents: .date
+//                    
+//                )
+//                .environment(\.timeZone, TimeZone.current)
+//                .datePickerStyle(.automatic)
+//
+//            }
+//            .opacity(transClock ? 0 : 1)
+//        }
     }
     func nextMonth() {
         PrintControl.shared.printTime("-DatePickView: Function: nextMonth is firing")
