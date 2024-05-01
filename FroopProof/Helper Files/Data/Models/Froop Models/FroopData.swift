@@ -364,7 +364,6 @@ class FroopData: NSObject, ObservableObject, Decodable {
         print("🚦 FirebaseServices.shared.uid:  \(FirebaseServices.shared.uid)")
         let uid = FirebaseServices.shared.uid
 
-        
         let userRef = db.collection("users").document(uid)
         print("🚦🚦\(userRef.path)")
 

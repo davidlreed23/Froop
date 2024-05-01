@@ -458,56 +458,53 @@ class FroopDataController: NSObject, ObservableObject, MFMessageComposeViewContr
     func getCollectedFroops(forUserWithUID uid: String, status: FroopListStatus, completion: @escaping ([Froop]?, Error?) -> Void) {
         guard !uid.isEmpty else {
             PrintControl.shared.printFroopDataController("Error: Function: getCollectedFroops: UID cannot be empty")
-            PrintControl.shared.printFroopDataController("getCollectedFroops: UID = \(uid)")
-            completion(nil, nil)
+            completion(nil, NSError(domain: "FroopDataController", code: 0, userInfo: [NSLocalizedDescriptionKey: "UID cannot be empty"]))
             return
         }
-        PrintControl.shared.printFroopDataController("-function getCollectedFroops firing")
+        
         let collectionName: String
-        
         switch status {
-            case .invites:
-                collectionName = "myInvitesList"
-            case .confirmed:
-                collectionName = "myConfirmedList"
-            case .declined:
-                collectionName = "myDeclinedList"
-            case .archived:
-                collectionName = "myArchivedList"
+            case .invites: collectionName = "myInvitesList"
+            case .confirmed: collectionName = "myConfirmedList"
+            case .declined: collectionName = "myDeclinedList"
+            case .archived: collectionName = "myArchivedList"
         }
-        
-        let dispatchGroup = DispatchGroup()
+
         var collectedFroops: [Froop] = []
+        let dispatchGroup = DispatchGroup()
         
         db.collection("users").document(uid).collection("froopDecisions").document("froopLists").collection(collectionName).getDocuments { (querySnapshot, error) in
             if let error = error {
-                completion([], error)
+                completion(nil, error)
             } else {
-                if let querySnapshot = querySnapshot {
-                    for document in querySnapshot.documents {
-                        if let froopId = document.get("froopId") as? String,
-                           let froopHost = document.get("froopHost") as? String {
-                            if froopId.isEmpty {
-                                PrintControl.shared.printData("Document found with empty froopId property")
-                                Crashlytics.crashlytics().record(error: NSError(domain: "FroopDataController", code: 1, userInfo: [NSLocalizedDescriptionKey: "Document found with empty froopId property"]))
-                                continue
-                            }
-                            if froopHost.isEmpty {
-                                PrintControl.shared.printData("Document found with empty froopHost property")
-                                Crashlytics.crashlytics().record(error: NSError(domain: "FroopDataController", code: 2, userInfo: [NSLocalizedDescriptionKey: "Document found with empty froopHost property"]))
-                                continue
-                            }
-                            dispatchGroup.enter()
-                            self.db.collection("users").document(froopHost).collection("myFroops").document(froopId).getDocument { (froopDocument, error) in
-                                if let froopDocument = froopDocument, let froopData = froopDocument.data() {
-                                    let froop = Froop(dictionary: froopData)
+                querySnapshot?.documents.forEach { document in
+                    if let froopId = document.get("froopId") as? String,
+                       let froopHost = document.get("froopHost") as? String {
+                        dispatchGroup.enter()
+                        
+                        // Get the main Froop data
+                        self.db.collection("users").document(froopHost).collection("myFroops").document(froopId).getDocument { (froopDocument, error) in
+                            if let froopData = froopDocument?.data(), froopDocument?.exists == true {
+                                // After getting Froop, fetch associated flight details
+                                let flightDetailsRef = self.db.collection("users").document(froopHost).collection("myFroops").document(froopId).collection("flightDetails")
+                                flightDetailsRef.getDocuments { (snapshot, flightError) in
+                                    var froop = Froop(dictionary: froopData) // Initialize Froop with main data
+                                    if let flightDocuments = snapshot?.documents, !flightDocuments.isEmpty {
+                                        // Assuming only one flight detail is relevant, adjust if multiple are expected
+                                        if let flightData = flightDocuments.first?.data(),
+                                           let flightDetail = FlightDetail(dictionary: flightData) {
+                                            froop.flightData = flightDetail
+                                        }
+                                    }
                                     collectedFroops.append(froop)
+                                    dispatchGroup.leave()
                                 }
+                            } else {
                                 dispatchGroup.leave()
                             }
-                        } else {
-                            PrintControl.shared.printFroopDataController("Skipping placeholder document")
                         }
+                    } else {
+                        print("Skipping placeholder document or invalid froopId/froopHost")
                     }
                 }
                 
@@ -517,6 +514,7 @@ class FroopDataController: NSObject, ObservableObject, MFMessageComposeViewContr
             }
         }
     }
+
     
     func fetchUserDocumentNames(listType: String, completion: @escaping ([String]?, Error?) -> Void) {
         PrintControl.shared.printFroopDataController("-function fetchUserDocumentNames firing")

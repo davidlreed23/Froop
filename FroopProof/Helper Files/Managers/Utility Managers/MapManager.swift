@@ -448,6 +448,22 @@ class MapManager: ObservableObject {
     
     
     /// Utility Methods
+    func createArch(from start: CLLocationCoordinate2D, to end: CLLocationCoordinate2D) -> [CLLocationCoordinate2D] {
+        let midLatitude = (start.latitude + end.latitude) / 2
+        let midLongitude = (start.longitude + end.longitude) / 2
+        let altitude = abs(end.latitude - start.latitude) / 10  // Adjust arch height here
+
+        var coordinates = [CLLocationCoordinate2D]()
+        let steps = 100  // More steps for smoother curve
+        for i in 0...steps {
+            let t = Double(i) / Double(steps)
+            let lat = (1 - t) * start.latitude + t * end.latitude
+            let lon = (1 - t) * start.longitude + t * end.longitude
+            let adjustedAltitude = altitude * sin(t * .pi)  // Sinusoidal arch
+            coordinates.append(CLLocationCoordinate2D(latitude: lat + adjustedAltitude, longitude: lon))
+        }
+        return coordinates
+    }
     
     func convertToUIColor(_ color: Color) -> UIColor {
         return UIColor(color)
@@ -491,7 +507,6 @@ class MapManager: ObservableObject {
     }
 }
 
-
 extension UIColor {
     convenience init(_ color: Color) {
         let components = color.cgColor?.components ?? [0, 0, 0, 0]
@@ -534,5 +549,121 @@ extension MapManager {
     func zoomToLocation(_ coordinate: CLLocationCoordinate2D) {
         let region = MKCoordinateRegion(center: coordinate, latitudinalMeters: 500, longitudinalMeters: 500)
         self.cameraPosition = .region(region)
+    }
+}
+
+
+class ArcPolyline: MKPolyline {
+    var coordinates: [CLLocationCoordinate2D]
+    
+    init(coordinates: [CLLocationCoordinate2D]) {
+        self.coordinates = coordinates
+        super.init()
+    }
+}
+
+struct FlightMapView: View {
+    @ObservedObject var flightManager = FroopFlightDataManager.shared
+    @ObservedObject var froopManager = FroopManager.shared
+    @ObservedObject var mapManager = MapManager.shared
+    @ObservedObject var timeZoneManager = TimeZoneManager.shared
+
+
+
+    @State private var region = MKCoordinateRegion(
+        center: CLLocationCoordinate2D(latitude: 0, longitude: 0),
+        span: MKCoordinateSpan(latitudeDelta: 100, longitudeDelta: 100)
+    )
+    
+    var body: some View {
+        ZStack {
+            MapReader { reader in
+                Map()
+//                    coordinateRegion: $region, annotationItems: [froopManager.selectedFroopHistory.froop]) { froop in
+//                    MapAnnotation(coordinate: CLLocationCoordinate2D(
+//                        latitude: froop.flightData?.departure.airport.location.lat ?? 0,
+//                        longitude: froop.flightData?.departure.airport.location.lon ?? 0)) {
+//                            Text("Departure")
+//                        }
+//                    MapAnnotation(coordinate: CLLocationCoordinate2D(
+//                        latitude: froop.flightData?.arrival.airport.location.lat ?? 0,
+//                        longitude: froop.flightData?.arrival.airport.location.lon ?? 0)) {
+//                            Text("Arrival")
+//                        }
+//                }
+//                .overlay(
+//                    Path { path in
+//                        if let departure = froopManager.selectedFroopHistory.froop.flightData?.departure,
+//                           let arrival = froopManager.selectedFroopHistory.froop.flightData?.arrival {
+//                            let coordinates = mapManager.createArch(from: CLLocationCoordinate2D(
+//                                latitude: departure.airport.location.lat,
+//                                longitude: departure.airport.location.lon),
+//                                                                    to: CLLocationCoordinate2D(
+//                                                                        latitude: arrival.airport.location.lat,
+//                                                                        longitude: arrival.airport.location.lon))
+//                            
+//                            path.addLines(coordinates)
+//                        }
+//                    }
+//                        .stroke(Color.blue, lineWidth: 2)
+//                )
+            }
+        }
+        .onAppear {
+            if let departure = froopManager.selectedFroopHistory.froop.flightData?.departure,
+               let arrival = froopManager.selectedFroopHistory.froop.flightData?.arrival {
+                timeZoneManager.updateTimeZonesForFlight(
+                    departureLat: departure.airport.location.lat,
+                    departureLon: departure.airport.location.lon,
+                    arrivalLat: arrival.airport.location.lat,
+                    arrivalLon: arrival.airport.location.lon,
+                    apiKey: Secrets.googleTimeZoneAPI
+                )
+            }
+        }
+    }
+}
+
+
+
+struct FlightPathView: View {
+    @ObservedObject var flightManager = FroopFlightDataManager.shared
+    @ObservedObject var froopManager = FroopManager.shared
+    @ObservedObject var mapManager = MapManager.shared
+    @ObservedObject var timeZoneManager = TimeZoneManager.shared
+    
+    @State private var region = MKCoordinateRegion(
+        center: CLLocationCoordinate2D(latitude: 
+                                        ((FroopManager.shared.selectedFroopHistory.froop.flightData?.departure.airport.location.lat ?? 0.0) + (FroopManager.shared.selectedFroopHistory.froop.flightData?.arrival.airport.location.lat ?? 0.0)) / 2,
+                                       longitude:
+                                        ((FroopManager.shared.selectedFroopHistory.froop.flightData?.departure.airport.location.lon ?? 0.0) + (FroopManager.shared.selectedFroopHistory.froop.flightData?.arrival.airport.location.lon ?? 0.0)) / 2),
+        
+        span: MKCoordinateSpan(
+            latitudeDelta: abs(FroopManager.shared.selectedFroopHistory.froop.flightData?.departure.airport.location.lat ?? 0.0 - (FroopManager.shared.selectedFroopHistory.froop.flightData?.arrival.airport.location.lat ?? 0.0) ) * 1.5,
+            longitudeDelta: abs(FroopManager.shared.selectedFroopHistory.froop.flightData?.departure.airport.location.lon ?? 0.0 - (FroopManager.shared.selectedFroopHistory.froop.flightData?.arrival.airport.location.lon ?? 0.0) ) * 1.5)
+    )
+    
+    var body: some View {
+        Map() /*{ location in*/
+//            MapAnnotation(coordinate: location.coordinate) {
+//                VStack {
+//                    Text(location.name)
+//                        .foregroundColor(.white)
+//                        .padding(5)
+//                        .background(Color.blue)
+//                        .cornerRadius(10)
+//                    Image(systemName: "airplane")
+//                        .foregroundColor(.red)
+//                }
+//            }
+//        }
+//        .overlay(
+//            Path { path in
+//                let points = [departure.coordinate, arrival.coordinate]
+//                path.addLines(points.map { MKMapPoint($0).coordinate })
+//            }
+//            .strokedPath(StrokeStyle(lineWidth: 2, lineCap: .round, lineJoin: .round))
+//            .foregroundColor(.blue)
+//        )
     }
 }

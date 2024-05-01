@@ -14,6 +14,7 @@ import SwiftUI
 class AccountSetupManager: ObservableObject { 
     static let shared = AccountSetupManager(profileSetup: ProfileData())
     @ObservedObject var myData = MyData.shared
+    @ObservedObject var myAccountData = MyAccountData.shared
     @Published var profileSetup: ProfileData = ProfileData()
     private var update: Bool = true
     var db = FirebaseServices.shared.db
@@ -27,10 +28,54 @@ class AccountSetupManager: ObservableObject {
         self.db = db
         self.uid = uid
         updateProfileSetup()
+//        saveUserFcmToken()
     }
     
     func forceRefresh() {
         self.key = UUID()
+    }
+    
+    func checkOrCreateAccountDocument(for user: User) async {
+        print("🔶 checkOrCreateAccountDocument Firing")
+        let uid = user.uid
+        let accountsRef = Firestore.firestore().collection("accounts")
+        
+        // Attempt to find an existing account document
+        let querySnapshot = try? await accountsRef.whereField("authUids", arrayContains: uid).getDocuments()
+        if let documents = querySnapshot?.documents, !documents.isEmpty {
+            // Account document exists
+            print("Account document exists for UID: \(uid)")
+        } else {
+            // No account document exists, create a new one
+            createNewAccountDocument(for: user)
+        }
+    }
+    
+    func createNewAccountDocument(for user: User) {
+        print("🔶 createNewAccountDocument Firing")
+
+        let uid = user.uid
+        let accountsRef = Firestore.firestore().collection("accounts")
+        let currentDate = Date()
+        let newAccountData: [String: Any] = [
+            "accountId": uid, // Use the auth UID as the initial accountId
+            "authUids": [uid], // Initialize with the current UID
+            "primaryUid": uid, // Set the primary UID to the current UID
+            "phoneNumber": "", // Initialize as empty
+            "OTPVerified": false, // Default to false
+            "premiumAccount": false, // Default to false
+            "professionalAccount": false, // Default to false
+            "creationDate": Timestamp(date: currentDate), // Current date as creation date
+            "badgeCount": 0 // Initialize with zero
+        ]
+        
+        accountsRef.document(uid).setData(newAccountData) { error in
+            if let error = error {
+                print("Error creating account document: \(error.localizedDescription)")
+            } else {
+                print("Account document created successfully for UID: \(uid)")
+            }
+        }
     }
     
     func updateProfileSetup() {
@@ -144,7 +189,6 @@ class AccountSetupManager: ObservableObject {
         }
     }
 
-    
     func createFroopDecisionsDocumentAndSubcollections(uid: String, completion: @escaping (Error?) -> Void) {
         let froopDecisionsDocRef = db.collection("froopDecisions").document(uid).collection("froopLists").document("placeholder")
         let collectionsInsideFroopLists = ["myArchivedList", "myConfirmedList", "myDeclinedList", "myInvitesList"]
@@ -172,11 +216,48 @@ class AccountSetupManager: ObservableObject {
         }
     }
 
+//    func saveUserFcmToken() {
+//        // Check if the user is authenticated
+//        guard let uid = Auth.auth().currentUser?.uid, !uid.isEmpty else {
+//           print("User is not authenticated. fcmToken not saved to user document.")
+//            let error = NSError(domain: "", code: 0, userInfo: [NSLocalizedDescriptionKey: "User is not authenticated. fcmToken not saved to user document."])
+//            Crashlytics.crashlytics().record(error: error) // Log error to Crashlytics
+//            return
+//        }
+//        
+//        // Get the FCM token form user defaults
+//        guard let fcmToken = UserDefaults.standard.value(forKey: "FCMTokenNotification") else {
+//            return
+//        }
+//        
+//        let db = Firestore.firestore()
+//        let docRef = db.collection("users").document(uid)
+//        let accountDocRef = db.collection("account").document(myAccountData.accountId)
+//        
+//        // Update the user document with the fcmToken
+//        docRef.updateData(["fcmToken": fcmToken]) { error in
+//            if let error = error {
+//                print("Error updating user document with fcmToken: \(error)")
+//                Crashlytics.crashlytics().record(error: error) // Log error to Crashlytics
+//            } else {
+//                print("fcmToken saved to user document successfully")
+//            }
+//        }
+//        accountDocRef.updateData(["fcmToken": fcmToken]) { error in
+//            if let error = error {
+//                print("Error updating account document with fcmToken: \(error)")
+//                Crashlytics.crashlytics().record(error: error) // Log error to Crashlytics
+//            } else {
+//                print("fcmToken saved to account document successfully")
+//            }
+//        }
+//    }
     
     func getUserFcmToken() -> String? {
+        print("getUserFcmToken function firing!")
         // Check if the user is authenticated
         guard let uid = Auth.auth().currentUser?.uid, !uid.isEmpty else {
-            PrintControl.shared.printErrorMessages("User is not authenticated. Unable to retrieve fcmToken.")
+            print("User is not authenticated. Unable to retrieve fcmToken.")
             let error = NSError(domain: "", code: 0, userInfo: [NSLocalizedDescriptionKey: "User is not authenticated. Unable to retrieve fcmToken."])
             Crashlytics.crashlytics().record(error: error) // Log error to Crashlytics
             return nil

@@ -297,6 +297,7 @@
 		63E68E9C2B587B60005162F8 /* FroopGroupChatNotificationsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63E68E9B2B587B60005162F8 /* FroopGroupChatNotificationsManager.swift */; };
 		63E68E9F2B587BD0005162F8 /* GlobalChatNotificationsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63E68E9E2B587BD0005162F8 /* GlobalChatNotificationsManager.swift */; };
 		63E68EA12B587D07005162F8 /* ENUM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63E68EA02B587D07005162F8 /* ENUM.swift */; };
+		63ED62392BE285740008568E /* MyAccountData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63ED62382BE285740008568E /* MyAccountData.swift */; };
 		63EEB7722A3915AB005238DB /* PassiveMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63EEB7712A3915AB005238DB /* PassiveMapView.swift */; };
 		63EFFB5D29D883D70069958A /* HomeView2ViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63EFFB5C29D883D70069958A /* HomeView2ViewModel.swift */; };
 		63EFFB6129D888670069958A /* SharedViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63EFFB6029D888670069958A /* SharedViewModel.swift */; };
@@ -626,6 +627,7 @@
 		63E68E9B2B587B60005162F8 /* FroopGroupChatNotificationsManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FroopGroupChatNotificationsManager.swift; sourceTree = "<group>"; };
 		63E68E9E2B587BD0005162F8 /* GlobalChatNotificationsManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlobalChatNotificationsManager.swift; sourceTree = "<group>"; };
 		63E68EA02B587D07005162F8 /* ENUM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ENUM.swift; sourceTree = "<group>"; };
+		63ED62382BE285740008568E /* MyAccountData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyAccountData.swift; sourceTree = "<group>"; };
 		63EEB7712A3915AB005238DB /* PassiveMapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PassiveMapView.swift; sourceTree = "<group>"; };
 		63EFFB5C29D883D70069958A /* HomeView2ViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView2ViewModel.swift; sourceTree = "<group>"; };
 		63EFFB6029D888670069958A /* SharedViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedViewModel.swift; sourceTree = "<group>"; };
@@ -1427,6 +1429,7 @@
 				63835A4C2A9439C6008A4A67 /* UserDetailView2.swift */,
 				63BA7FD92AF7C31900D27758 /* AddFriendsActiveFroopView.swift */,
 				636EF2A829B95FAA007AA589 /* AddFriendsFroopView.swift */,
+				63ED62372BDF29130008568E /* FlightPickUpView */,
 				63E1AF652B9A69FC00DEA8E1 /* HostMessageView */,
 				63E1AF662B9A6A4900DEA8E1 /* GuestView */,
 				63E1AF6F2B9A91A100DEA8E1 /* PendingView */,
@@ -1531,6 +1534,7 @@
 		63D186002BC9F4910004178B /* User Data Models */ = {
 			isa = PBXGroup;
 			children = (
+				63ED62382BE285740008568E /* MyAccountData.swift */,
 				63D5BEE82A298760001AC297 /* MyData.swift */,
 				6311DD502979033B009063AC /* UserData.swift */,
 				63B0CC11299A1931000E5687 /* FriendData.swift */,
@@ -1909,6 +1913,13 @@
 			path = Manager;
 			sourceTree = "<group>";
 		};
+		63ED62372BDF29130008568E /* FlightPickUpView */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = FlightPickUpView;
+			sourceTree = "<group>";
+		};
 		63EFFB6629D891520069958A /* HomeView2VM */ = {
 			isa = PBXGroup;
 			children = (
@@ -2193,6 +2204,7 @@
 				63CF52112BA4C01B00B3D104 /* FroopHistory.swift in Sources */,
 				634D5938297989C50052BF16 /* FroopDateView.swift in Sources */,
 				63EFFB6E29DB50630069958A /* PhoneNumberTextField.swift in Sources */,
+				63ED62392BE285740008568E /* MyAccountData.swift in Sources */,
 				638C32892A34F9C1008F46C0 /* AlertManager.swift in Sources */,
 				634D8EFB29A7D1950059083D /* UserInfoView.swift in Sources */,
 				634D594129798CAA0052BF16 /* Extensions.swift in Sources */,

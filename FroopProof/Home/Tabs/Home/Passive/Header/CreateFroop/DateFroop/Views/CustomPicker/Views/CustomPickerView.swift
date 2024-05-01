@@ -512,7 +512,7 @@ struct DurationView: View {
         ZStack {
 
             HStack {
-                Text("DURATION")
+                Text("DURATION1 \(froopData.froopDuration) - \(scrollTrig.seventhPositionIndex) - \(scrollTrig.seventhPositionTime)")
                     .frame(width: 110)
                     .fontWeight(.bold)
                     .foregroundColor(Color(red: 80/255, green: 80/255, blue: 110/255))
@@ -837,6 +837,7 @@ extension ScrollTrig {
         }
 
         ChangeView.shared.froopData.froopDuration = durationInSeconds
+        
     }
 
 }

@@ -175,7 +175,7 @@ class FroopManager: ObservableObject {
             }
         }
     }
-
+//
     func fetchAttendedFroops(for uid: String, completion: @escaping (Result<[FroopAndHost], Error>) -> Void) {
         let archivedFroopsRef = db.collection("users").document(uid).collection("myDecisions").document("froopLists").collection("myArchivedList")
         
@@ -235,42 +235,14 @@ class FroopManager: ObservableObject {
             }
         }
     }
-    
-    func fetchFroopsFromIds(uid: String, templateStore: [String], completion: @escaping (Result<[Froop], Error>) -> Void) {
-        let userFroopsCollectionRef = db.collection("users").document(uid).collection("myFroops")
-        
-        var froopsArray = [Froop]()
-        let dispatchGroup = DispatchGroup()
-        
-        for froopId in templateStore {
-            dispatchGroup.enter()
-            
-            userFroopsCollectionRef.document(froopId).getDocument { (document, error) in
-                if let error = error {
-                    completion(.failure(error))
-                    return
-                } else if let document = document, document.exists {
-                    let data = document.data() ?? [:]
-                    let froop = Froop(dictionary: data)
-                    froopsArray.append(froop)
-                }
-                
-                dispatchGroup.leave()
-            }
-        }
-        
-        dispatchGroup.notify(queue: .main) {
-            completion(.success(froopsArray))
-        }
-    }
-    
+
     func fetchFriendLists(uid: String, completion: @escaping ([String]) -> Void) {
         PrintControl.shared.printFroopManager("fetchFriendList: uid:  \(uid))")
         let friendsRef = db.collection("users").document(uid).collection("friends").document("friendList")
         
         friendsRef.getDocument { document, error in
             if let document = document, document.exists {
-                var userFriendUIDs = document.data()?["friendUIDs"] as? [String] ?? []
+                let userFriendUIDs = document.data()?["friendUIDs"] as? [String] ?? []
                 PrintControl.shared.printFroopManager("First Function: fetchFriendLists: \(userFriendUIDs.description)")
                 print("First Function: fetchFriendLists: \(userFriendUIDs.description)")
 
@@ -307,69 +279,44 @@ class FroopManager: ObservableObject {
             }
         }
     }
-    
-    func fetchUserArchivedFroops(for uid: String, completion: @escaping ([Froop]) -> Void) {
-        var allFroops: [Froop] = []
-        
-        let archivedFroopsRef = db.collection("users").document(uid).collection("myDecisions").document("froopLists").collection("myArchivedList")
-        
-        archivedFroopsRef.getDocuments() { (querySnapshot, err) in
-            if let err = err {
-                PrintControl.shared.printErrorMessages("Error getting documents: \(err)")
-                completion([]) // returning an empty array in case of error
-            } else {
-                for document in querySnapshot!.documents {
-                    let data = document.data()
-                    let froop = Froop(dictionary: data)
-                    allFroops.append(froop)
-                    
-                }
-                completion(allFroops)
-            }
-        }
-    }
-    
-    func getUserFroops(uid: String, completion: @escaping (Result<[Froop], Error>) -> Void) {
-        let froopsCollectionRef = db.collection("users").document(uid).collection("myFroops")
-        
-        froopsCollectionRef.getDocuments { (querySnapshot, error) in
-            if let error = error {
-                completion(.failure(error))
-            } else if let querySnapshot = querySnapshot {
-                var froopsArray = [Froop]()
-                for document in querySnapshot.documents {
-                    let data = document.data()
-                    let froop = Froop(dictionary: data)
-                    froopsArray.append(froop)
-                }
-                completion(.success(froopsArray))
-            } else {
-                let error = NSError(domain: "", code: 0, userInfo: [NSLocalizedDescriptionKey: "No documents found in the collection"])
-                completion(.failure(error))
-            }
-        }
-    }
-    
+
     func fetchFroopData(froopId: String, froopHost: String, completion: @escaping (Froop?) -> Void) {
-        
         let froopRef = db.collection("users").document(froopHost).collection("myFroops").document(froopId)
         
         froopRef.getDocument { (document, error) in
             if let error = error {
                 PrintControl.shared.printFroopManager("Error fetching Froop data: \(error.localizedDescription)")
                 completion(nil)
-            } else {
-                if let document = document, document.exists, let data = document.data() {
-                    let froop = Froop(dictionary: data)
-                    FroopManager.shared.selectedFroopHistory.froop = froop // Corrected line
-                    completion(froop)
-                } else {
-                    PrintControl.shared.printFroopManager("Document does not exist 2")
-                    completion(nil)
+            } else if let document = document, document.exists, let data = document.data() {
+                // After fetching the froop, fetch flight details
+                let flightDetailsRef = froopRef.collection("flightDetails")
+                flightDetailsRef.getDocuments { (snapshot, error) in
+                    if let error = error {
+                        PrintControl.shared.printFroopManager("Error fetching flight data: \(error.localizedDescription)")
+                        completion(nil)
+                    } else {
+                        var flightDetails: [FlightDetail] = []
+                        snapshot?.documents.forEach { document in
+                            let flightDataDict = document.data()
+                            if let flightDetail = FlightDetail(dictionary: flightDataDict) {
+                                flightDetails.append(flightDetail)
+                            }
+                        }
+
+                        // Use the fetched data
+                        var froop = Froop(dictionary: data)
+                        froop.flightData = flightDetails.first
+                        FroopManager.shared.selectedFroopHistory.froop = froop
+                        completion(froop)
+                    }
                 }
+            } else {
+                PrintControl.shared.printFroopManager("Document does not exist")
+                completion(nil)
             }
         }
     }
+
     
     func fetchFriendsData(from friendUIDs: [String], completion: @escaping ([UserData]) -> Void) {
         
@@ -401,37 +348,7 @@ class FroopManager: ObservableObject {
             completion(friends)
         }
     }
-    
-    func fetchFroops(for userFriends: [UserData], completion: @escaping ([FroopAndHost]) -> Void) {
-        var allFroops: [Froop] = []
-        let dispatchGroup = DispatchGroup()
-        
-        for userFriend in userFriends {
-            dispatchGroup.enter()
-            let friendUID = userFriend.froopUserID
-            let froopsRef = db.collection("users").document(friendUID).collection("myFroops")
-            
-            froopsRef.getDocuments() { (querySnapshot, err) in
-                if let err = err {
-                    PrintControl.shared.printErrorMessages("Error getting documents: \(err)")
-                } else {
-                    for document in querySnapshot!.documents {
-                        let data = document.data()
-                        let froop = Froop(dictionary: data)
-                        allFroops.append(froop)
-                    }
-                }
-                dispatchGroup.leave()
-            }
-        }
-        
-        dispatchGroup.notify(queue: .main) {
-            let froopsWithImages = self.filterFroopsWithoutImages(from: allFroops)
-            let froopAndHostArray = self.createFroopAndHostArray(from: froopsWithImages, and: userFriends)
-            completion(froopAndHostArray)
-        }
-    }
-    
+
     func fetchUserDataFor(uids: [String], completion: @escaping (Result<[UserData], Error>) -> Void) {
         let dispatchGroup = DispatchGroup()
         var users: [UserData] = []
@@ -452,7 +369,7 @@ class FroopManager: ObservableObject {
         dispatchGroup.notify(queue: .main) {
             completion(.success(users))
         }
-}
+    }
     
     func fetchConfirmedFriendData(for froop: Froop, completion: @escaping (Result<[UserData], Error>) -> Void) {
         fetchConfirmedFriends(for: froop) { result in
@@ -676,8 +593,8 @@ class FroopManager: ObservableObject {
         }
     }
     
-    ///FROOP HISTORY
-    
+//    ///FROOP HISTORY
+//    
     func createFroopHistoryArray(completion: @escaping ([FroopHistory]) -> Void) {
         let froops = FroopDataController.shared.myArchivedList + FroopDataController.shared.myInvitesList + FroopDataController.shared.myConfirmedList + FroopDataController.shared.myDeclinedList
         
@@ -735,7 +652,7 @@ class FroopManager: ObservableObject {
         }
         let groupChatConversation = Conversation() // Create a new conversation or fetch existing one
         let groupChatMessages: [Message] = []
-        let froopGroupConversationAndMessages = ConversationAndMessages(conversation: groupChatConversation, messages: groupChatMessages, participants: [])
+//        let froopGroupConversationAndMessages = ConversationAndMessages(conversation: groupChatConversation, messages: groupChatMessages, participants: [])
         
         var invited: [UserData] = []
         var confirmed: [UserData] = []
@@ -744,15 +661,15 @@ class FroopManager: ObservableObject {
         
         let dispatchGroup = DispatchGroup()
         
-        let mediaData = FroopMediaData(
-            froopImages: froop.froopImages,
-            froopDisplayImages: froop.froopDisplayImages,
-            froopThumbnailImages: froop.froopThumbnailImages,
-            froopIntroVideo: froop.froopIntroVideo,
-            froopIntroVideoThumbnail: froop.froopIntroVideoThumbnail,
-            froopVideos: froop.froopVideos,
-            froopVideoThumbnails: froop.froopVideoThumbnails
-        )
+//        let mediaData = FroopMediaData(
+//            froopImages: froop.froopImages,
+//            froopDisplayImages: froop.froopDisplayImages,
+//            froopThumbnailImages: froop.froopThumbnailImages,
+//            froopIntroVideo: froop.froopIntroVideo,
+//            froopIntroVideoThumbnail: froop.froopIntroVideoThumbnail,
+//            froopVideos: froop.froopVideos,
+//            froopVideoThumbnails: froop.froopVideoThumbnails
+//        )
         
         self.froopHistoryService.evaluateFroopHistoryConditions()
         
@@ -883,14 +800,14 @@ class FroopManager: ObservableObject {
             froopMediaData: froopMediaData
         )
     }
-    
-    
-    /// STATE MANAGEMENT
-    
-    func updateSelectedFroopHistory() {
-        selectedFroopHistory = froopHistory.first { $0.froop.froopId == selectedFroopUUID } ?? FroopManager.defaultFroopHistory()
-        }
-    
+//    
+//    
+//    /// STATE MANAGEMENT
+//    
+//    func updateSelectedFroopHistory() {
+//        selectedFroopHistory = froopHistory.first { $0.froop.froopId == selectedFroopUUID } ?? FroopManager.defaultFroopHistory()
+//        }
+//    
     private func handleFroopHistoryChanges() {
         AppStateManager.shared.appState = .active
 //        print("handleFroopHistoryChanges Firing - \(AppStateManager.shared.appState)")
@@ -924,40 +841,6 @@ class FroopManager: ObservableObject {
         }
     }
 
-    func listenToUserDataChanges(uid: String, completion: @escaping (Result<UserData, Error>) -> Void) {
-        let listenerKey = "user_\(uid)"
-        
-        if ListenerStateService.shared.shouldCreateListener(forKey: listenerKey) {
-            let docRef = db.collection("users").document(uid)
-            
-            let listener = docRef.addSnapshotListener { documentSnapshot, error in
-                guard let document = documentSnapshot else {
-                    let fetchError = error ?? NSError(domain: "FroopManager", code: -1, userInfo: [NSLocalizedDescriptionKey: "Unknown error occurred while fetching user document."])
-                    PrintControl.shared.printFroopManager("Error fetching user document: \(fetchError.localizedDescription)")
-                    completion(.failure(fetchError))
-                    return
-                }
-                
-                guard let data = document.data() else {
-                    PrintControl.shared.printFroopManager("User document data was empty.")
-                    // Return an error to the completion handler if needed
-                    completion(.failure(NSError(domain: "FroopManager", code: 0, userInfo: [NSLocalizedDescriptionKey: "User document data was empty."])))
-                    return
-                }
-                
-                if let user = UserData(dictionary: data) {
-                    completion(.success(user))
-                } else {
-                    let conversionError = NSError(domain: "FroopManager", code: 1, userInfo: [NSLocalizedDescriptionKey: "Error converting dictionary to UserData."])
-                    PrintControl.shared.printFroopManager(conversionError.localizedDescription)
-                    completion(.failure(conversionError))
-                }
-            }
-            
-            ListenerStateService.shared.registerListener(listener, forKey: listenerKey)
-        }
-    }
-    
     func listenToUserDocument(userData: UserData) {
         let listenerKey = "user_\(userData.froopUserID)"
 
@@ -994,65 +877,7 @@ class FroopManager: ObservableObject {
             ListenerStateService.shared.registerListener(listener, forKey: listenerKey)
         }
     }
-    
-    func updateFroopState(_ state: FroopState, for froopHistory: FroopHistory) {
-        PrintControl.shared.printFroopManager("-FroopManager: Function: updateFroopState is firing!")
-        PrintControl.shared.printFroopManager("Froop State Change to \(state) for \(froopHistory.froop.froopId) with name: \(froopHistory.froop.froopName) starting at \(froopHistory.froop.froopStartTime)")
-        
-        switch state {
-            case .froopPreGame:
-                setActiveFroopHistory(froopHistory)
-                notificationCenter.notifyStatusChanged(froopHistory)
-                // startMediaScanForActiveFroop()
-            default:
-                break
-        }
-    }
-    
-    func setActiveFroopHistory(_ froopHistory: FroopHistory) {
-        PrintControl.shared.printFroopManager("-FroopManager: Function: setActiveFroop firing")
-        if let index = activeFroopHistories.firstIndex(where: { $0.froop.froopId == froopHistory.froop.froopId }) {
-            activeFroopHistories[index] = froopHistory
-        }
-    }
-    
-    func addActiveFroopHistory(froopHistory: FroopHistory) {
-        PrintControl.shared.printFroopManager("-FroopManager: Function: addActiveFroop firing")
-        activeFroopHistories.append(froopHistory)
-    }
-    
-    func removeActiveFroopHistory(froopId: String) {
-        PrintControl.shared.printFroopManager("-FroopManager: Function: removeActiveFroop firing")
-        activeFroopHistories.removeAll { $0.froop.froopId == froopId }
-    }
-    
-    
-    /// GROUP CHAT AND MESSAGING
-    
-    func postToFroopGroupChat(content: String) {
-        guard !content.isEmpty else { return }
 
-        let froopId = appStateManager.currentFilteredFroopHistory[safe: appStateManager.aFHI]?.froop.froopId  ?? "" // Hardcoded Froop ID
-        let hostId = appStateManager.currentFilteredFroopHistory[safe: appStateManager.aFHI]?.host.froopUserID ?? ""          // Hardcoded Host ID
-        let groupChatRef = db.collection("users").document(hostId)
-                             .collection("myFroops").document(froopId)
-                             .collection("chats").document("froopGroupChat")
-                             .collection("messages")
-
-        // Add message to the group chat
-        groupChatRef.addDocument(data: [
-            "senderId": uid,
-            "text": content,
-            "timestamp": FieldValue.serverTimestamp()
-        ]) { error in
-            if let error = error {
-                print("🚫Error sending message to group chat: \(error)")
-                return
-            }
-            print("Message posted to group chat successfully")
-        }
-    }
-    
     func fetchGroupChatMessages(for froopId: String, for hostId: String, completion: @escaping (Result<[Message], Error>) -> Void) {
         // Define the reference to the group chat messages in the database
         let messagesRef = db.collection("users").document(hostId).collection("myFroops").document(froopId).collection("chats").document("froopGroupChat").collection("messages")
@@ -1221,7 +1046,7 @@ class FroopManager: ObservableObject {
             }
         }
     }
-    
+//    
     func addMediaURLsToDocument(froopHost: String, froopId: String, fullsizeImageUrl: URL, displayImageUrl: URL, thumbnailImageUrl: URL, isImage: Bool) {
         let froopRef = db.collection("users").document(froopHost).collection("myFroops").document(froopId)
         
@@ -1267,18 +1092,6 @@ class FroopManager: ObservableObject {
         }
     }
     
-    
-    /// NOTIFICATIONS AND LISTENER MANAGEMENT
-
-    func subscribeToNotifications(_ delegate: FroopNotificationDelegate) {
-        PrintControl.shared.printFroopManager("-FroopManager: Function: subscribeToNotifications firing")
-        notificationCenter.delegate = delegate
-    }
-
-    func unsubscribeFromNotifications() {
-        PrintControl.shared.printFroopManager("-FroopManager: Function: unauvaxeivwDeomNotifications firing")
-        notificationCenter.delegate = nil
-    }
 
     func removeListeners() {
         PrintControl.shared.printFroopManager("removing frooplistener for \(selectedFroopHistory.froop.froopName)")
@@ -1328,12 +1141,6 @@ class FroopManager: ObservableObject {
         }
     }
 
-    func printLocationData (froopLocation: CLLocationCoordinate2D, userLocation: CLLocationCoordinate2D) {
-        PrintControl.shared.printFroopManager("Froop Location: \(String(describing: self.selectedFroopHistory.froop.froopLocationCoordinate ?? CLLocationCoordinate2D()))")
-        PrintControl.shared.printFroopManager("User Location: \(String(describing: self.myData.coordinate))")
-    }
-    
-   
     /// UTILITY AND MISC>
     
     func saveFroopAsTemplate(froopId: String, completion: @escaping (Error?) -> Void) {
@@ -1420,6 +1227,224 @@ class FroopManager: ObservableObject {
             completion(nil)
         }
     }
+    
+    //
+    //    func fetchFroopsFromIds(uid: String, templateStore: [String], completion: @escaping (Result<[Froop], Error>) -> Void) {
+    //        let userFroopsCollectionRef = db.collection("users").document(uid).collection("myFroops")
+    //
+    //        var froopsArray = [Froop]()
+    //        let dispatchGroup = DispatchGroup()
+    //
+    //        for froopId in templateStore {
+    //            dispatchGroup.enter()
+    //
+    //            userFroopsCollectionRef.document(froopId).getDocument { (document, error) in
+    //                if let error = error {
+    //                    completion(.failure(error))
+    //                    return
+    //                } else if let document = document, document.exists {
+    //                    let data = document.data() ?? [:]
+    //                    let froop = Froop(dictionary: data)
+    //                    froopsArray.append(froop)
+    //                }
+    //
+    //                dispatchGroup.leave()
+    //            }
+    //        }
+    //
+    //        dispatchGroup.notify(queue: .main) {
+    //            completion(.success(froopsArray))
+    //        }
+    //    }
+    //
+    //
+    //    func fetchUserArchivedFroops(for uid: String, completion: @escaping ([Froop]) -> Void) {
+    //        var allFroops: [Froop] = []
+    //
+    //        let archivedFroopsRef = db.collection("users").document(uid).collection("myDecisions").document("froopLists").collection("myArchivedList")
+    //
+    //        archivedFroopsRef.getDocuments() { (querySnapshot, err) in
+    //            if let err = err {
+    //                PrintControl.shared.printErrorMessages("Error getting documents: \(err)")
+    //                completion([]) // returning an empty array in case of error
+    //            } else {
+    //                for document in querySnapshot!.documents {
+    //                    let data = document.data()
+    //                    let froop = Froop(dictionary: data)
+    //                    allFroops.append(froop)
+    //
+    //                }
+    //                completion(allFroops)
+    //            }
+    //        }
+    //    }
+    //
+    //    func getUserFroops(uid: String, completion: @escaping (Result<[Froop], Error>) -> Void) {
+    //        let froopsCollectionRef = db.collection("users").document(uid).collection("myFroops")
+    //
+    //        froopsCollectionRef.getDocuments { (querySnapshot, error) in
+    //            if let error = error {
+    //                completion(.failure(error))
+    //            } else if let querySnapshot = querySnapshot {
+    //                var froopsArray = [Froop]()
+    //                for document in querySnapshot.documents {
+    //                    let data = document.data()
+    //                    let froop = Froop(dictionary: data)
+    //                    froopsArray.append(froop)
+    //                }
+    //                completion(.success(froopsArray))
+    //            } else {
+    //                let error = NSError(domain: "", code: 0, userInfo: [NSLocalizedDescriptionKey: "No documents found in the collection"])
+    //                completion(.failure(error))
+    //            }
+    //        }
+    //    }
+    //
+    //
+    //    func fetchFroops(for userFriends: [UserData], completion: @escaping ([FroopAndHost]) -> Void) {
+    //        var allFroops: [Froop] = []
+    //        let dispatchGroup = DispatchGroup()
+    //
+    //        for userFriend in userFriends {
+    //            dispatchGroup.enter()
+    //            let friendUID = userFriend.froopUserID
+    //            let froopsRef = db.collection("users").document(friendUID).collection("myFroops")
+    //
+    //            froopsRef.getDocuments() { (querySnapshot, err) in
+    //                if let err = err {
+    //                    PrintControl.shared.printErrorMessages("Error getting documents: \(err)")
+    //                } else {
+    //                    for document in querySnapshot!.documents {
+    //                        let data = document.data()
+    //                        let froop = Froop(dictionary: data)
+    //                        allFroops.append(froop)
+    //                    }
+    //                }
+    //                dispatchGroup.leave()
+    //            }
+    //        }
+    //
+    //        dispatchGroup.notify(queue: .main) {
+    //            let froopsWithImages = self.filterFroopsWithoutImages(from: allFroops)
+    //            let froopAndHostArray = self.createFroopAndHostArray(from: froopsWithImages, and: userFriends)
+    //            completion(froopAndHostArray)
+    //        }
+    //    }
+    //
+    //
+    //    func updateFroopState(_ state: FroopState, for froopHistory: FroopHistory) {
+    //        PrintControl.shared.printFroopManager("-FroopManager: Function: updateFroopState is firing!")
+    //        PrintControl.shared.printFroopManager("Froop State Change to \(state) for \(froopHistory.froop.froopId) with name: \(froopHistory.froop.froopName) starting at \(froopHistory.froop.froopStartTime)")
+    //
+    //        switch state {
+    //            case .froopPreGame:
+    //                setActiveFroopHistory(froopHistory)
+    //                notificationCenter.notifyStatusChanged(froopHistory)
+    //                // startMediaScanForActiveFroop()
+    //            default:
+    //                break
+    //        }
+    //    }
+    //
+    //    func setActiveFroopHistory(_ froopHistory: FroopHistory) {
+    //        PrintControl.shared.printFroopManager("-FroopManager: Function: setActiveFroop firing")
+    //        if let index = activeFroopHistories.firstIndex(where: { $0.froop.froopId == froopHistory.froop.froopId }) {
+    //            activeFroopHistories[index] = froopHistory
+    //        }
+    //    }
+    //
+    //    func addActiveFroopHistory(froopHistory: FroopHistory) {
+    //        PrintControl.shared.printFroopManager("-FroopManager: Function: addActiveFroop firing")
+    //        activeFroopHistories.append(froopHistory)
+    //    }
+    //
+    //    func removeActiveFroopHistory(froopId: String) {
+    //        PrintControl.shared.printFroopManager("-FroopManager: Function: removeActiveFroop firing")
+    //        activeFroopHistories.removeAll { $0.froop.froopId == froopId }
+    //    }
+    //
+    //
+    //    /// GROUP CHAT AND MESSAGING
+    //
+    //    func postToFroopGroupChat(content: String) {
+    //        guard !content.isEmpty else { return }
+    //
+    //        let froopId = appStateManager.currentFilteredFroopHistory[safe: appStateManager.aFHI]?.froop.froopId  ?? "" // Hardcoded Froop ID
+    //        let hostId = appStateManager.currentFilteredFroopHistory[safe: appStateManager.aFHI]?.host.froopUserID ?? ""          // Hardcoded Host ID
+    //        let groupChatRef = db.collection("users").document(hostId)
+    //                             .collection("myFroops").document(froopId)
+    //                             .collection("chats").document("froopGroupChat")
+    //                             .collection("messages")
+    //
+    //        // Add message to the group chat
+    //        groupChatRef.addDocument(data: [
+    //            "senderId": uid,
+    //            "text": content,
+    //            "timestamp": FieldValue.serverTimestamp()
+    //        ]) { error in
+    //            if let error = error {
+    //                print("🚫Error sending message to group chat: \(error)")
+    //                return
+    //            }
+    //            print("Message posted to group chat successfully")
+    //        }
+    //    }
+    //
+    //
+    //    /// NOTIFICATIONS AND LISTENER MANAGEMENT
+    //
+    //    func subscribeToNotifications(_ delegate: FroopNotificationDelegate) {
+    //        PrintControl.shared.printFroopManager("-FroopManager: Function: subscribeToNotifications firing")
+    //        notificationCenter.delegate = delegate
+    //    }
+    //
+    //    func unsubscribeFromNotifications() {
+    //        PrintControl.shared.printFroopManager("-FroopManager: Function: unauvaxeivwDeomNotifications firing")
+    //        notificationCenter.delegate = nil
+    //    }
+    //
+    //
+    //    func printLocationData (froopLocation: CLLocationCoordinate2D, userLocation: CLLocationCoordinate2D) {
+    //        PrintControl.shared.printFroopManager("Froop Location: \(String(describing: self.selectedFroopHistory.froop.froopLocationCoordinate ?? CLLocationCoordinate2D()))")
+    //        PrintControl.shared.printFroopManager("User Location: \(String(describing: self.myData.coordinate))")
+    //    }
+    //
+    //
+    //
+    //    func listenToUserDataChanges(uid: String, completion: @escaping (Result<UserData, Error>) -> Void) {
+    //        let listenerKey = "user_\(uid)"
+    //
+    //        if ListenerStateService.shared.shouldCreateListener(forKey: listenerKey) {
+    //            let docRef = db.collection("users").document(uid)
+    //
+    //            let listener = docRef.addSnapshotListener { documentSnapshot, error in
+    //                guard let document = documentSnapshot else {
+    //                    let fetchError = error ?? NSError(domain: "FroopManager", code: -1, userInfo: [NSLocalizedDescriptionKey: "Unknown error occurred while fetching user document."])
+    //                    PrintControl.shared.printFroopManager("Error fetching user document: \(fetchError.localizedDescription)")
+    //                    completion(.failure(fetchError))
+    //                    return
+    //                }
+    //
+    //                guard let data = document.data() else {
+    //                    PrintControl.shared.printFroopManager("User document data was empty.")
+    //                    // Return an error to the completion handler if needed
+    //                    completion(.failure(NSError(domain: "FroopManager", code: 0, userInfo: [NSLocalizedDescriptionKey: "User document data was empty."])))
+    //                    return
+    //                }
+    //
+    //                if let user = UserData(dictionary: data) {
+    //                    completion(.success(user))
+    //                } else {
+    //                    let conversionError = NSError(domain: "FroopManager", code: 1, userInfo: [NSLocalizedDescriptionKey: "Error converting dictionary to UserData."])
+    //                    PrintControl.shared.printFroopManager(conversionError.localizedDescription)
+    //                    completion(.failure(conversionError))
+    //                }
+    //            }
+    //
+    //            ListenerStateService.shared.registerListener(listener, forKey: listenerKey)
+    //        }
+    //    }
+    //
     
 }
 

@@ -22,7 +22,7 @@ struct FroopDurationSummaryView: View {
     var body: some View {
         VStack (alignment: .leading) {
             
-            Text("DURATION")
+            Text("DURATION3")
                 .font(.system(size: 14))
                 .fontWeight(.semibold)
                 .foregroundColor(Color(red: 50/255, green: 46/255, blue: 62/255).opacity(0.9))

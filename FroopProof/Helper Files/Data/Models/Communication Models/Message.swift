@@ -27,19 +27,19 @@ struct Message: Decodable, Identifiable, Hashable {
 //            print("Document data is nil for document ID: \(document.documentID)")
             return nil
         }
-        print("Document data for \(document.documentID): \(data)")
+//        print("Document data for \(document.documentID): \(data)")
 
         guard let text = data["text"] as? String else {
 //            print("Text field is missing or not a string in document ID: \(document.documentID)")
             return nil
         }
-        print("Text: \(text)")
+//        print("Text: \(text)")
 
         guard let senderId = data["senderId"] as? String else {
 //            print("SenderId field is missing or not a string in document ID: \(document.documentID)")
             return nil
         }
-        print("SenderId: \(senderId)")
+//        print("SenderId: \(senderId)")
 
         guard let timestamp = (data["timestamp"] as? Timestamp)?.dateValue() else {
 //            print("Timestamp field is missing or not a Timestamp in document ID: \(document.documentID)")

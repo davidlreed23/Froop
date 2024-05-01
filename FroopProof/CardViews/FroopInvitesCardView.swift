@@ -223,7 +223,7 @@ struct FroopInvitesCardView: View {
                 }
             }
             .alert(isPresented: $showAlert) {
-                Alert(title: Text("Geofence Alert"), message: Text("This Froop has been added to your calendar."), dismissButton: .default(Text("OK")))
+                Alert(title: Text("Calendar Update"), message: Text("This Froop has been added to your calendar."), dismissButton: .default(Text("OK")))
             }
         }
     }

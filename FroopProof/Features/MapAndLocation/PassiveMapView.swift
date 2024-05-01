@@ -300,11 +300,26 @@ struct PassiveMapView: View {
                                 }
                             }
                             //                                Text(String(describing: mapManager.tapLatitudeDelta))
+                            
+                            ZStack {
+                                Image(systemName: "circle.fill")
+                                    .font(.system(size: 34))
+                                    .foregroundColor(.white)
+                                    .background(.ultraThinMaterial)
+                                    .clipShape(.rect(cornerRadius: 5))
+                                
+                                Image(systemName: "airplane.circle.fill")
+                                    .font(.system(size: 34))
+                                    .foregroundColor(Color(red: 249/255, green: 0/255, blue: 98/255))
+                                
+                            }
+                            .padding(.bottom, 5)
+                            
                             Spacer()
                         }
                         Spacer()
                     }
-                    .padding(.top, 10)
+                    .padding(.top, 50)
                     .padding(.leading, 10)
                 }
                 .navigationTitle("")

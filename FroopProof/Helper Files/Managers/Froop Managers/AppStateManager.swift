@@ -403,7 +403,6 @@ class AppStateManager: ObservableObject {
             }
         }
     }
-    
 }
 
 

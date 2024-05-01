@@ -26,7 +26,7 @@ struct DurationEnterView: View {
     var body: some View {
         VStack {
             HStack {
-                Text("DURATION")
+                Text("DURATION2")
                     .multilineTextAlignment(.leading)
                     .font(.system(size: 12))
                     .fontWeight(.semibold)

@@ -28,19 +28,22 @@ class AppDelegate: NSObject, ObservableObject, UIApplicationDelegate, UNUserNoti
     
     var window: UIWindow?
     
-    private func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) async -> Bool {
-        
+    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
+        print("🔶 Application Delegate didFinishWithOptions Firing")
         NSSetUncaughtExceptionHandler { exception in
             print("Uncaught exception: \(exception)")
             print("Stack trace: \(exception.callStackSymbols)")
         }
         Purchases.configure(withAPIKey: Secrets.apiKey)
+        
         Messaging.messaging().delegate = self
         
         Crashlytics.crashlytics().setCrashlyticsCollectionEnabled(true)
         
         PrintControl.shared.printAppDelegate("-AppDelegate: Function: application2 firing")
         // Request user authorization for notifications
+        print("🔶 UNUserNotificationCenter Firing")
+
         UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { granted, error in
             if let error = error {
                 PrintControl.shared.printErrorMessages("Failed to request authorization for remote notifications with error: \(error.localizedDescription)")
@@ -55,11 +58,10 @@ class AppDelegate: NSObject, ObservableObject, UIApplicationDelegate, UNUserNoti
             }
         }
         
-       
-        
         Purchases.logLevel = .debug
         
         Purchases.shared.logIn(Auth.auth().currentUser?.uid ?? "") { (purchaserInfo, created, error) in
+            print("🔶 Purchases.shared.logIn Firing")
             // Handle the result here
             if let error = error {
                 // Handle error
@@ -78,8 +80,9 @@ class AppDelegate: NSObject, ObservableObject, UIApplicationDelegate, UNUserNoti
         
         let locationManager = LocationManager.shared
         locationManager.requestAlwaysAuthorization() // Or requestAlwaysAuthorization()
-        await locationManager.startLiveLocationUpdates()
-        
+//        locationManager.startLiveLocationUpdates()
+        print("🔶 locationManager.startLiveLocationUpdates() Firing")
+
         FirebaseServices.requestBadgePermission { granted in
             if granted {
                 PrintControl.shared.printNotifications("Badge permission granted")
@@ -87,22 +90,9 @@ class AppDelegate: NSObject, ObservableObject, UIApplicationDelegate, UNUserNoti
                 PrintControl.shared.printNotifications("Badge permission denied")
             }
         }
-        saveUserFcmToken()
+//        saveUserFcmToken()
         return true
     }
-    
-//    func application(_ application: UIApplication, continue userActivity: NSUserActivity, restorationHandler: @escaping ([UIUserActivityRestoring]?) -> Void) -> Bool {
-//        // Ensure the activity type is for opening a URL
-//        guard userActivity.activityType == NSUserActivityTypeBrowsingWeb, let incomingURL = userActivity.webpageURL else {
-//            print("returning false")
-//            return false
-//        }
-//        print("firing handleIncomingURL: \(incomingURL)")
-//        // Handle the incoming URL
-//        handleIncomingURL(incomingURL)
-//
-//        return true
-//    }
 
     func applicationDidEnterBackground(_ application: UIApplication) {
         // Called when the user quits the application and it begins to transition to the background state.
@@ -218,12 +208,15 @@ class AppDelegate: NSObject, ObservableObject, UIApplicationDelegate, UNUserNoti
     // MARK: - FroopNotificationDelegate
     
     func messaging(_ messaging: Messaging, didReceiveRegistrationToken fcmToken: String?) {
+        print("messaging Firing ❣️")
+        print("FCMToken: \(fcmToken as Any)")
         guard let fcmToken = fcmToken else { return }
         print(">> FCM TOKEN:", fcmToken)
         let dataDict: [String: String] = ["fcmToken": fcmToken]
         NotificationCenter.default.post(name: Notification.Name("FCMTokenNotification"), object: fcmToken, userInfo: dataDict)
         UserDefaults.standard.set(fcmToken, forKey: "fcmToken")
         self.updateFCMTokenInFirestore(fcmToken)
+        saveUserFcmToken(token: fcmToken)
 
     }
     
@@ -313,52 +306,49 @@ class AppDelegate: NSObject, ObservableObject, UIApplicationDelegate, UNUserNoti
         return false
     }
     
-//    private func handleIncomingURL(_ url: URL) {
-//        print("Incoming URL: \(url)")
-//        // Assuming your URL format is https://froop.me/invite/<UID>
-//        let pathComponents = url.pathComponents
-//        if let inviteIndex = pathComponents.firstIndex(of: "invite"), inviteIndex + 1 < pathComponents.count {
-//            let inviteUID = pathComponents[inviteIndex + 1]
-//            // Now you have the UID, you can use it as needed in your app
-//            print("🍊 Extracted UID: \(inviteUID)")
-//            MyData.shared.inviteUrlUid = inviteUID
-//            // For example, navigate to a specific view controller or perform an action with the UID
-//            navigateToInvite(withUID: inviteUID)
-//        }
-//    }
-    
     private func navigateToInvite(withUID uid: String) {
         print("Navigate to the part of the app related to the UID: \(uid)")
         // Example: Posting a notification that can be observed where appropriate to handle the navigation
         NotificationCenter.default.post(name: Notification.Name("NavigateToInviteNotification"), object: nil, userInfo: ["UID": uid])
     }
     
-    func saveUserFcmToken() {
+   
+    func saveUserFcmToken(token: String) {
         // Check if the user is authenticated
         guard let uid = Auth.auth().currentUser?.uid, !uid.isEmpty else {
-            PrintControl.shared.printErrorMessages("User is not authenticated. fcmToken not saved to user document.")
+           print("User is not authenticated. fcmToken not saved to user document.")
             let error = NSError(domain: "", code: 0, userInfo: [NSLocalizedDescriptionKey: "User is not authenticated. fcmToken not saved to user document."])
             Crashlytics.crashlytics().record(error: error) // Log error to Crashlytics
             return
         }
         
         // Get the FCM token form user defaults
-        guard let fcmToken = UserDefaults.standard.value(forKey: "FCMTokenNotification") else {
-            return
-        }
-        
+//        guard let fcmToken = UserDefaults.standard.value(forKey: "FCMTokenNotification") else {
+//            return
+//        }
+        print("❣️❣️❣️")
+        print(token)
         let db = Firestore.firestore()
         let docRef = db.collection("users").document(uid)
+//        let accountDocRef = db.collection("account").document(MyAccountData.shared.accountId)
         
         // Update the user document with the fcmToken
-        docRef.updateData(["fcmToken": fcmToken]) { error in
+        docRef.updateData(["fcmToken": token]) { error in
             if let error = error {
-                PrintControl.shared.printErrorMessages("Error updating user document with fcmToken: \(error)")
+                print("Error updating user document with fcmToken: \(error)")
                 Crashlytics.crashlytics().record(error: error) // Log error to Crashlytics
             } else {
-                PrintControl.shared.printAppDelegate("fcmToken saved to user document successfully")
+                print("fcmToken saved to user document successfully")
             }
         }
+//        accountDocRef.updateData(["fcmToken": token]) { error in
+//            if let error = error {
+//                print("Error updating account document with fcmToken: \(error)")
+//                Crashlytics.crashlytics().record(error: error) // Log error to Crashlytics
+//            } else {
+//                print("fcmToken saved to account document successfully")
+//            }
+//        }
     }
 }
 
@@ -366,15 +356,17 @@ class AppDelegate: NSObject, ObservableObject, UIApplicationDelegate, UNUserNoti
 struct MyApp: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
     @StateObject var authState = AuthState()
+    @StateObject var myAccountData = MyAccountData.shared
     @StateObject var myData = MyData.shared
     @StateObject var inviteManager = InviteManager.shared
+    @StateObject var accountSetupManager = AccountSetupManager.shared
     @Environment(\.scenePhase) var scenePhase
     @State private var overlayWindow: UIWindow?
     @StateObject var listenerStateService = ListenerStateService.shared
     
     init() {
         FirebaseApp.configure()
-        Purchases.configure(withAPIKey: "appl_zsbWOZPceVxoPJKVxdDezDdiSNU" )
+//        Purchases.configure(withAPIKey: "appl_zsbWOZPceVxoPJKVxdDezDdiSNU" )
     }
     
     var body: some Scene {
@@ -384,29 +376,35 @@ struct MyApp: App {
             if authState.isFirebaseAuthDone {
                 if authState.isAuthenticated {
                     RootView(friendData: UserData(), photoData: PhotoData(), appDelegate: AppDelegate(), confirmedFroopsList: ConfirmedFroopsList())
-                        .onAppear(perform:  {
-                            myData.updateSubscriptionStatus()
-                            Purchases.shared.getOfferings { (offerings, error) in
-                                if let packages = offerings?.current?.availablePackages {
-                                    print(packages.map( {$0.offeringIdentifier }))
-                                    print(packages.map( {$0.localizedPriceString }))                                }
-                            }
-                            if overlayWindow == nil {
-                                if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene {
-                                    let overlayWindow = PassThroughWindow(windowScene: windowScene)
-                                    overlayWindow.backgroundColor = .clear
-                                    overlayWindow.tag = 0320
-                                    let controller = StatusBarBasedController()
-                                    controller.view.backgroundColor = .clear
-                                    overlayWindow.rootViewController = controller
-                                    overlayWindow.isHidden = false
-                                    overlayWindow.isUserInteractionEnabled = true
-                                    self.overlayWindow = overlayWindow
-                                    PrintControl.shared.printAppDelegate("Overlay Window Created")
+                        .onAppear {
+                            Task {
+                                if let currentUser = Auth.auth().currentUser {
+                                    await AccountSetupManager.shared.checkOrCreateAccountDocument(for: currentUser)
                                 }
+                                myData.updateSubscriptionStatus()
+//                                Purchases.shared.getOfferings { (offerings, error) in
+//                                    if let packages = offerings?.current?.availablePackages {
+//                                        print(packages.map( {$0.offeringIdentifier }))
+//                                        print(packages.map( {$0.localizedPriceString }))
+//                                    }
+//                                }
+                                if overlayWindow == nil {
+                                    if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene {
+                                        let overlayWindow = PassThroughWindow(windowScene: windowScene)
+                                        overlayWindow.backgroundColor = .clear
+                                        overlayWindow.tag = 0320
+                                        let controller = StatusBarBasedController()
+                                        controller.view.backgroundColor = .clear
+                                        overlayWindow.rootViewController = controller
+                                        overlayWindow.isHidden = false
+                                        overlayWindow.isUserInteractionEnabled = true
+                                        self.overlayWindow = overlayWindow
+                                        PrintControl.shared.printAppDelegate("Overlay Window Created")
+                                    }
+                                }
+                                PrintControl.shared.printAppDelegate("LOADING ROOT VIEW")
                             }
-                            PrintControl.shared.printAppDelegate("LOADING ROOT VIEW")
-                        })
+                        }
                         .onOpenURL { url in
                             print("Received URL: \(url)")
                             handleIncomingURL(url)

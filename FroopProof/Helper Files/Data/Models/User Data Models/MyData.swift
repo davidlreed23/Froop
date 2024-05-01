@@ -4,8 +4,8 @@
 //
 //  Created by David Reed on 1/18/23.
 //
+
 import Foundation
- 
 import CoreLocation
 import Firebase
 import Combine

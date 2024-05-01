@@ -128,7 +128,9 @@ struct DurationPicker: View {
 
                         .pickerStyle(WheelPickerStyle())
                         .offset(y: 0)
-                        
+                        .onDisappear {
+                            durationTotal = 0
+                        }
                         Rectangle()
                             .fill(.white)
                             .frame(width: 100, height: 75)

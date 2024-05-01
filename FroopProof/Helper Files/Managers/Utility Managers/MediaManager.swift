@@ -24,7 +24,7 @@ class MediaManager: ObservableObject {
     static let shared = MediaManager()
     @ObservedObject var printControl = PrintControl.shared
     @ObservedObject var froopManager = FroopManager.shared
-    
+    @ObservedObject var appStateManager = AppStateManager.shared
     // @ObservedObject var froopDataListener = FroopDataListener.shared
    
     /// Reference Properties
@@ -168,11 +168,11 @@ class MediaManager: ObservableObject {
 
                     // Define paths for video and thumbnail in Firebase Storage
                     let froopId = mediaItem.froopId
-                    let froopHost = mediaItem.owner
+                    let froopHost = self.appStateManager.currentFilteredFroopHistory[safe: self.appStateManager.aFHI]?.host.froopUserID
                     let storage = Storage.storage()
                     let storageRef = storage.reference()
-                    let videoRef = storageRef.child("FroopMediaAssets/\(froopHost)/\(froopId)/videos/\(UUID().uuidString).mp4")
-                    let thumbnailRef = storageRef.child("FroopMediaAssets/\(froopHost)/\(froopId)/thumbnails/\(UUID().uuidString).jpg")
+                    let videoRef = storageRef.child("FroopMediaAssets/\(String(describing: froopHost))/\(froopId)/videos/\(UUID().uuidString).mp4")
+                    let thumbnailRef = storageRef.child("FroopMediaAssets/\(String(describing: froopHost))/\(froopId)/thumbnails/\(UUID().uuidString).jpg")
 
                     // Upload video and track progress
                     let videoUploadTask = videoRef.putFile(from: encodedVideoURL, metadata: nil)
@@ -199,7 +199,7 @@ class MediaManager: ObservableObject {
                                         return
                                     }
 
-                                    FroopManager.shared.addVideoAndThumbnailURLToDocument(froopHost: froopHost, froopId: froopId, videoUrl: videoDownloadURL, thumbnailUrl: thumbnailDownloadURL)
+                                    FroopManager.shared.addVideoAndThumbnailURLToDocument(froopHost: froopHost ?? "", froopId: froopId, videoUrl: videoDownloadURL, thumbnailUrl: thumbnailDownloadURL)
                                     completion(true)
                                 }
                             }
@@ -481,10 +481,10 @@ class MediaManager: ObservableObject {
 
         // Define Firebase Storage paths
         let froopId = mediaItem.froopId
-        let froopHost = mediaItem.owner
+        let froopHost = appStateManager.currentFilteredFroopHistory[safe: appStateManager.aFHI]?.host.froopUserID
         let storage = Storage.storage()
         let storageRef = storage.reference()
-        let froopMediaAssetsRef = storageRef.child("FroopMediaAssets/\(froopHost)/\(froopId)")
+        let froopMediaAssetsRef = storageRef.child("FroopMediaAssets/\(String(describing: froopHost))/\(froopId)")
         let imageName = UUID().uuidString
 
         // Define references for fullsize, display, and thumbnail images
@@ -544,7 +544,7 @@ class MediaManager: ObservableObject {
                                 }
 
                                 // Now that all images are uploaded and we have their URLs, update the Froop document
-                                FroopManager.shared.addMediaURLsToDocument(froopHost: froopHost, froopId: froopId, fullsizeImageUrl: fullsizeUrl, displayImageUrl: displayUrl, thumbnailImageUrl: thumbnailUrl, isImage: true)
+                                FroopManager.shared.addMediaURLsToDocument(froopHost: froopHost ?? "", froopId: froopId, fullsizeImageUrl: fullsizeUrl, displayImageUrl: displayUrl, thumbnailImageUrl: thumbnailUrl, isImage: true)
                                 completion(true)
                             }
                         }

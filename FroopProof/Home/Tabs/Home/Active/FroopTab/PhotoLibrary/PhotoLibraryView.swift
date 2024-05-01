@@ -28,8 +28,8 @@ struct PhotoLibraryView: View {
     @State private var uploading = false
     @Binding var uploadedMedia: [MediaData]
     
-    let froopStartTime = AppStateManager.shared.currentFilteredFroopHistory[safe: AppStateManager.shared.aFHI]?.froop.froopStartTime.addingTimeInterval(-30 * 60) ?? Date()
-    let froopEndTime = AppStateManager.shared.currentFilteredFroopHistory[safe: AppStateManager.shared.aFHI]?.froop.froopEndTime.addingTimeInterval(30 * 60) ?? Date()
+    let froopStartTime = AppStateManager.shared.currentFilteredFroopHistory[safe: AppStateManager.shared.aFHI]?.froop.froopStartTime.addingTimeInterval(-60 * 60) ?? Date()
+    let froopEndTime = AppStateManager.shared.currentFilteredFroopHistory[safe: AppStateManager.shared.aFHI]?.froop.froopEndTime.addingTimeInterval(60 * 60) ?? Date()
     let validData = Data()
     let validString = ""
     
@@ -189,7 +189,7 @@ class MediaGridViewModel: ObservableObject {
 
         let froopId = froopEndTime < Date() ? FroopManager.shared.selectedFroopHistory.froop.froopId : appStateManager.currentFilteredFroopHistory[safe: appStateManager.aFHI]?.froop.froopId ?? ""
         
-        let froopHost = froopEndTime < Date() ? FroopManager.shared.selectedFroopHistory.host.froopUserID : appStateManager.currentFilteredFroopHistory[safe: appStateManager.aFHI]?.froop.froopHost ?? ""
+//        let froopHost = froopEndTime < Date() ? FroopManager.shared.selectedFroopHistory.host.froopUserID : appStateManager.currentFilteredFroopHistory[safe: appStateManager.aFHI]?.froop.froopHost ?? ""
             
         mediaManager.requestPhotoLibraryAuthorization { success in
             if success {

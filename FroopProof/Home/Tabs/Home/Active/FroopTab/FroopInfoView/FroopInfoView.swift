@@ -258,8 +258,8 @@ struct FroopInfoView: View {
                                                     .frame(maxWidth: 75, maxHeight: 75)
                                                 Rectangle()
                                                     .frame(width: 75, height: 75)
-                                                    .foregroundColor(colorScheme == .dark ? Color(red: 255/255 ,green: 255/255,blue: 255/255) : Color(red: 255/255 ,green: 255/255,blue: 255/255))
-                                                    .opacity(0.25)
+                                                    .foregroundColor(.white)
+                                                    .opacity(0.5)
                                                 
                                                 VStack  {
                                                     Text("Open")

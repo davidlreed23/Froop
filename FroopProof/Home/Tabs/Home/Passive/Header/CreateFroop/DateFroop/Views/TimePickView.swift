@@ -90,8 +90,24 @@ struct TimePickView: View {
                         } else {
                             scrollTrig.updateDateFromIndices()
                             if appStateManager.froopIsEditing {
+                                ScrollTrig.shared.firstPositionIndex = 0
+                                ScrollTrig.shared.secondPositionIndexA = 0
+                                ScrollTrig.shared.secondPositionIndexB = 0
+                                ScrollTrig.shared.thirdPositionIndex = 0
+                                ScrollTrig.shared.fourthPositionIndex = 0
+                                ScrollTrig.shared.fifthPositionIndex = 0
+                                ScrollTrig.shared.sixthPositionIndex = 0
+                                ScrollTrig.shared.seventhPositionIndex = 0
                                 changeView.pageNumber = changeView.showSummary
                             } else {
+                                ScrollTrig.shared.firstPositionIndex = 0
+                                ScrollTrig.shared.secondPositionIndexA = 0
+                                ScrollTrig.shared.secondPositionIndexB = 0
+                                ScrollTrig.shared.thirdPositionIndex = 0
+                                ScrollTrig.shared.fourthPositionIndex = 0
+                                ScrollTrig.shared.fifthPositionIndex = 0
+                                ScrollTrig.shared.sixthPositionIndex = 0
+                                ScrollTrig.shared.seventhPositionIndex = 0
                                 changeView.pageNumber += 1
                             }
                         }

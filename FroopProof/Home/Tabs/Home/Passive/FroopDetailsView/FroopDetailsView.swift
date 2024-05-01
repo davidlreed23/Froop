@@ -23,6 +23,7 @@ struct FroopDetailsView: View {
     @ObservedObject var appStateManager = AppStateManager.shared
     @ObservedObject var printControl = PrintControl.shared
     @ObservedObject var locationServices = LocationServices.shared
+    @ObservedObject var flightManager = FroopFlightDataManager.shared
 //    @ObservedObject var froopDataListener = FroopDataListener.shared
     @ObservedObject var myData = MyData.shared
     @ObservedObject var froopManager = FroopManager.shared
@@ -53,7 +54,8 @@ struct FroopDetailsView: View {
     @Binding var froopAdded: Bool
     @State var froopStatus: FroopHistory.FroopStatus = .none
     @Binding var globalChat: Bool
-    
+    @State private var fadeIn = false
+
     
     @State var instanceFroop: FroopHistory = FroopHistory(
         froop: Froop(dictionary: [:]),
@@ -92,7 +94,7 @@ struct FroopDetailsView: View {
             VStack (spacing: 0 ){
                 
                 DetailsHeaderView(templateMade: $templateMade)
-                    .frame(height: 200)
+                    .frame(height: 225)
                     .onAppear {
                         froopStatus = froopManager.selectedFroopHistory.froopStatus
                     }
@@ -111,49 +113,186 @@ struct FroopDetailsView: View {
                             
                             if froopManager.selectedFroopHistory.host.froopUserID == Auth.auth().currentUser?.uid ?? "" {
                             
-                                ScrollView {
-                                    VStack (spacing: 0){
-                                        PremiumBannerDetailsView()
-                                            .frame(height: myData.premiumAccount ? 25 : 75)
-                                        DetailsHostMessageView(selectedFroopHistory: $froopManager.selectedFroopHistory, messageEdit: $messageEdit)
-                                        if $froopManager.selectedFroopHistory.froop.guestApproveList.count > 0 {
-                                            withAnimation {
-                                                PendingGuestView(selectedFroopHistory: $froopManager.selectedFroopHistory, miniFriendDetailOpen: $miniFriendDetailOpen, miniFriend: $miniFriend)
+                                if froopManager.selectedFroopHistory.froop.froopType == 5009 {
+                                    // Flight Pickup Froop - Host View
+                                    ScrollView {
+                                        VStack (spacing: 0){
+                                            PremiumBannerDetailsView()
+                                                .frame(height: myData.premiumAccount ? 25 : 75)
+                                            ZStack {
+                                                Rectangle()
+                                                    .frame(height: 100)
+                                                    .foregroundColor(.offWhite)
+                                                VStack {
+                                                    HStack {
+                                                        VStack(alignment: .leading) {
+                                                            Text(froopManager.selectedFroopHistory.froop.flightData?.departure.airport.iata ?? "DDD")
+                                                                .font(.system(size: 20))
+                                                                .fontWeight(.bold)
+                                                            Text(froopManager.selectedFroopHistory.froop.flightData?.departure.airport.municipalityName ?? "New York")
+                                                                .font(.system(size: 14))
+                                                                .fontWeight(.light)
+                                                        }
+                                                        .foregroundColor(Color(red: 50/255, green: 46/255, blue: 62/255))
+                                                        .padding(.leading, 20)
+                                                        
+                                                        Spacer()
+                                                        
+                                                        VStack(alignment: .center) {
+                                                            Image(systemName: "airplane.departure")
+                                                                .foregroundColor(Color(red: 100/255, green: 155/255, blue: 255/255))
+                                                                .font(.system(size: 24))
+                                                        }
+                                                        
+                                                        Spacer()
+                                                        
+                                                        VStack(alignment: .trailing) {
+                                                            Text(froopManager.selectedFroopHistory.froop.flightData?.arrival.airport.iata ?? "AAA")
+                                                                .font(.system(size: 20))
+                                                                .fontWeight(.bold)
+                                                            Text(froopManager.selectedFroopHistory.froop.flightData?.arrival.airport.municipalityName ?? "Los Angeles")
+                                                                .font(.system(size: 14))
+                                                                .fontWeight(.light)
+                                                        }
+                                                        .foregroundColor(Color(red: 50/255, green: 46/255, blue: 62/255))
+                                                        .padding(.trailing, 20)
+                                                    }
+                                                    HStack {
+                                                        VStack(alignment: .leading) {
+                                                            Text("Departing")
+                                                                .foregroundColor(Color(red: 50/255, green: 46/255, blue: 62/255))
+                                                                .font(.system(size: 12))
+                                                                .fontWeight(.light)
+                                                            if let utcDate = flightManager.dateFromUTCString(froopManager.selectedFroopHistory.froop.flightData?.departure.scheduledTime.utc ?? "") {
+                                                                let adjustedDate = DateUtilities.adjustDateByOffsets(date: utcDate, dstOffset: timeZoneManager.departingTimeZone?.dstOffset, rawOffset: timeZoneManager.departingTimeZone?.rawOffset)
+                                                                Text("\(timeZoneManager.formatTime(from: utcDate, timeZoneIdentifier: timeZoneManager.departingTimeZone?.timeZoneId ?? TimeZone.current.identifier))")
+                                                                    .font(.system(size: 14))
+                                                                    .fontWeight(.semibold)
+                                                                    .foregroundColor(Color(red: 100/255, green: 155/255, blue: 255/255))
+                                                            } else {
+                                                                Text("Time not available")
+                                                            }
+                                                        }
+                                                        Spacer()
+                                                        VStack(alignment: .trailing) {
+                                                            Text("Arriving")
+                                                                .foregroundColor(Color(red: 50/255, green: 46/255, blue: 62/255))
+                                                                .font(.system(size: 12))
+                                                                .fontWeight(.light)
+                                                            if let utcDate = flightManager.dateFromUTCString(froopManager.selectedFroopHistory.froop.flightData?.arrival.scheduledTime.utc ?? "") {
+                                                                let adjustedDate = DateUtilities.adjustDateByOffsets(date: utcDate, dstOffset: timeZoneManager.arrivingTimeZone?.dstOffset, rawOffset: timeZoneManager.arrivingTimeZone?.rawOffset)
+                                                                Text("\(timeZoneManager.formatTime(from: utcDate, timeZoneIdentifier: timeZoneManager.arrivingTimeZone?.timeZoneId ?? TimeZone.current.identifier))")
+                                                                    .font(.system(size: 14))
+                                                                    .fontWeight(.semibold)
+                                                                    .foregroundColor(Color(red: 100/255, green: 155/255, blue: 255/255))
+                                                            } else {
+                                                                Text("Time not available")
+                                                            }
+                                                        }
+                                                    }
+                                                    .padding(.leading, 20)
+                                                    .padding(.trailing, 20)
+                                                    .padding(.top, 5)
+
+                                                }
                                             }
+                                            
+                                            ZStack {
+                                                Rectangle()
+                                                VStack{
+                                                    FlightMapView()
+                                                }
+                                            }
+                                            .frame(width: UIScreen.screenWidth, height: UIScreen.screenHeight * 0.25)
+                                            
+                                            if $froopManager.selectedFroopHistory.froop.guestApproveList.count > 0 {
+                                                withAnimation {
+                                                    PendingGuestView(selectedFroopHistory: $froopManager.selectedFroopHistory, miniFriendDetailOpen: $miniFriendDetailOpen, miniFriend: $miniFriend)
+                                                }
+                                            }
+                                            
+                                            DetailsGuestView(selectedFroopHistory: $froopManager.selectedFroopHistory, miniFriendDetailOpen: $miniFriendDetailOpen, miniFriend: $miniFriend)
+                                            
+                                            DetailsCalendarView(selectedFroopHistory: $froopManager.selectedFroopHistory)
+                                            
+                                            DetailsMapView(selectedFroopHistory: $froopManager.selectedFroopHistory)
+                                            
+                                            DetailsTasksAndInformationView(taskOn: $taskOn, selectedFroopHistory: $froopManager.selectedFroopHistory)
+                                            
+                                            DetailsDeleteView(froopAdded: $froopAdded, selectedFroopHistory: $froopManager.selectedFroopHistory)
+                                            Spacer()
                                         }
-                                        DetailsGuestView(selectedFroopHistory: $froopManager.selectedFroopHistory, miniFriendDetailOpen: $miniFriendDetailOpen, miniFriend: $miniFriend)
-                                        
-                                        DetailsCalendarView(selectedFroopHistory: $froopManager.selectedFroopHistory)
-                                        DetailsMapView(selectedFroopHistory: $froopManager.selectedFroopHistory)
-                                        DetailsTasksAndInformationView(taskOn: $taskOn, selectedFroopHistory: $froopManager.selectedFroopHistory)
-                                        DetailsDeleteView(froopAdded: $froopAdded, selectedFroopHistory: $froopManager.selectedFroopHistory)
-                                        Spacer()
                                     }
+                                    .scrollIndicators(.hidden)
+                                    .frame(maxWidth: UIScreen.screenWidth, maxHeight: UIScreen.screenHeight - 300)
+                                } else {
+                                    // Generic Froop - Host View
+                                    ScrollView {
+                                        VStack (spacing: 0){
+                                            PremiumBannerDetailsView()
+                                                .frame(height: myData.premiumAccount ? 25 : 75)
+                                            DetailsHostMessageView(selectedFroopHistory: $froopManager.selectedFroopHistory, messageEdit: $messageEdit)
+                                            if $froopManager.selectedFroopHistory.froop.guestApproveList.count > 0 {
+                                                withAnimation {
+                                                    PendingGuestView(selectedFroopHistory: $froopManager.selectedFroopHistory, miniFriendDetailOpen: $miniFriendDetailOpen, miniFriend: $miniFriend)
+                                                }
+                                            }
+                                            DetailsGuestView(selectedFroopHistory: $froopManager.selectedFroopHistory, miniFriendDetailOpen: $miniFriendDetailOpen, miniFriend: $miniFriend)
+                                            
+                                            DetailsCalendarView(selectedFroopHistory: $froopManager.selectedFroopHistory)
+                                            DetailsMapView(selectedFroopHistory: $froopManager.selectedFroopHistory)
+                                            DetailsTasksAndInformationView(taskOn: $taskOn, selectedFroopHistory: $froopManager.selectedFroopHistory)
+                                            DetailsDeleteView(froopAdded: $froopAdded, selectedFroopHistory: $froopManager.selectedFroopHistory)
+                                            Spacer()
+                                        }
+                                    }
+                                    .scrollIndicators(.hidden)
+                                    .frame(maxWidth: UIScreen.screenWidth, maxHeight: UIScreen.screenHeight - 300)
                                 }
-                                .scrollIndicators(.hidden)
-                                .frame(maxWidth: UIScreen.screenWidth, maxHeight: UIScreen.screenHeight - 300)
-
-                                //.frame(height: UIScreen.screenHeight - 300)
+                                
                             } else {
-                                ScrollView {
-                                    VStack (spacing: 0){
-                                        DetailsGuestMessageView(selectedFroopHistory: $froopManager.selectedFroopHistory, messageEdit: $messageEdit)
-                                        DetailsGuestView(selectedFroopHistory: $froopManager.selectedFroopHistory, miniFriendDetailOpen: $miniFriendDetailOpen, miniFriend: $miniFriend)
-                                        DetailsCalendarView(selectedFroopHistory: $froopManager.selectedFroopHistory)
-                                        DetailsMapView(selectedFroopHistory: $froopManager.selectedFroopHistory)
-                                        DetailsTasksAndInformationView(taskOn: $taskOn, selectedFroopHistory: $froopManager.selectedFroopHistory)
-                                        DetailsDeleteView(froopAdded: $froopAdded, selectedFroopHistory: $froopManager.selectedFroopHistory)
-//                                            .frame(maxHeight: 110)
-                                        
-                                        
-                                        Spacer()
+                                
+                                if froopManager.selectedFroopHistory.froop.froopType == 5009 {
+                                    // Flight Pickup Froop - Guest View
+                                    ScrollView {
+                                        VStack (spacing: 0){
+                                            DetailsGuestMessageView(selectedFroopHistory: $froopManager.selectedFroopHistory, messageEdit: $messageEdit)
+                                            DetailsGuestView(selectedFroopHistory: $froopManager.selectedFroopHistory, miniFriendDetailOpen: $miniFriendDetailOpen, miniFriend: $miniFriend)
+                                            DetailsCalendarView(selectedFroopHistory: $froopManager.selectedFroopHistory)
+                                            DetailsMapView(selectedFroopHistory: $froopManager.selectedFroopHistory)
+                                            DetailsTasksAndInformationView(taskOn: $taskOn, selectedFroopHistory: $froopManager.selectedFroopHistory)
+                                            DetailsDeleteView(froopAdded: $froopAdded, selectedFroopHistory: $froopManager.selectedFroopHistory)
+                                            //                                            .frame(maxHeight: 110)
+                                            
+                                            
+                                            Spacer()
+                                        }
                                     }
+                                    .scrollIndicators(.hidden)
+                                    .frame(maxWidth: UIScreen.screenWidth, maxHeight: UIScreen.screenHeight - 300)
+                                    
+                                } else {
+                                    
+                                    // Generic Froop - Guest View
+                                    ScrollView {
+                                        VStack (spacing: 0){
+                                            DetailsGuestMessageView(selectedFroopHistory: $froopManager.selectedFroopHistory, messageEdit: $messageEdit)
+                                            DetailsGuestView(selectedFroopHistory: $froopManager.selectedFroopHistory, miniFriendDetailOpen: $miniFriendDetailOpen, miniFriend: $miniFriend)
+                                            DetailsCalendarView(selectedFroopHistory: $froopManager.selectedFroopHistory)
+                                            DetailsMapView(selectedFroopHistory: $froopManager.selectedFroopHistory)
+                                            DetailsTasksAndInformationView(taskOn: $taskOn, selectedFroopHistory: $froopManager.selectedFroopHistory)
+                                            DetailsDeleteView(froopAdded: $froopAdded, selectedFroopHistory: $froopManager.selectedFroopHistory)
+                                            //                                            .frame(maxHeight: 110)
+                                            
+                                            
+                                            Spacer()
+                                        }
+                                    }
+                                    .scrollIndicators(.hidden)
+                                    .frame(maxWidth: UIScreen.screenWidth, maxHeight: UIScreen.screenHeight - 300)
+                                    
                                 }
-                                .scrollIndicators(.hidden)
-                                .frame(maxWidth: UIScreen.screenWidth, maxHeight: UIScreen.screenHeight - 300)
-
                             }
-                            
                             DetailsAddFriendsView(froopAdded: $froopAdded)
                                 .ignoresSafeArea()
                             
@@ -331,23 +470,44 @@ struct FroopDetailsView: View {
             if froopManager.froopMapOpen {
                 ZStack {
                     PassiveMapView(froopHistory: instanceFroop, globalChat: $globalChat)
+                        .frame(width: UIScreen.screenWidth, height: UIScreen.screenHeight)
                     
                     VStack {
-                        Text("tap to close")
-                            .font(.system(size: 18))
-                            .fontWeight(.light)
-                            .foregroundColor(Color(red: 50/255, green: 46/255, blue: 62/255).opacity(0.75))
-                            .padding(.top, 25)
-                            .opacity(0.5)
-                        Image(systemName: "chevron.down")
-                            .font(.system(size: 24))
-                            .foregroundColor(Color(red: 50/255, green: 46/255, blue: 62/255).opacity(0.75))
+                        ZStack {
+//                            Rectangle()
+//                                .frame(width: UIScreen.screenWidth, height: 75)
+//                                .foregroundColor(.clear)
+//                                .background(.ultraThinMaterial)
+//                                .opacity(1)
+
+                            HStack {
+                                Spacer()
+                                ZStack {
+                                    Image(systemName: "circle.fill")
+                                        .font(.system(size: 36))
+                                        .foregroundColor(.black).opacity(0.5)
+                                        .background(.ultraThinMaterial)
+                                        .mask {
+                                            Circle()
+                                        }
+                                    
+                                    Image(systemName: "xmark")
+                                        .font(.system(size: 24))
+                                        .foregroundColor(.white)
+                                }
+                                
+                            }
+                            .padding(.trailing, 23)
+                            .padding(.top, UIScreen.screenHeight * 0.058)
+
+                        }
+                        
+                        .frame(alignment: .top)
+//                        .padding(.top, 35)
+                        .onTapGesture {
+                            froopManager.froopMapOpen = false
+                        }
                         Spacer()
-                    }
-                    .frame(alignment: .top)
-                    .padding(.top, 25)
-                    .onTapGesture {
-                        froopManager.froopMapOpen = false
                     }
                     
                     if (MapManager.shared.showSavePassivePinView) {
@@ -423,6 +583,11 @@ struct FroopDetailsView: View {
                 CustomVideoPlayerView(videoURLString: froopManager.selectedFroopHistory.froop.froopIntroVideo == "" ? froopManager.videoUrl : froopManager.selectedFroopHistory.froop.froopIntroVideo) {
                     froopManager.showVideoPlayer = false
                 }
+            }
+        }
+        .onAppear {
+            withAnimation(.linear(duration: 1.5)) {
+                fadeIn = true
             }
         }
         .ignoresSafeArea()

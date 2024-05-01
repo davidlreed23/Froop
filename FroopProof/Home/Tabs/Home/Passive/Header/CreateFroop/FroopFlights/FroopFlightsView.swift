@@ -497,9 +497,10 @@ struct FlightDataDisplay: View {
                                 .onTapGesture {
                                     froopData.flightData = flightManager.flights[0]
                                     froopData.froopName = "Pick up \(MyData.shared.firstName) from Airport"
-                                    froopData.froopStartTime = flightManager.convertToDate(from: flightManager.flights[0].arrival.scheduledTime.local, timeZoneIdentifier: "") ?? Date()
+//                                    froopData.froopStartTime = flightManager.convertToDate(from: flightManager.flights[0].arrival.scheduledTime.local, timeZoneIdentifier: "") ?? Date()
                                     froopData.froopLocationtitle = flightManager.locDerivedTitle ?? ""
                                     froopData.froopLocationsubtitle = flightManager.locDerivedSubtitle ?? ""
+                                    froopData.froopLocationCoordinate = CLLocationCoordinate2D(latitude: flightManager.flights[0].arrival.airport.location.lat, longitude: flightManager.flights[0].arrival.airport.location.lon)
                                     froopData.froopDuration = 7200
                                     print("FroopData.locationTitle: \(froopData.froopLocationtitle)")
                                     print("FroopData.locationSubtitle: \(froopData.froopLocationsubtitle)")

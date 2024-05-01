@@ -67,11 +67,11 @@ struct DetailsGuestView: View {
                             Spacer()
                         }
                         VStack {
-                        Text("GUESTS")
-                                .foregroundColor(Color(red: 50/255, green: 46/255, blue: 62/255))
-                                .font(.system(size: 15))
-                                .fontWeight(.semibold)
-                                .offset(y: -15)
+                            Text(froopManager.selectedFroopHistory.froop.froopType != 5009 ? "GUESTS" : "FRIENDS")
+                                    .foregroundColor(Color(red: 50/255, green: 46/255, blue: 62/255))
+                                    .font(.system(size: 15))
+                                    .fontWeight(.semibold)
+                                    .offset(y: -15)
 
                             HStack {
                                 Text("Invited:")

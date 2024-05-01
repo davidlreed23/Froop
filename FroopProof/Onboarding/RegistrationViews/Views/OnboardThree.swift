@@ -367,19 +367,22 @@ struct OnboardThree: View {
     }
     
     func sendOTP(phoneNumber: String) {
+        print("sendOTP Function Firing")
         // Remove non-numeric characters
         let cleanedPhoneNumber = phoneNumber.components(separatedBy: CharacterSet.decimalDigits.inverted).joined()
         
         // Prepend the country code to get it in E.164 format. Assume 1 as the country code for the USA.
         let e164FormattedNumber = "+1" + cleanedPhoneNumber
-        
+        print(e164FormattedNumber)
+
         PhoneAuthProvider.provider().verifyPhoneNumber(e164FormattedNumber, uiDelegate: nil) { (verificationID, error) in
             if let error = error {
-                // Handle the error
-                print(error.localizedDescription)
+                // Log the error to the console more explicitly
+                print("Error during OTP verification: \(error.localizedDescription)")
                 return
             }
-            // If there's no error, save the verificationID
+            // Log success or further details
+            print("Verification ID received: \(verificationID ?? "No ID")")
             UserDefaults.standard.set(verificationID, forKey: "authVerificationID")
             OTPSent = true
             isShowingOTPAlert = true

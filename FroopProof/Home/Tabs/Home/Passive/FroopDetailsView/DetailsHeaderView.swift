@@ -77,7 +77,7 @@ struct DetailsHeaderView: View {
         ZStack {
             ZStack {
                 Rectangle()
-                    .frame(height: 200)
+                    .frame(height: 225)
                     .foregroundColor(colorScheme == .dark ? Color(red: 50/255, green: 46/255, blue: 62/255) : Color(red: 50/255, green: 46/255, blue: 62/255))
                 if FirebaseServices.shared.uid == froopManager.selectedFroopHistory.host.froopUserID {
                     if froopManager.selectedFroopHistory.froop.froopType != 5001 {
@@ -85,11 +85,11 @@ struct DetailsHeaderView: View {
                             ZStack {
                                 VStack {
                                     HStack {
-                                        Spacer()
+                                        
                                         ZStack {
                                             RoundedRectangle(cornerRadius: 0)
                                                 .fill(froopManager.selectedFroopHistory.froop.template || templateMade ? Color(red: 0/255, green: 150/255, blue: 160/255) : Color(red: 249/255, green: 0/255, blue: 98/255))
-                                                .frame(width: 70, height: 50)
+                                                .frame(width: 70, height: 40)
                                                 .shadow(color: Color(.black).opacity(0.5), radius: 4, x: 4, y: 4)
                                             VStack {
                                                 Text(froopManager.selectedFroopHistory.froop.template || templateMade ? "Made From" : "Create")
@@ -102,10 +102,11 @@ struct DetailsHeaderView: View {
                                                     .foregroundColor(.white)
                                             }
                                         }
+                                        Spacer()
                                     }
                                     Spacer()
                                 }
-                                .padding(.top, 60)
+                                .padding(.top, 50)
                                 .onTapGesture {
                                     //print("tapped")
                                     templateMade = true

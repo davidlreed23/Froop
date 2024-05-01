@@ -61,6 +61,9 @@ struct FroopSummaryView: View {
 //                    changeView.froopHolder = froopData.toFroop()
                     fetchFriendsData(from: froopData.froopInvitedFriends) { fetchedFriends in
                         changeView.confirmedFriends = fetchedFriends
+                        print("🟡 printing Friends")
+                        print(fetchedFriends)
+                        print(changeView.confirmedFriends)
                         // Additional actions if needed
                     }
                 }
